@@ -1,0 +1,7 @@
+<p>Event Name: {{ event.name }}</p>
+<p [ngSwitch]="getCurrentBreakpoint()" class="time">
+    <ng-container *ngSwitchCase="'small'">Small Breakpoint Content</ng-container>
+    <ng-container *ngSwitchCase="'medium'">Medium Breakpoint Content</ng-container>
+    <ng-container *ngSwitchCase="'large'">Large Breakpoint Content</ng-container>
+    <ng-container *ngSwitchDefault>Default Breakpoint Content</ng-container>
+</p>

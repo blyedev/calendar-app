@@ -1,0 +1,35 @@
+<div class="background">
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+</div>
+<div id="row">
+    <ng-container *ngFor="let day of arrayOfObjects; let i = index">
+        <div class="column">
+            <ng-container *ngFor="let event of day.events; let eventIndex = index">
+                <app-event-component [event]="event"></app-event-component>
+            </ng-container>
+        </div>
+    </ng-container>
+</div>
