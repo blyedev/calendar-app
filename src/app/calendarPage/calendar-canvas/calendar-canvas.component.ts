@@ -15,6 +15,7 @@ export class CalendarCanvasComponent {
   }[] = [];
 
   constructor(private calendarEventService: CalendarEventService) {
-    this.arrayOfObjects = this.calendarEventService.getArrayOfObjects();
+    this.arrayOfObjects = this.calendarEventService.getArrayOfObjectsWithSortedEvents();
+    console.log(this.arrayOfObjects);
   }
 }
