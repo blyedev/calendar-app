@@ -5,12 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CalendarCanvasComponent } from './calendarPage/calendar-canvas/calendar-canvas.component';
 import { EventComponentComponent } from './calendarPage/event-component/event-component.component';
+import { DayColumnComponent } from './calendarPage/day-column/day-column.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CalendarCanvasComponent,
-    EventComponentComponent
+    EventComponentComponent,
+    DayColumnComponent
   ],
   imports: [
     BrowserModule,

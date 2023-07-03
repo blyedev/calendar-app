@@ -1,5 +1,5 @@
-import { Component, ElementRef, HostBinding, Input } from '@angular/core';
-import { CalendarEvent } from '../calendar-event';
+import { Component, HostBinding, Input } from '@angular/core';
+import { PositionedCalendarEvent } from '../day-column/positioned-calendar-event';
 
 @Component({
   selector: 'app-event-component',
@@ -7,9 +7,7 @@ import { CalendarEvent } from '../calendar-event';
   styleUrls: ['./event-component.component.css']
 })
 export class EventComponentComponent {
-  @Input() event!: CalendarEvent; // Assuming you pass the event object to the component using an input property
-
-  constructor(private elementRef: ElementRef) {}
+  @Input() event!: PositionedCalendarEvent; // Assuming you pass the event object to the component using an input property
 
   @HostBinding('style.top.px')
   get topPosition(): number {
@@ -25,20 +23,13 @@ export class EventComponentComponent {
     return height;
   }
 
-  getCurrentBreakpoint(): string {
-    const elementHeight = this.elementRef.nativeElement.offsetHeight;
-    console.log(elementHeight);
-    
-    
-    if (elementHeight < 100) {
-      return 'small';
-    } else if (elementHeight >= 100 && elementHeight < 150) {
-      return 'medium';
-    } else if (elementHeight >= 150) {
-      return 'large';
-    } else {
-      return 'default';
-    }
+  @HostBinding('style.left')
+  get leftPosition(): string {
+    return `calc((100% - 8px) * ${this.event.position.left})`;
   }
-  
+
+  @HostBinding('style.width')
+  get eventWidth(): string {
+    return `calc((100% - 8px) * ${this.event.position.width})`;
+  }  
 }
