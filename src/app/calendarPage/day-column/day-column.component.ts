@@ -66,9 +66,9 @@ export class DayColumnComponent implements OnInit {
 
     for (let i = 0; i < numColumns; i++) {
       const col = columns[i];
-      const colSpan = 1; // make sure to change this
 
       col.forEach((ev: CalendarEvent) => {
+        const colSpan = this.expandEvent(ev, i, columns);
         this.positionedEvents.push({
           ...ev,
           position: {
@@ -80,21 +80,21 @@ export class DayColumnComponent implements OnInit {
     }
   }
 
-  // expandEvent(ev: PositionedCalendarEvent, iColumn: number, columns: PositionedCalendarEvent[][]): number {
-  //   let colSpan = 1;
+  expandEvent(ev: CalendarEvent, iColumn: number, columns: CalendarEvent[][]): number {
+    let colSpan = 1;
 
-  //   for (let i = iColumn + 1; i < columns.length; i++) {
-  //     const col = columns[i];
-  //     for (const ev1 of col) {
-  //       if (this.collidesWith(ev, ev1)) {
-  //         return colSpan;
-  //       }
-  //     }
-  //     colSpan++;
-  //   }
+    for (let i = iColumn + 1; i < columns.length; i++) {
+      const col = columns[i];
+      for (const ev1 of col) {
+        if (this.collidesWith(ev, ev1)) {
+          return colSpan;
+        }
+      }
+      colSpan++;
+    }
 
-  //   return colSpan;
-  // }
+    return colSpan;
+  }
 
   collidesWith(a: PositionedCalendarEvent | CalendarEvent, b: PositionedCalendarEvent | CalendarEvent): boolean {
     return a.endDateTime > b.startDateTime && a.startDateTime < b.endDateTime;

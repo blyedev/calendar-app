@@ -92,9 +92,9 @@ export class CalendarEventService {
       } else if (a.startDateTime > b.startDateTime) {
         return 1;
       } else {
-        if (a.endDateTime < b.endDateTime) {
+        if (a.endDateTime > b.endDateTime) {
           return -1;
-        } else if (a.endDateTime > b.endDateTime) {
+        } else if (a.endDateTime < b.endDateTime) {
           return 1;
         } else {
           return a.id - b.id;
