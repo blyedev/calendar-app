@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges } from "@angular/core";
 import { CalendarEvent } from "../calendar-event";
 import { PositionedCalendarEvent } from "./positioned-calendar-event";
+import { CalendarNode } from "./calendar-event-tree";
 
 @Component({
   selector: 'app-day-column',
@@ -27,7 +28,7 @@ export class DayColumnComponent implements OnInit {
   }
 
   layoutEvents(): void {
-    const columns : CalendarEvent[][] = [];
+    const columns: CalendarNode[][] = [];
     let lastEventEnd: Date | null = null;
 
     this.events.forEach((ev: CalendarEvent) => {
@@ -40,15 +41,39 @@ export class DayColumnComponent implements OnInit {
       let placed = false;
       for (let i = 0; i < columns.length; i++) {
         const col = columns[i];
-        if (!this.collidesWith(col[col.length - 1], ev)) {
-          col.push(ev);
+        // check if event fits in the current column
+        if (!this.collidesWith(col[col.length - 1].value, ev)) {      
+          const calNode = new CalendarNode(ev)
+          // sets event's parent
+          if (i > 0) {              
+            const parentNode = this.getFirstCollider(columns[i - 1], calNode)!
+            if (this.collidesWithFirstHour(parentNode.value, calNode.value)) {
+              parentNode.topChildren.push(calNode)
+            } else {
+              parentNode.bottomChildren.push(calNode)
+            }
+          }
+          // puts event in columns
+          col.push(calNode);
+          // ends positioning
           placed = true;
           break;
         }
       }
 
       if (!placed) {
-        columns.push([ev]);
+        const calNode = new CalendarNode(ev)
+
+        if (columns.length > 0) {
+          const parentNode = this.getFirstCollider(columns[columns.length - 1], calNode)!
+          if (this.collidesWithFirstHour(parentNode.value, calNode.value)) {
+            parentNode.topChildren.push(calNode)
+          } else {
+            parentNode.bottomChildren.push(calNode)
+          }
+        }
+
+        columns.push([calNode]);
       }
 
       if (lastEventEnd === null || ev.endDateTime > lastEventEnd) {
@@ -57,20 +82,20 @@ export class DayColumnComponent implements OnInit {
     })
 
     this.positionEvents(columns);
+    console.log("Endday");
     console.log(this.positionedEvents);
-    
   }
 
-  positionEvents(columns: CalendarEvent[][]): void {
+  positionEvents(columns: CalendarNode[][]): void {
     const numColumns = columns.length;
 
     for (let i = 0; i < numColumns; i++) {
       const col = columns[i];
 
-      col.forEach((ev: CalendarEvent) => {
-        const colSpan = this.expandEvent(ev, i, columns);
+      col.forEach((ev: CalendarNode) => {
+        const colSpan = this.expandEvent(ev.value, i, columns);
         this.positionedEvents.push({
-          ...ev,
+          ...ev.value,
           position: {
             left: i / numColumns,
             width: colSpan / numColumns
@@ -80,13 +105,13 @@ export class DayColumnComponent implements OnInit {
     }
   }
 
-  expandEvent(ev: CalendarEvent, iColumn: number, columns: CalendarEvent[][]): number {
+  expandEvent(ev: CalendarEvent, iColumn: number, columns: CalendarNode[][]): number {
     let colSpan = 1;
 
     for (let i = iColumn + 1; i < columns.length; i++) {
       const col = columns[i];
       for (const ev1 of col) {
-        if (this.collidesWith(ev, ev1)) {
+        if (this.collidesWith(ev, ev1.value)) {
           return colSpan;
         }
       }
@@ -96,7 +121,24 @@ export class DayColumnComponent implements OnInit {
     return colSpan;
   }
 
+  getFirstCollider(nodes: CalendarNode[], ev: CalendarNode): CalendarNode | null {
+    const collider = nodes.find(node => this.collidesWith(node.value, ev.value));
+    if (collider) {
+      return collider;
+    } else {
+      return null
+    }
+  }
+
   collidesWith(a: PositionedCalendarEvent | CalendarEvent, b: PositionedCalendarEvent | CalendarEvent): boolean {
     return a.endDateTime > b.startDateTime && a.startDateTime < b.endDateTime;
   }
+
+  collidesWithFirstHour(parent: PositionedCalendarEvent | CalendarEvent, child: PositionedCalendarEvent | CalendarEvent): boolean {
+    const StartPlusOneHour = new Date(parent.startDateTime);
+    StartPlusOneHour.setHours(StartPlusOneHour.getHours() + 1); // Add one hour to the start time of event A
+
+    return StartPlusOneHour > child.startDateTime && parent.startDateTime < child.endDateTime;
+  }
+
 }
