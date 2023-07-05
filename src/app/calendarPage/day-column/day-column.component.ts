@@ -33,6 +33,8 @@ export class DayColumnComponent implements OnInit {
 
     this.events.forEach((ev: CalendarEvent) => {
       if (lastEventEnd !== null && ev.startDateTime >= lastEventEnd) {
+        console.log("NodeHeads:");
+        console.log(columns[0]);
         this.positionEvents(columns);
         columns.length = 0;
         lastEventEnd = null;
@@ -42,10 +44,10 @@ export class DayColumnComponent implements OnInit {
       for (let i = 0; i < columns.length; i++) {
         const col = columns[i];
         // check if event fits in the current column
-        if (!this.collidesWith(col[col.length - 1].value, ev)) {      
+        if (!this.collidesWith(col[col.length - 1].value, ev)) {
           const calNode = new CalendarNode(ev)
           // sets event's parent
-          if (i > 0) {              
+          if (i > 0) {
             const parentNode = this.getFirstCollider(columns[i - 1], calNode)!
             if (this.collidesWithFirstHour(parentNode.value, calNode.value)) {
               parentNode.topChildren.push(calNode)
@@ -80,27 +82,57 @@ export class DayColumnComponent implements OnInit {
         lastEventEnd = ev.endDateTime;
       }
     })
-
+    console.log("NodeHeads:");
+    console.log(columns[0]);
     this.positionEvents(columns);
     console.log("Endday");
     console.log(this.positionedEvents);
   }
 
+  getFirstCollider(nodes: CalendarNode[], ev: CalendarNode): CalendarNode | null {
+    const collider = nodes.find(node => this.collidesWith(node.value, ev.value));
+    if (collider) {
+      return collider;
+    } else {
+      return null
+    }
+  }
+
   positionEvents(columns: CalendarNode[][]): void {
-    const numColumns = columns.length;
+    const nodeHeads = columns[0];
 
-    for (let i = 0; i < numColumns; i++) {
-      const col = columns[i];
+    for (let headIndex = 0; headIndex < nodeHeads.length; headIndex++) {
+      this.positionEvent(nodeHeads[headIndex], 0);
 
-      col.forEach((ev: CalendarNode) => {
-        const colSpan = this.expandEvent(ev.value, i, columns);
-        this.positionedEvents.push({
-          ...ev.value,
-          position: {
-            left: i / numColumns,
-            width: colSpan / numColumns
-          }
-        })
+    }
+  }
+
+  positionEvent(node: CalendarNode, offset: number): void {
+    if (node.topChildren.length === 0) {
+      this.positionedEvents.push({
+        ...node.value,
+        position: {
+          left: offset,
+          width: 1 - offset
+        }
+      })
+      node.bottomChildren.forEach((node) => {
+        this.positionEvent(node, offset + 0.05)
+      })
+    } else {
+      const elementWidth = (1 - offset) / this.getMaxTreeDepth(node);
+      this.positionedEvents.push({
+        ...node.value,
+        position: {
+          left: offset,
+          width: elementWidth
+        }
+      })
+      node.topChildren.forEach((node) => {
+        this.positionEvent(node, offset + elementWidth)
+      })
+      node.bottomChildren.forEach((node) => {
+        this.positionEvent(node, offset + 0.05)
       })
     }
   }
@@ -121,13 +153,27 @@ export class DayColumnComponent implements OnInit {
     return colSpan;
   }
 
-  getFirstCollider(nodes: CalendarNode[], ev: CalendarNode): CalendarNode | null {
-    const collider = nodes.find(node => this.collidesWith(node.value, ev.value));
-    if (collider) {
-      return collider;
-    } else {
-      return null
+  getMaxTreeDepth(node: CalendarNode): number {
+    if (!node) {
+      return 0;
     }
+
+    let maxDepth = 0;
+
+    // Traverse top children
+    for (const child of node.topChildren) {
+      const depth = this.getMaxTreeDepth(child);
+      maxDepth = Math.max(maxDepth, depth);
+    }
+
+    // Traverse bottom children
+    for (const child of node.bottomChildren) {
+      const depth = this.getMaxTreeDepth(child);
+      maxDepth = Math.max(maxDepth, depth);
+    }
+
+    // Add 1 to account for the current node
+    return maxDepth + 1;
   }
 
   collidesWith(a: PositionedCalendarEvent | CalendarEvent, b: PositionedCalendarEvent | CalendarEvent): boolean {
