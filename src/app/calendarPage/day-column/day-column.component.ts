@@ -102,12 +102,13 @@ export class DayColumnComponent implements OnInit {
     const nodeHeads = columns[0];
 
     for (let headIndex = 0; headIndex < nodeHeads.length; headIndex++) {
-      this.positionEvent(nodeHeads[headIndex], 0);
+      this.positionEvent(nodeHeads[headIndex], 0, columns, 0);
 
     }
   }
 
-  positionEvent(node: CalendarNode, offset: number): void {
+  positionEvent(node: CalendarNode, offset: number, columns: CalendarNode[][], columnsIndex: number): void {
+    const elementWidth = (1 - offset) / this.getMaxTreeDepth(node);
     if (node.topChildren.length === 0) {
       this.positionedEvents.push({
         ...node.value,
@@ -116,11 +117,16 @@ export class DayColumnComponent implements OnInit {
           width: 1 - offset
         }
       })
-      node.bottomChildren.forEach((node) => {
-        this.positionEvent(node, offset + 0.05)
+
+      node.bottomChildren.forEach((childNode) => {
+        if (this.collidesWithAnyFirstHours(childNode, node, columns[columnsIndex])) {
+          this.positionEvent(childNode, offset + elementWidth, columns, columnsIndex + 1)
+        } else {
+          this.positionEvent(childNode, offset + 0.05, columns, columnsIndex + 1)
+        }
       })
+
     } else {
-      const elementWidth = (1 - offset) / this.getMaxTreeDepth(node);
       this.positionedEvents.push({
         ...node.value,
         position: {
@@ -128,11 +134,17 @@ export class DayColumnComponent implements OnInit {
           width: elementWidth
         }
       })
-      node.topChildren.forEach((node) => {
-        this.positionEvent(node, offset + elementWidth)
+
+      node.topChildren.forEach((childNode) => {
+        this.positionEvent(childNode, offset + elementWidth, columns, columnsIndex + 1)
       })
-      node.bottomChildren.forEach((node) => {
-        this.positionEvent(node, offset + 0.05)
+
+      node.bottomChildren.forEach((childNode) => {
+        if (this.collidesWithAnyFirstHours(childNode, node, columns[columnsIndex])) {
+          this.positionEvent(childNode, offset + elementWidth, columns, columnsIndex + 1)
+        } else {
+          this.positionEvent(childNode, offset + 0.05, columns, columnsIndex + 1)
+        }
       })
     }
   }
@@ -182,9 +194,18 @@ export class DayColumnComponent implements OnInit {
 
   collidesWithFirstHour(parent: PositionedCalendarEvent | CalendarEvent, child: PositionedCalendarEvent | CalendarEvent): boolean {
     const StartPlusOneHour = new Date(parent.startDateTime);
-    StartPlusOneHour.setHours(StartPlusOneHour.getHours() + 1); // Add one hour to the start time of event A
+    StartPlusOneHour.setHours(StartPlusOneHour.getHours() + 2); // Add one hour to the start time of event A
 
     return StartPlusOneHour > child.startDateTime && parent.startDateTime < child.endDateTime;
   }
+
+  collidesWithAnyFirstHours(node: CalendarNode, parent: CalendarNode, nodes: CalendarNode[]): boolean {
+    for (const previousNode of nodes) {
+      if (previousNode !== parent && this.collidesWithFirstHour(previousNode.value, node.value)) {
+        return true;
+      }
+    }
+    return false;
+  }  
 
 }
