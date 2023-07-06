@@ -30,6 +30,10 @@ export class EventComponentComponent {
 
   @HostBinding('style.width')
   get eventWidth(): string {
-    return `calc((100% - 8px) * ${this.event.position.width})`;
-  }  
+    if (this.event.position.width * 7 / 5 + this.event.position.left > 1) {
+      return `calc((100% - 8px) * ${1 - this.event.position.left})`;
+    } else {
+      return `calc((100% - 8px) * ${this.event.position.width * 7 / 5})`;
+    }
+  }
 }

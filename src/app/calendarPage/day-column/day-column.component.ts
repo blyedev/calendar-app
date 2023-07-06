@@ -108,13 +108,22 @@ export class DayColumnComponent implements OnInit {
   }
 
   positionEvent(node: CalendarNode, offset: number, columns: CalendarNode[][], columnsIndex: number): void {
-    const elementWidth = (1 - offset) / this.getMaxTreeDepth(node);
+    const widthLimitIndex = this.findCollidingColumnIndex(columnsIndex, node, columns)
+    let widthLimit: number;
+    if (widthLimitIndex) {
+      widthLimit = (widthLimitIndex) / columns.length
+      
+    } else {
+      widthLimit = 1
+    }
+    const elementWidth = (widthLimit - offset) / this.getMaxTreeDepth(node);
+
     if (node.topChildren.length === 0) {
       this.positionedEvents.push({
         ...node.value,
         position: {
           left: offset,
-          width: 1 - offset
+          width: widthLimit - offset
         }
       })
 
@@ -149,21 +158,28 @@ export class DayColumnComponent implements OnInit {
     }
   }
 
-  expandEvent(ev: CalendarEvent, iColumn: number, columns: CalendarNode[][]): number {
-    let colSpan = 1;
+  findCollidingColumnIndex(startIndex: number, node: CalendarNode, columns: CalendarNode[][]): number | null {
+    let descendants = [...node.topChildren, ...node.bottomChildren]
 
-    for (let i = iColumn + 1; i < columns.length; i++) {
+    for (let i = startIndex + 1; i < columns.length; i++) {
       const col = columns[i];
-      for (const ev1 of col) {
-        if (this.collidesWith(ev, ev1.value)) {
-          return colSpan;
+
+      for (const colNode of col) {
+        if (!descendants.includes(colNode) && this.collidesWith(colNode.value, node.value)) {
+          return i;
         }
       }
-      colSpan++;
+
+      const nextGeneration: CalendarNode[] = [];
+      descendants.forEach((childNode: CalendarNode) => {
+        nextGeneration.push(...childNode.topChildren, ...childNode.bottomChildren)
+      })
+      descendants = nextGeneration;
     }
 
-    return colSpan;
+    return null;
   }
+
 
   getMaxTreeDepth(node: CalendarNode): number {
     if (!node) {
@@ -206,6 +222,6 @@ export class DayColumnComponent implements OnInit {
       }
     }
     return false;
-  }  
+  }
 
 }
