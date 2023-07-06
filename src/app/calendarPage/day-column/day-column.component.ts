@@ -108,14 +108,7 @@ export class DayColumnComponent implements OnInit {
   }
 
   positionEvent(node: CalendarNode, offset: number, columns: CalendarNode[][], columnsIndex: number): void {
-    const widthLimitIndex = this.findCollidingColumnIndex(columnsIndex, node, columns)
-    let widthLimit: number;
-    if (widthLimitIndex) {
-      widthLimit = (widthLimitIndex) / columns.length
-      
-    } else {
-      widthLimit = 1
-    }
+    let widthLimit = this.findWidthLimit(node, columns, columnsIndex)
     const elementWidth = (widthLimit - offset) / this.getMaxTreeDepth(node);
 
     if (node.topChildren.length === 0) {
@@ -128,7 +121,7 @@ export class DayColumnComponent implements OnInit {
       })
 
       node.bottomChildren.forEach((childNode) => {
-        if (this.collidesWithAnyFirstHours(childNode, node, columns[columnsIndex])) {
+        if (this.collidesWithAnyNonAncestors(childNode, node, columns, columnsIndex)) {
           this.positionEvent(childNode, offset + elementWidth, columns, columnsIndex + 1)
         } else {
           this.positionEvent(childNode, offset + 0.05, columns, columnsIndex + 1)
@@ -149,7 +142,7 @@ export class DayColumnComponent implements OnInit {
       })
 
       node.bottomChildren.forEach((childNode) => {
-        if (this.collidesWithAnyFirstHours(childNode, node, columns[columnsIndex])) {
+        if (this.collidesWithAnyNonAncestors(childNode, node, columns, columnsIndex)) {
           this.positionEvent(childNode, offset + elementWidth, columns, columnsIndex + 1)
         } else {
           this.positionEvent(childNode, offset + 0.05, columns, columnsIndex + 1)
@@ -158,28 +151,48 @@ export class DayColumnComponent implements OnInit {
     }
   }
 
-  findCollidingColumnIndex(startIndex: number, node: CalendarNode, columns: CalendarNode[][]): number | null {
-    let descendants = [...node.topChildren, ...node.bottomChildren]
+  findWidthLimit(node: CalendarNode, columns: CalendarNode[][], columnsIndex: number): number {
+    let descendants = [...node.topChildren, ...node.bottomChildren];
 
-    for (let i = startIndex + 1; i < columns.length; i++) {
+    for (let i = columnsIndex + 1; i < columns.length; i++) {
       const col = columns[i];
 
       for (const colNode of col) {
         if (!descendants.includes(colNode) && this.collidesWith(colNode.value, node.value)) {
-          return i;
+          const positionedNode = this.positionedEvents.find((positionedEvent) => positionedEvent.id === colNode.value.id);
+          if (positionedNode) {
+            return positionedNode.position.left;
+          }
         }
       }
 
       const nextGeneration: CalendarNode[] = [];
       descendants.forEach((childNode: CalendarNode) => {
-        nextGeneration.push(...childNode.topChildren, ...childNode.bottomChildren)
-      })
+        nextGeneration.push(...childNode.topChildren, ...childNode.bottomChildren);
+      });
       descendants = nextGeneration;
     }
 
-    return null;
+    return 1;
   }
 
+  collidesWithAnyNonAncestors(node: CalendarNode, parent: CalendarNode, columns: CalendarNode[][], columnsIndex: number): boolean {
+    let ancestor = node;
+    for (let i = columnsIndex; i >= 0; i--) {
+      const col = columns[i];
+      ancestor = col.find((potentialParent: CalendarNode) => potentialParent.topChildren.includes(ancestor!) || potentialParent.bottomChildren.includes(ancestor!))!;
+      
+      for (const colNode of col) {
+        if (colNode !== ancestor && this.collidesWithFirstHour(colNode.value, node.value)) {
+          if (this.collidesWithFirstHour(colNode.value, parent.value)) {
+            return false
+          }
+          return true
+        }
+      }
+    }
+    return false;
+  }
 
   getMaxTreeDepth(node: CalendarNode): number {
     if (!node) {
@@ -213,15 +226,6 @@ export class DayColumnComponent implements OnInit {
     StartPlusOneHour.setHours(StartPlusOneHour.getHours() + 2); // Add one hour to the start time of event A
 
     return StartPlusOneHour > child.startDateTime && parent.startDateTime < child.endDateTime;
-  }
-
-  collidesWithAnyFirstHours(node: CalendarNode, parent: CalendarNode, nodes: CalendarNode[]): boolean {
-    for (const previousNode of nodes) {
-      if (previousNode !== parent && this.collidesWithFirstHour(previousNode.value, node.value)) {
-        return true;
-      }
-    }
-    return false;
   }
 
 }

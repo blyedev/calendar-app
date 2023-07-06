@@ -35,5 +35,6 @@ export class EventComponentComponent {
     } else {
       return `calc((100% - 8px) * ${this.event.position.width * 7 / 5})`;
     }
+    // return `calc((100% - 8px) * ${this.event.position.width})`;
   }
 }
