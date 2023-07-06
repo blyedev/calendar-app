@@ -37,4 +37,9 @@ export class EventComponentComponent {
     }
     // return `calc((100% - 8px) * ${this.event.position.width})`;
   }
+
+  @HostBinding('style.z-index')
+  get zIndex(): number {
+    return this.event.position.zIndex;
+  }
 }

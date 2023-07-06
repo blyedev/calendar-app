@@ -116,7 +116,8 @@ export class DayColumnComponent implements OnInit {
         ...node.value,
         position: {
           left: offset,
-          width: widthLimit - offset
+          width: widthLimit - offset,
+          zIndex: columnsIndex
         }
       })
 
@@ -133,7 +134,8 @@ export class DayColumnComponent implements OnInit {
         ...node.value,
         position: {
           left: offset,
-          width: elementWidth
+          width: elementWidth,
+          zIndex: columnsIndex
         }
       })
 
