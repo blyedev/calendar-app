@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, HostListener, Input } from '@angular/core';
 import { PositionedCalendarEvent } from '../day-column/positioned-calendar-event';
 
 @Component({
@@ -41,5 +41,10 @@ export class EventComponentComponent {
   @HostBinding('style.z-index')
   get zIndex(): number {
     return this.event.position.zIndex;
+  }
+
+  @HostListener('click', ['$event'])
+  onClick(e: any) {
+    console.log(this.event);
   }
 }

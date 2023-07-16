@@ -25,7 +25,7 @@
     <div class="hairline"></div>
 </div>
 <div id="row">
-    <ng-container *ngFor="let day of arrayOfObjects; let i = index">
-        <app-day-column [events]="day.events"></app-day-column>
+    <ng-container *ngFor="let events of getEventsByDay(); let i = index">
+        <app-day-column [events]="events"></app-day-column>
     </ng-container>
 </div>

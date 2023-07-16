@@ -15,18 +15,36 @@ export class DayColumnComponent implements OnInit {
   positionedEvents: PositionedCalendarEvent[] = [];
 
   ngOnInit(): void {
+    this.sortEvents();
     this.layoutEvents();
     this.initialized = true;
   }
-
+  
   ngOnChanges(changes: SimpleChanges): void {
     if (this.initialized && changes["events"] && changes["events"].currentValue) {
-      // Perform your logic here whenever the 'events' array changes
-      console.log('Events changed:', this.events);
+      this.sortEvents();
       this.layoutEvents();
     }
   }
 
+  private sortEvents(): void {
+    this.events.sort((a, b) => {
+      if (a.startDateTime < b.startDateTime) {
+        return -1;
+      } else if (a.startDateTime > b.startDateTime) {
+        return 1;
+      } else {
+        if (a.endDateTime < b.endDateTime) {
+          return -1;
+        } else if (a.endDateTime > b.endDateTime) {
+          return 1;
+        } else {
+          return a.id - b.id;
+        }
+      }
+    });
+  }
+  
   layoutEvents(): void {
     const columns: CalendarNode[][] = [];
     let lastEventEnd: Date | null = null;
