@@ -62,7 +62,7 @@ export class CalendarEventImpl implements CalendarEvent {
         const currentDateTime = new Date();
 
         const modayOffset = currentDateTime.getDay() > 0 ? currentDateTime.getDay() - 1 : 6; // 0 (Sunday) to 6 (Saturday)
-        const randomDay = Math.floor(Math.random() * (7 + 1)); // Random day index
+        const randomDay = Math.floor(Math.random() * (7)); // Random day index
 
         const randomHour = Math.floor(Math.random() * (24)); // Random hour between 0 and 23
         // const randomQuarter = [0, 15, 30, 45][Math.floor(Math.random() * (4 + 1))]; // Random quarter (0, 15, 30, or 45)

@@ -104,6 +104,7 @@ export class DayColumnComponent implements OnInit {
     console.log(columns[0]);
     this.positionEvents(columns);
     console.log("Endday");
+    console.log(this.events);
     console.log(this.positionedEvents);
   }
 
@@ -245,7 +246,7 @@ export class DayColumnComponent implements OnInit {
     const StartPlusOneHour = new Date(parent.startDateTime);
     StartPlusOneHour.setHours(StartPlusOneHour.getHours() + 2); // Add one hour to the start time of event A
 
-    return StartPlusOneHour > child.startDateTime && parent.startDateTime < child.endDateTime;
+    return StartPlusOneHour > child.startDateTime && parent.startDateTime < child.endDateTime && this.collidesWith(parent, child);
   }
 
 }
