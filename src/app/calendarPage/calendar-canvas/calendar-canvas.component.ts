@@ -22,17 +22,11 @@ export class CalendarCanvasComponent {
   }
 
   getEventsByDay(): CalendarEvent[][] {
-    const eventsByDayOfWeek: CalendarEvent[][] = [];
+    const eventsByDayOfWeek: CalendarEvent[][] = [[], [], [], [], [], [], []];
 
     // Assuming you have an array of events called 'events'
     this.events.forEach((event: CalendarEvent) => {
-      let dayOfWeek = event.startDateTime.getDay() - 1; // 0 (Monday) to 6 (Sunday)
-      if (dayOfWeek < 0) {
-        dayOfWeek = 6; // Adjust Sunday to index 6
-      }
-      if (!eventsByDayOfWeek[dayOfWeek]) {
-        eventsByDayOfWeek[dayOfWeek] = []; // Initialize the array for the day of the week if it doesn't exist
-      }
+      const dayOfWeek = event.startDateTime.getDay() - 1 >= 0 ? event.startDateTime.getDay() - 1 : 6; // 0 (Monday) to 6 (Sunday)
 
       eventsByDayOfWeek[dayOfWeek].push(event); // Push the event to the corresponding day of the week array
     });

@@ -15,14 +15,12 @@ export class DayColumnComponent implements OnInit {
   positionedEvents: PositionedCalendarEvent[] = [];
 
   ngOnInit(): void {
-    this.sortEvents();
     this.layoutEvents();
     this.initialized = true;
   }
   
   ngOnChanges(changes: SimpleChanges): void {
     if (this.initialized && changes["events"] && changes["events"].currentValue) {
-      this.sortEvents();
       this.layoutEvents();
     }
   }
@@ -49,11 +47,11 @@ export class DayColumnComponent implements OnInit {
     const columns: CalendarNode[][] = [];
     let lastEventEnd: Date | null = null;
 
+    this.sortEvents();
     this.events.forEach((ev: CalendarEvent) => {
       if (lastEventEnd !== null && ev.startDateTime >= lastEventEnd) {
-        console.log("NodeHeads:");
-        console.log(columns[0]);
         this.positionEvents(columns);
+
         columns.length = 0;
         lastEventEnd = null;
       }
@@ -67,7 +65,7 @@ export class DayColumnComponent implements OnInit {
           // sets event's parent
           if (i > 0) {
             const parentNode = this.getFirstCollider(columns[i - 1], calNode)!
-            if (this.collidesWithFirstHour(parentNode.value, calNode.value)) {
+            if (this.collidesWithVisualBox(parentNode.value, calNode.value)) {
               parentNode.topChildren.push(calNode)
             } else {
               parentNode.bottomChildren.push(calNode)
@@ -86,7 +84,7 @@ export class DayColumnComponent implements OnInit {
 
         if (columns.length > 0) {
           const parentNode = this.getFirstCollider(columns[columns.length - 1], calNode)!
-          if (this.collidesWithFirstHour(parentNode.value, calNode.value)) {
+          if (this.collidesWithVisualBox(parentNode.value, calNode.value)) {
             parentNode.topChildren.push(calNode)
           } else {
             parentNode.bottomChildren.push(calNode)
@@ -100,12 +98,7 @@ export class DayColumnComponent implements OnInit {
         lastEventEnd = ev.endDateTime;
       }
     })
-    console.log("NodeHeads:");
-    console.log(columns[0]);
     this.positionEvents(columns);
-    console.log("Endday");
-    console.log(this.events);
-    console.log(this.positionedEvents);
   }
 
   getFirstCollider(nodes: CalendarNode[], ev: CalendarNode): CalendarNode | null {
@@ -204,8 +197,8 @@ export class DayColumnComponent implements OnInit {
       ancestor = col.find((potentialParent: CalendarNode) => potentialParent.topChildren.includes(ancestor!) || potentialParent.bottomChildren.includes(ancestor!))!;
       
       for (const colNode of col) {
-        if (colNode !== ancestor && this.collidesWithFirstHour(colNode.value, node.value)) {
-          if (this.collidesWithFirstHour(colNode.value, parent.value)) {
+        if (colNode !== ancestor && this.collidesWithVisualBox(colNode.value, node.value)) {
+          if (this.collidesWithVisualBox(colNode.value, parent.value)) {
             return false
           }
           return true
@@ -242,7 +235,7 @@ export class DayColumnComponent implements OnInit {
     return a.endDateTime > b.startDateTime && a.startDateTime < b.endDateTime;
   }
 
-  collidesWithFirstHour(parent: PositionedCalendarEvent | CalendarEvent, child: PositionedCalendarEvent | CalendarEvent): boolean {
+  collidesWithVisualBox(parent: PositionedCalendarEvent | CalendarEvent, child: PositionedCalendarEvent | CalendarEvent): boolean {
     const StartPlusOneHour = new Date(parent.startDateTime);
     StartPlusOneHour.setHours(StartPlusOneHour.getHours() + 2); // Add one hour to the start time of event A
 
