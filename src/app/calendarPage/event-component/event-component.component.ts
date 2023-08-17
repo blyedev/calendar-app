@@ -18,7 +18,10 @@ export class EventComponentComponent {
   @HostBinding('style.height.px')
   get eventHeight(): number {
     const startHour = this.event.startDateTime.getHours();
-    const endHour = this.event.endDateTime.getHours();
+    let endHour = this.event.endDateTime.getHours();
+    if (endHour === 0) {
+      endHour = 24
+    }
     const height = (endHour - startHour) * 48;
     return height;
   }

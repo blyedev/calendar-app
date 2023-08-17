@@ -1,101 +1,131 @@
 import { CalendarEvent } from "./calendar-event";
 
-export class CalendarEventImpl implements CalendarEvent {
+export class RandomCalendarEvent implements CalendarEvent {
     id: number;
     name: string;
     startDateTime: Date;
     endDateTime: Date;
-
-    private plausibleEventNames: string[] = [
-        'Meeting',
-        'Conference',
-        'Seminar',
-        'Workshop',
-        'Training Session',
-        'Webinar',
-        'Product Launch',
-        'Team Building',
-        'Networking Event',
-        'Panel Discussion',
-        'Hackathon',
-        'Exhibition',
-        'Trade Show',
-        'Symposium',
-        'Lecture',
-        'Keynote Address',
-        'Career Fair',
-        'Social Gathering',
-        'Charity Fundraiser',
-        'Art Exhibition',
-        'Music Concert',
-        'Film Screening',
-        'Book Reading',
-        'Food Tasting',
-        'Sports Event',
-        'Community Service',
-        'Award Ceremony',
-        'Business Dinner',
-        'Fundraising Gala',
-        'Art Workshop',
-        'Tech Talk',
-    ];
 
     constructor(
         id: number,
         name?: string,
         startDateTime?: Date,
         endDateTime?: Date,
-        endSameDay: boolean = true
+        forceSameDay: boolean = true
     ) {
         this.id = id;
         this.name = name || this.getRandomEventName();
-        this.startDateTime = startDateTime || this.getRandomStartDateTime();
-        this.endDateTime = endDateTime || this.getRandomEndDateTime(endSameDay);
+        if (startDateTime === undefined || endDateTime === undefined) {
+            [this.startDateTime, this.endDateTime] = this.getRandomDateRange(startDateTime, endDateTime, forceSameDay);
+        } else {
+            this.startDateTime = startDateTime;
+            this.endDateTime = endDateTime;
+        }
     }
 
     private getRandomEventName(): string {
-        const randomIndex = Math.floor(Math.random() * this.plausibleEventNames.length);
-        return this.plausibleEventNames[randomIndex];
+        const plausibleEventNames: string[] = [
+            'Meeting',
+            'Conference',
+            'Seminar',
+            'Workshop',
+            'Training Session',
+            'Webinar',
+            'Product Launch',
+            'Team Building',
+            'Networking Event',
+            'Panel Discussion',
+            'Hackathon',
+            'Exhibition',
+            'Trade Show',
+            'Symposium',
+            'Lecture',
+            'Keynote Address',
+            'Career Fair',
+            'Social Gathering',
+            'Charity Fundraiser',
+            'Art Exhibition',
+            'Music Concert',
+            'Film Screening',
+            'Book Reading',
+            'Food Tasting',
+            'Sports Event',
+            'Community Service',
+            'Award Ceremony',
+            'Business Dinner',
+            'Fundraising Gala',
+            'Art Workshop',
+            'Tech Talk',
+        ];
+
+        const randomIndex = Math.floor(Math.random() * plausibleEventNames.length);
+        return plausibleEventNames[randomIndex];
     }
 
-    private getRandomStartDateTime(): Date {
-        const currentDateTime = new Date();
+    private getRandomDateRange(inputStartDateTime: Date | undefined, inputEndDateTime: Date | undefined, forceSameDay: boolean): [Date, Date] {
+        const { currentWeekStart, currentWeekEnd } = getWeekBounds();
+        // validateInputDates();
+        
+        const startDateTime = new Date();
+        const endDateTime = new Date();
 
-        const modayOffset = currentDateTime.getDay() > 0 ? currentDateTime.getDay() - 1 : 6; // 0 (Sunday) to 6 (Saturday)
-        const randomDay = Math.floor(Math.random() * (7)); // Random day index
-
-        const randomHour = Math.floor(Math.random() * (24)); // Random hour between 0 and 23
-        // const randomQuarter = [0, 15, 30, 45][Math.floor(Math.random() * (4 + 1))]; // Random quarter (0, 15, 30, or 45)
-        const randomQuarter = 0
-
-        currentDateTime.setDate(currentDateTime.getDate() - modayOffset + randomDay);
-        currentDateTime.setHours(randomHour, randomQuarter, 0, 0);
-        return currentDateTime;
-    }
-
-    private getRandomEndDateTime(endSameDay: boolean): Date {
-        const endDateTime = new Date(this.startDateTime);
-        let randomEndDate: number;
-        let randomEndHour: number;
-        let randomQuarter: number;
-
-        if (endSameDay) {
-            randomEndDate = this.startDateTime.getDate();
-            const startHour = this.startDateTime.getHours(); 
-            randomEndHour = startHour + Math.floor(Math.random() * (24 - startHour)) + 1; // makes sure the EndHour is at least an hour later
-            // randomQuarter = [0, 15, 30, 45][Math.floor(Math.random() * (4 + 1))]; // Random quarter (0, 15, 30, or 45)
-            randomQuarter = 0
+        let daySpan: number;
+        if (!forceSameDay) {
+            daySpan = Math.floor(Math.random() * 7);
         } else {
-            const daysUntilSunday = this.startDateTime.getDay() > 0 ? 7 - this.startDateTime.getDay() : 0;
-            randomEndDate = this.startDateTime.getDate() + Math.floor(Math.random() * (daysUntilSunday + 1)); // returns the
-            randomEndHour = Math.floor(Math.random() * (24));
-            // randomQuarter = [0, 15, 30, 45][Math.floor(Math.random() * (4 + 1))]; // Random quarter (0, 15, 30, or 45)
-            randomQuarter = 0
+            daySpan = 0;
+        }
+        const startDayIndex = Math.floor(Math.random() * (7 - daySpan));
+
+        startDateTime.setDate(currentWeekStart.getDate() + startDayIndex);
+        endDateTime.setDate(currentWeekStart.getDate() + startDayIndex + daySpan);
+
+        let hourSpan: number;
+        let startHour: number;
+        let endHour: number;
+        if (startDateTime.getTime() !== endDateTime.getTime()) {
+            hourSpan = Math.floor(Math.random() * 48) + 1; // Force at least an hour
+            if (hourSpan > 24) {
+                startHour = Math.floor(Math.random() * (48 + 1 - hourSpan)); // + 1 so ending on 24 can be included
+            } else {
+                startHour = 24 - Math.floor(Math.random() * (hourSpan + 1));
+            }
+            endHour = startHour + hourSpan - 24
+        } else {
+            hourSpan = Math.floor(Math.random() * 24) + 1; // Force at least an hour
+            startHour = Math.floor(Math.random() * (24 + 1 - hourSpan)); // + 1 so ending on 24 can be included
+            endHour = startHour + hourSpan
         }
 
-        endDateTime.setDate(randomEndDate)
-        endDateTime.setHours(randomEndHour, randomQuarter, 0, 0);
-        return endDateTime;
+        startDateTime.setHours(startHour, 0, 0, 0);
+        endDateTime.setHours(endHour, 0, 0, 0);
+
+        return [startDateTime, endDateTime];
+
+        function validateInputDates() {
+            if (inputStartDateTime && (inputStartDateTime <= currentWeekStart || inputStartDateTime >= currentWeekEnd)) {
+                throw new Error("Start date is out of bounds for the current week for a custom component");
+            }
+
+            if (inputEndDateTime && (inputEndDateTime <= currentWeekStart || inputEndDateTime >= currentWeekEnd)) {
+                throw new Error("End date is out of bounds for the current week for a custom component");
+            }
+        }
+
+        function getWeekBounds() {
+            const currentDate = new Date();
+
+            const currentWeekStart = new Date(currentDate);
+            const mondayOffset = currentWeekStart.getDay() > 0 ? currentWeekStart.getDay() - 1 : 6; // 0 (Sunday) to 6 (Saturday)
+            currentWeekStart.setDate(currentWeekStart.getDate() - mondayOffset);
+            currentWeekStart.setHours(0, 0, 0, 0); // Midnight of Monday
+
+            const currentWeekEnd = new Date(currentWeekStart);
+            currentWeekEnd.setDate(currentWeekEnd.getDate() + 7);
+            currentWeekEnd.setHours(0, 0, 0, 0); // Midnight after Sunday
+            
+            return { currentWeekStart, currentWeekEnd }; 
+        }
     }
 
 }
