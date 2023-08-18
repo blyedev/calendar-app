@@ -2,11 +2,11 @@ import { Component, HostBinding, HostListener, Input } from '@angular/core';
 import { PositionedCalendarEvent } from '../day-column/positioned-calendar-event';
 
 @Component({
-  selector: 'app-event-component',
-  templateUrl: './event-component.component.html',
-  styleUrls: ['./event-component.component.css']
+  selector: 'app-relational-event',
+  templateUrl: './relational-event.component.html',
+  styleUrls: ['./relational-event.component.css']
 })
-export class EventComponentComponent {
+export class RelationalEventComponent {
   @Input() event!: PositionedCalendarEvent; // Assuming you pass the event object to the component using an input property
 
   @HostBinding('style.top.px')
@@ -18,7 +18,10 @@ export class EventComponentComponent {
   @HostBinding('style.height.px')
   get eventHeight(): number {
     const startHour = this.event.startDateTime.getHours();
-    const endHour = this.event.endDateTime.getHours();
+    let endHour = this.event.endDateTime.getHours();
+    if (endHour === 0) {
+      endHour = 24
+    }
     const height = (endHour - startHour) * 48;
     return height;
   }

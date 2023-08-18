@@ -15,28 +15,39 @@ export class CalendarCanvasComponent {
   }
 
   loadEventData(): void {
-    this.calendarEventService.getAllSameDayEvents().subscribe(events =>
+    this.calendarEventService.getAllEvents().subscribe(events =>
       this.events = events
     );
     console.log(this.events);
   }
 
-  getEventsByDay(): CalendarEvent[][] {
-    const eventsByDayOfWeek: CalendarEvent[][] = [];
+  getFullDayEvents(): CalendarEvent[] {
+    const filteredEvents = this.events
+      .filter(event => {
+        const unixDay = 1000 * 60 * 60 * 24;
+        const unixDaySpan = event.endDateTime.getTime() - event.startDateTime.getTime();
+        return Math.floor(unixDaySpan / unixDay) >= 1;
+      }); // Apply additional filters
+  
+    return filteredEvents;
+  }
 
-    // Assuming you have an array of events called 'events'
-    this.events.forEach((event: CalendarEvent) => {
-      let dayOfWeek = event.startDateTime.getDay() - 1; // 0 (Monday) to 6 (Sunday)
-      if (dayOfWeek < 0) {
-        dayOfWeek = 6; // Adjust Sunday to index 6
-      }
-      if (!eventsByDayOfWeek[dayOfWeek]) {
-        eventsByDayOfWeek[dayOfWeek] = []; // Initialize the array for the day of the week if it doesn't exist
-      }
+  getShortEventsByDay(dayOfWeekIndex: number): CalendarEvent[] {
+    if (dayOfWeekIndex < 0 || dayOfWeekIndex > 6) {
+      throw new Error("Invalid day of week index. It should be between 0 and 6.");
+    }
+  
+    const eventsForDay = this.events
+      .filter(event => {
+        const eventDayOfWeek = event.startDateTime.getDay() - 1 >= 0 ? event.startDateTime.getDay() - 1 : 6;
+        return eventDayOfWeek === dayOfWeekIndex;
+      })
+      .filter(event => {
+        const unixDay = 1000 * 60 * 60 * 24;
+        const unixDaySpan = event.endDateTime.getTime() - event.startDateTime.getTime();
+        return Math.floor(unixDaySpan / unixDay) < 1;
+      });
 
-      eventsByDayOfWeek[dayOfWeek].push(event); // Push the event to the corresponding day of the week array
-    });
-
-    return eventsByDayOfWeek
+    return eventsForDay;
   }
 }

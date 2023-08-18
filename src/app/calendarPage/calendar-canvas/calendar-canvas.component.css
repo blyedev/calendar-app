@@ -1,6 +1,6 @@
-:host {
+/* :host {
     position: relative;
-}
+} */
 
 .background {
     display: flex;
@@ -21,8 +21,9 @@
     border-bottom: #D7d7d7 1px solid;
 }
 
-#row {
+#main-canvas {
     display: flex;
+    position: relative;
     flex-flow: row nowrap;
     align-items: stretch;
     height: calc(24 * 48px);

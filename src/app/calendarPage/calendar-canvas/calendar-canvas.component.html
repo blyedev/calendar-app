@@ -1,31 +1,32 @@
-<div class="background">
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-    <div class="hairline"></div>
-</div>
-<div id="row">
-    <ng-container *ngFor="let events of getEventsByDay(); let i = index">
-        <app-day-column [events]="events"></app-day-column>
+<app-week-row [events]="getFullDayEvents()"></app-week-row>
+<div id="main-canvas">
+    <div class="background">
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+        <div class="hairline"></div>
+    </div>
+    <ng-container *ngFor="let index of [0,1,2,3,4,5,6]">
+        <app-day-column [events]="getShortEventsByDay(index)"></app-day-column>
     </ng-container>
 </div>
