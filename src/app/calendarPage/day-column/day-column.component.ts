@@ -21,20 +21,21 @@ export class DayColumnComponent implements OnInit {
   
   ngOnChanges(changes: SimpleChanges): void {
     if (this.initialized && changes["events"] && changes["events"].currentValue) {
+      this.positionedEvents = [];
       this.layoutEvents();
     }
   }
 
   private sortEvents(): void {
     this.events.sort((a, b) => {
-      if (a.startDateTime < b.startDateTime) {
+      if (a.startDateTime.getTime() < b.startDateTime.getTime()) {
         return -1;
-      } else if (a.startDateTime > b.startDateTime) {
+      } else if (a.startDateTime.getTime() > b.startDateTime.getTime()) {
         return 1;
       } else {
-        if (a.endDateTime < b.endDateTime) {
+        if (a.endDateTime.getTime() < b.endDateTime.getTime()) {
           return -1;
-        } else if (a.endDateTime > b.endDateTime) {
+        } else if (a.endDateTime.getTime() > b.endDateTime.getTime()) {
           return 1;
         } else {
           return a.id - b.id;
@@ -49,7 +50,7 @@ export class DayColumnComponent implements OnInit {
 
     this.sortEvents();
     this.events.forEach((ev: CalendarEvent) => {
-      if (lastEventEnd !== null && ev.startDateTime >= lastEventEnd) {
+      if (lastEventEnd !== null && ev.startDateTime.getTime() >= lastEventEnd.getTime()) {
         this.positionEvents(columns);
 
         columns.length = 0;
@@ -111,7 +112,7 @@ export class DayColumnComponent implements OnInit {
   }
 
   positionEvents(columns: CalendarNode[][]): void {
-    const nodeHeads = columns[0];
+    const nodeHeads = columns[0] || [];
 
     for (let headIndex = 0; headIndex < nodeHeads.length; headIndex++) {
       this.positionEvent(nodeHeads[headIndex], 0, columns, 0);
@@ -232,14 +233,14 @@ export class DayColumnComponent implements OnInit {
   }
 
   collidesWith(a: PositionedCalendarEvent | CalendarEvent, b: PositionedCalendarEvent | CalendarEvent): boolean {
-    return a.endDateTime > b.startDateTime && a.startDateTime < b.endDateTime;
+    return a.endDateTime.getTime() > b.startDateTime.getTime() && a.startDateTime.getTime() < b.endDateTime.getTime();
   }
 
   collidesWithVisualBox(parent: PositionedCalendarEvent | CalendarEvent, child: PositionedCalendarEvent | CalendarEvent): boolean {
     const StartPlusOneHour = new Date(parent.startDateTime);
     StartPlusOneHour.setHours(StartPlusOneHour.getHours() + 2); // Add one hour to the start time of event A
 
-    return StartPlusOneHour > child.startDateTime && parent.startDateTime < child.endDateTime && this.collidesWith(parent, child);
+    return StartPlusOneHour.getTime() > child.startDateTime.getTime() && parent.startDateTime.getTime() < child.endDateTime.getTime() && this.collidesWith(parent, child);
   }
 
 }
