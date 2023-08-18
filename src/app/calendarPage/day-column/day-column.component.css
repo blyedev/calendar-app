@@ -8,7 +8,7 @@
     border-right: #D7d7d7 1px solid;
 }
 
-app-event-component {
+app-relational-event {
     position: absolute;
     left: 0;
     box-sizing: border-box;

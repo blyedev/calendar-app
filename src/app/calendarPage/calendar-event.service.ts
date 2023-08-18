@@ -10,14 +10,14 @@ export class CalendarEventService {
   events: CalendarEvent[];
 
   constructor() {
-    this.events = this.generateEvents(30)
+    this.events = [...this.generateEvents(20, true), ...this.generateEvents(3, false)];
   }
 
-  private generateEvents(count: number): CalendarEvent[] {
+  private generateEvents(count: number, forceSameDay: boolean): CalendarEvent[] {
     const events: CalendarEvent[] = [];
 
     for (let i = 1; i <= count; i++) {
-      const event: CalendarEvent = new RandomCalendarEvent(i);
+      const event: CalendarEvent = new RandomCalendarEvent(i, undefined, undefined, undefined, forceSameDay);
       events.push(event);
     }
 
@@ -30,9 +30,12 @@ export class CalendarEventService {
       followingMidnight.setDate(followingMidnight.getDate() + 1)
       followingMidnight.setHours(0, 0, 0, 0)
       return event.startDateTime.toDateString() === event.endDateTime.toDateString() || event.endDateTime.getTime() == followingMidnight.getTime();
-    });
+    }) || [];
 
     return of(filteredEvents);
   }
 
+  getAllEvents(): Observable<CalendarEvent[]> {
+    return of(this.events);
+  }
 }

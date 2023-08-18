@@ -21,6 +21,7 @@ export class DayColumnComponent implements OnInit {
   
   ngOnChanges(changes: SimpleChanges): void {
     if (this.initialized && changes["events"] && changes["events"].currentValue) {
+      this.positionedEvents = [];
       this.layoutEvents();
     }
   }
@@ -111,7 +112,7 @@ export class DayColumnComponent implements OnInit {
   }
 
   positionEvents(columns: CalendarNode[][]): void {
-    const nodeHeads = columns[0];
+    const nodeHeads = columns[0] || [];
 
     for (let headIndex = 0; headIndex < nodeHeads.length; headIndex++) {
       this.positionEvent(nodeHeads[headIndex], 0, columns, 0);
