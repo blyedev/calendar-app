@@ -83,6 +83,6 @@ jobs:
           for id in $ids
           do
             echo "$id"
-            docker stop $id && docker rm $id
+            sudo docker stop $id && docker rm $id
           done
-          docker run -d -p 80:80 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          sudo docker run -d -p 80:80 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
