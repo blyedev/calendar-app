@@ -79,7 +79,7 @@ jobs:
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
         script: |
-          ids=$(docker ps -a -q)
+          ids=$(sudo docker ps -a -q)
           for id in $ids
           do
             echo "$id"
