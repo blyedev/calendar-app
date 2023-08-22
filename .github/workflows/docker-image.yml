@@ -73,6 +73,10 @@ jobs:
 
     - name: deploy on ec2
       uses: appleboy/ssh-action@v1.0.0
+      env:
+        aws-region: ${{ env.AWS_REGION }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
@@ -86,9 +90,5 @@ jobs:
             echo "$id"
             sudo docker stop $id && sudo docker rm $id
           done
-          echo "Region var: $AWS_REGION"
-          echo "Registry var: $ECR_REGISTRY"
-          echo "Repo var: $ECR_REPOSITORY"
-          echo "Image var: $IMAGE_TAG"
           aws ecr get-login-password --region "$AWS_REGION" | sudo docker login --username AWS --password-stdin "$ECR_REGISTRY"
           sudo docker run -d -p 80:80 "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
