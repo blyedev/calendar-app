@@ -78,6 +78,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
+        envs: AWS_REGION,ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG
         script: |
           ids=$(sudo docker ps -a -q)
           for id in $ids
@@ -85,5 +86,5 @@ jobs:
             echo "$id"
             sudo docker stop $id && sudo docker rm $id
           done
-          sudo docker login --username AWS -p $(aws ecr get-login-password --region $AWS_REGION) $ECR_REGISTRY
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
           sudo docker run -d -p 80:80 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
