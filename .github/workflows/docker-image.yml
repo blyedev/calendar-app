@@ -86,5 +86,6 @@ jobs:
             echo "$id"
             sudo docker stop $id && sudo docker rm $id
           done
+          echo $ECR_REGISTRY
           aws ecr get-login-password --region $AWS_REGION | sudo docker login --username AWS --password-stdin $ECR_REGISTRY
           sudo docker run -d -p 80:80 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
