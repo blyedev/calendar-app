@@ -13,7 +13,7 @@ COPY . /code/
 RUN python manage.py migrate
 
 ENV DJANGO_SUPERUSER_PASSWORD dev
-RUN python manage.py createsuperuser --noinput --username dev 
+RUN python manage.py createsuperuser --noinput --username dev --email adam.smielewski@gmail.com
 
 EXPOSE 8000
 
