@@ -8,6 +8,7 @@ import { DayColumnComponent } from './calendarPage/day-column/day-column.compone
 import { WeekRowComponent } from './calendarPage/week-row/week-row.component';
 import { RelationalEventComponent } from './calendarPage/relational-event/relational-event.component';
 import { GridEventComponent } from './calendarPage/grid-event/grid-event.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { GridEventComponent } from './calendarPage/grid-event/grid-event.compone
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
