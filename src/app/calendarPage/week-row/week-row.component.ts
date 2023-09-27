@@ -8,10 +8,8 @@ import { CalendarGridCell } from './calendar-event-grid';
   styleUrls: ['./week-row.component.css']
 })
 export class WeekRowComponent {
-  @Input() events!: CalendarEvent[];
-  initialized!: boolean;
+  @Input() events: CalendarEvent[] = [];
 
-  positionedEvents: CalendarGridCell[] = [];
   rows: number = 0;
 
   @HostBinding('style.height.px')
@@ -20,29 +18,34 @@ export class WeekRowComponent {
     return height;
   }
 
-  ngOnInit(): void {
-    this.layoutEvents();
-    this.initialized = true;
-  }
-  
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.initialized && changes["events"] && changes["events"].currentValue) {
-      this.layoutEvents();
-    }
+  getPositionedEvents(events: CalendarEvent[]) {
+    const laidOutEvents = this.layoutEvents(events);
+
+    this.rows = laidOutEvents.length;
+
+    const positionedEvents = this.unpackColumns(laidOutEvents);
+    return positionedEvents
   }
 
-  private layoutEvents(): void {
-    this.sortEvents();
+  private layoutEvents(events: CalendarEvent[]): CalendarGridCell[][] {
+    const sortedEvents = this.sortEvents(events);
 
     const columns: CalendarGridCell[][] = [];
-    this.events.forEach((ev: CalendarEvent) => {
+    sortedEvents.forEach((ev: CalendarEvent) => {
       let placed = false;
       for (let i = 0; i < columns.length; i++) {
         const col = columns[i]
         if (!collidesWith(col[col.length - 1].value, ev)) {
-          const startIndex = this.getStartIndex(ev);
-          const daySpan = this.getDaySpan(ev);
-          
+          let startIndex = this.getStartIndex(ev);
+          if (startIndex < 0) {
+            startIndex = 0
+          }
+
+          let daySpan = this.getDaySpan(ev);
+          if (startIndex + daySpan > 6) {
+            daySpan = 6 - startIndex
+          }
+
           const calGridCell = new CalendarGridCell(ev, i, startIndex, daySpan);
 
           col.push(calGridCell);
@@ -52,18 +55,23 @@ export class WeekRowComponent {
       }
 
       if (!placed) {
-        const startIndex = this.getStartIndex(ev);
-        const daySpan = this.getDaySpan(ev);
-        
-        const calGridCell = new CalendarGridCell(ev, columns.length , startIndex, daySpan)
+        let startIndex = this.getStartIndex(ev);
+        if (startIndex < 0) {
+          startIndex = 0
+        }
+
+        let daySpan = this.getDaySpan(ev);
+        if (startIndex + daySpan > 6) {
+          daySpan = 6 - startIndex
+        }
+
+        const calGridCell = new CalendarGridCell(ev, columns.length, startIndex, daySpan)
 
         columns.push([calGridCell])
       }
     })
 
-    console.log(columns)
-    this.rows = columns.length;
-    this.unpackColumns(columns);
+    return columns
 
     // Helper functions
 
@@ -81,12 +89,15 @@ export class WeekRowComponent {
     }
   }
 
-  private unpackColumns(columns: CalendarGridCell[][]): void {
+  private unpackColumns(columns: CalendarGridCell[][]): CalendarGridCell[] {
+    const positionedEvents: CalendarGridCell[] = []
     columns.forEach((col: CalendarGridCell[]) => {
       col.forEach((gridEv: CalendarGridCell) => {
-        this.positionedEvents.push(gridEv)
+        positionedEvents.push(gridEv)
       })
     })
+
+    return positionedEvents
   }
 
   private getDaySpan(ev: CalendarEvent) {
@@ -118,11 +129,11 @@ export class WeekRowComponent {
     return startIndex;
   }
 
-  private sortEvents() {
-    this.events.sort((a, b) => {
+  private sortEvents(events: CalendarEvent[]): CalendarEvent[] {
+    events.sort((a, b) => {
       const aStartIndex = this.getStartIndex(a);
       const bStartIndex = this.getStartIndex(b);
-  
+
       if (aStartIndex < bStartIndex) {
         return -1;
       } else if (aStartIndex > bStartIndex) {
@@ -130,7 +141,7 @@ export class WeekRowComponent {
       } else {
         const aDaySpan = this.getDaySpan(a);
         const bDaySpan = this.getDaySpan(b);
-  
+
         if (aDaySpan < bDaySpan) {
           return 1;
         } else if (aDaySpan > bDaySpan) {
@@ -140,6 +151,8 @@ export class WeekRowComponent {
         }
       }
     });
+
+    return events
   }
 }
 
