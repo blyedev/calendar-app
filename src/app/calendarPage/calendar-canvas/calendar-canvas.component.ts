@@ -19,34 +19,48 @@ export class CalendarCanvasComponent implements OnInit {
   loadEventData(): void {
     this.calendarEventService.getAllEvents().subscribe(events => {
       this.events = events;
-      console.log(this.events); // Log the events after they are loaded
+      console.log(this.events);
     });
   }
 
-  getFullDayEvents(): CalendarEvent[] {
-    const filteredEvents = this.events.filter(event => {
+  getFullDayEvents(events: CalendarEvent[]): CalendarEvent[] {
+    return events.filter(event => {
+      // filters out events shorter than a day
       const unixDay = 1000 * 60 * 60 * 24;
       const unixDaySpan = event.endDateTime.getTime() - event.startDateTime.getTime();
       return Math.floor(unixDaySpan / unixDay) >= 1;
     });
-
-    return filteredEvents;
   }
 
-  getShortEventsByDay(dayOfWeekIndex: number): CalendarEvent[] {
-    if (dayOfWeekIndex < 0 || dayOfWeekIndex > 6) {
-      throw new Error("Invalid day of the week index. It should be between 0 and 6.");
-    }
+  getShortEventsByDay(events: CalendarEvent[], dayOfWeekIndex: number): CalendarEvent[] {
+    // Creates the date object for the start of week
+    const { dayStart, dayEnd } = this.getDayBoundries(dayOfWeekIndex);
 
-    const eventsForDay = this.events.filter(event => {
-      const eventDayOfWeek = event.startDateTime.getDay() - 1 >= 0 ? event.startDateTime.getDay() - 1 : 6;
-      return eventDayOfWeek === dayOfWeekIndex;
-    }).filter(event => {
+    const filteredEvents = events.filter(event => {
+      // filters out events longer than a day
       const unixDay = 1000 * 60 * 60 * 24;
       const unixDaySpan = event.endDateTime.getTime() - event.startDateTime.getTime();
       return Math.floor(unixDaySpan / unixDay) < 1;
+    }).filter(event => {
+      // filters out events that do not overlapped with the specified day
+      return event.startDateTime.getTime() < dayEnd.getTime() && event.endDateTime.getTime() > dayStart.getTime();
     });
 
-    return eventsForDay;
+    return filteredEvents
+  }
+
+  getDayBoundries(dayOfWeekIndex: number): { dayStart: Date, dayEnd: Date } {
+    const currentWeekStart = new Date();
+    const mondayOffset = currentWeekStart.getDay() > 0 ? currentWeekStart.getDay() - 1 : 6; // 0 (Sunday) to 6 (Saturday)
+    currentWeekStart.setDate(currentWeekStart.getDate() - mondayOffset);
+    currentWeekStart.setHours(0, 0, 0, 0); // Midnight of Monday
+
+
+    // Creates the start and end date objects from the weekStart and the dayindex parameter
+    const dayStart = new Date(currentWeekStart);
+    dayStart.setDate(dayStart.getDate() + dayOfWeekIndex);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
+    return { dayStart, dayEnd };
   }
 }
