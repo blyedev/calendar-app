@@ -9,6 +9,7 @@ import { WeekRowComponent } from './calendarPage/week-row/week-row.component';
 import { RelationalEventComponent } from './calendarPage/relational-event/relational-event.component';
 import { GridEventComponent } from './calendarPage/grid-event/grid-event.component';
 import { HttpClientModule } from '@angular/common/http';
+import { NewEventComponent } from './calendarPage/new-event/new-event.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { HttpClientModule } from '@angular/common/http';
     DayColumnComponent,
     WeekRowComponent,
     RelationalEventComponent,
-    GridEventComponent
+    GridEventComponent,
+    NewEventComponent
   ],
   imports: [
     BrowserModule,

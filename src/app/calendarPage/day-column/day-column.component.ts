@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges } from "@angular/core";
+import { Component, ElementRef, HostListener, Input, OnInit, SimpleChanges } from "@angular/core";
 import { CalendarEvent } from "../calendar-event";
 import { PositionedCalendarEvent } from "./positioned-calendar-event";
 import { CalendarNode } from "./calendar-event-tree";
@@ -9,8 +9,48 @@ import { CalendarNode } from "./calendar-event-tree";
   styleUrls: ['./day-column.component.css']
 })
 export class DayColumnComponent {
+  constructor(private el: ElementRef) { }
+
   @Input() events: CalendarEvent[] = [];
   @Input() dayBoundaries!: { dayStart: Date, dayEnd: Date };
+
+  isDragging = false;
+  newEventStartY = 0;
+  newEventTop = 0;
+  newEventHeight = 0;
+
+  @HostListener('mousedown', ['$event'])
+  onMouseDown(event: MouseEvent): void {
+    console.log('Mouse down:', event);
+    this.isDragging = true;
+    const elementRectangle = this.el.nativeElement.getBoundingClientRect();
+    this.newEventStartY = event.pageY - elementRectangle.top
+  }
+
+  @HostListener('mousemove', ['$event'])
+  onMouseMove(event: MouseEvent): void {
+    if (this.isDragging) {
+      console.log('Mouse move:', event);
+      const elementRectangle = this.el.nativeElement.getBoundingClientRect();
+      if (event.pageY - elementRectangle.top >= this.newEventStartY) {
+        this.newEventTop = Math.floor(this.newEventStartY / 12) * 12;
+        this.newEventHeight = Math.ceil((event.pageY - elementRectangle.top) / 12) * 12 - this.newEventTop
+      } else {
+        this.newEventTop = Math.floor((event.pageY - elementRectangle.top) / 12) * 12;
+        this.newEventHeight = Math.ceil(this.newEventStartY / 12) * 12 - this.newEventTop
+      }
+    }
+  }
+
+  @HostListener('document:mouseup', ['$event'])
+  onMouseUp(event: MouseEvent): void {
+    if (this.isDragging) {
+      // Handle mouseup only if the component was actively dragging
+      console.log('Handling mouseup in the active drag component');
+      console.log('Mouse up:', event);
+      this.isDragging = false;
+    }
+  }
 
   sortEvents(events: CalendarEvent[]): CalendarEvent[] {
     return events.sort((a, b) => {
