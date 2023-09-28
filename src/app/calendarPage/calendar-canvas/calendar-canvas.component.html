@@ -28,6 +28,6 @@
     </div>
     <ng-container *ngFor="let index of [0,1,2,3,4,5,6]">
         <app-day-column [events]="getShortEventsByDay(this.events, index)"
-            [dayBoundaries]="getDayBoundries(index)"></app-day-column>
+            [dayBoundaries]="getDayBounds(index)"></app-day-column>
     </ng-container>
 </div>
