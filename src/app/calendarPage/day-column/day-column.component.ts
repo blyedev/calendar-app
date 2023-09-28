@@ -15,6 +15,7 @@ export class DayColumnComponent {
   @Input() dayBoundaries!: { dayStart: Date, dayEnd: Date };
 
   isDragging = false;
+  newEventEvent: CalendarEvent | undefined;
   newEventStartY = 0;
   newEventTop = 0;
   newEventHeight = 0;
@@ -24,20 +25,43 @@ export class DayColumnComponent {
     console.log('Mouse down:', event);
     this.isDragging = true;
     const elementRectangle = this.el.nativeElement.getBoundingClientRect();
-    this.newEventStartY = event.pageY - elementRectangle.top
+    this.newEventStartY = event.pageY - elementRectangle.top - window.scrollY
   }
 
   @HostListener('mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
     if (this.isDragging) {
       console.log('Mouse move:', event);
+
+      // get cursor position
       const elementRectangle = this.el.nativeElement.getBoundingClientRect();
-      if (event.pageY - elementRectangle.top >= this.newEventStartY) {
-        this.newEventTop = Math.floor(this.newEventStartY / 12) * 12;
-        this.newEventHeight = Math.ceil((event.pageY - elementRectangle.top) / 12) * 12 - this.newEventTop
+      const currentY = event.pageY - elementRectangle.top - window.scrollY;
+
+      // get coordinates
+      let quarterStartIndex, quarterEndIndex;
+      if (currentY >= this.newEventStartY) {
+        quarterStartIndex = Math.floor(this.newEventStartY / 12)
+        quarterEndIndex = Math.ceil(currentY / 12)
       } else {
-        this.newEventTop = Math.floor((event.pageY - elementRectangle.top) / 12) * 12;
-        this.newEventHeight = Math.ceil(this.newEventStartY / 12) * 12 - this.newEventTop
+        quarterStartIndex = Math.floor(currentY / 12)
+        quarterEndIndex = Math.ceil(this.newEventStartY / 12)
+      }
+
+      // set event position
+      this.newEventTop = quarterStartIndex * 12;
+      this.newEventHeight = quarterEndIndex * 12 - this.newEventTop
+
+      // create event content
+      const eventStart = new Date(this.dayBoundaries.dayStart)
+      eventStart.setMinutes(eventStart.getMinutes() + (quarterStartIndex * 15))
+      const eventEnd = new Date(this.dayBoundaries.dayStart)
+      eventEnd.setMinutes(eventEnd.getMinutes() + (quarterEndIndex * 15))
+
+      this.newEventEvent = {
+        id: 1000,
+        name: "Untitled",
+        startDateTime: eventStart,
+        endDateTime: eventEnd
       }
     }
   }
@@ -49,6 +73,9 @@ export class DayColumnComponent {
       console.log('Handling mouseup in the active drag component');
       console.log('Mouse up:', event);
       this.isDragging = false;
+      this.newEventStartY = 0;
+      // this.newEventTop = 0;
+      // this.newEventHeight = 0;
     }
   }
 
