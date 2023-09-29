@@ -11,5 +11,5 @@ import { Observable } from 'rxjs';
 export class CalendarCanvasComponent {
   constructor(private calendarEventService: CalendarEventService) { }
 
-  events$: Observable<CalendarEvent[]> = this.calendarEventService.getAllEvents();
+  events$: Observable<CalendarEvent[]> = this.calendarEventService.events$;
 }

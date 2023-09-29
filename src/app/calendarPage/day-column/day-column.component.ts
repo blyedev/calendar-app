@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, SimpleChanges } from "@angular/core";
 import { CalendarEvent } from "../calendar-event";
+import { CalendarEventService } from "../calendar-event-service/calendar-event.service";
 
 @Component({
   selector: 'app-day-column',
@@ -7,7 +8,7 @@ import { CalendarEvent } from "../calendar-event";
   styleUrls: ['./day-column.component.css']
 })
 export class DayColumnComponent {
-  constructor(private el: ElementRef, private cdr: ChangeDetectorRef) { }
+  constructor(private el: ElementRef, private calendarEventService: CalendarEventService) { }
 
   @Input() events: CalendarEvent[] = [];
   @Input() dayBoundaries!: { dayStart: Date, dayEnd: Date };
@@ -85,7 +86,11 @@ export class DayColumnComponent {
       // this.newEventHeight = 0;
 
       if (this.newEventEvent) {
-        this.events = [...this.events, (this.newEventEvent)]
+        // this.events = [...this.events, this.newEventEvent]; // You may add it to the local events if needed
+        this.calendarEventService.createEvent(this.newEventEvent).subscribe(createdEvent => {
+          // Optionally, handle the created event or update the local events array
+          console.log('Created Event:', createdEvent);
+        });
         this.newEventEvent = undefined;
       }
     }
