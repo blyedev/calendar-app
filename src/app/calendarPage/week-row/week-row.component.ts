@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, SimpleChanges } from '@angular/core';
+import { Component, HostBinding, Input } from '@angular/core';
 import { CalendarEvent } from '../calendar-event';
 import { CalendarGridCell } from './calendar-event-grid';
 
@@ -129,30 +129,23 @@ export class WeekRowComponent {
     return startIndex;
   }
 
-  private sortEvents(events: CalendarEvent[]): CalendarEvent[] {
-    events.sort((a, b) => {
-      const aStartIndex = this.getStartIndex(a);
-      const bStartIndex = this.getStartIndex(b);
-
-      if (aStartIndex < bStartIndex) {
-        return -1;
-      } else if (aStartIndex > bStartIndex) {
-        return 1;
-      } else {
-        const aDaySpan = this.getDaySpan(a);
-        const bDaySpan = this.getDaySpan(b);
-
-        if (aDaySpan < bDaySpan) {
-          return 1;
-        } else if (aDaySpan > bDaySpan) {
-          return -1;
-        } else {
-          return a.id - b.id;
-        }
+  sortEvents(events: CalendarEvent[]): CalendarEvent[] {
+    return events.sort((a, b) => {
+      // sorts by which event is earlier
+      const startComparison = a.startDateTime.getTime() - b.startDateTime.getTime();
+      if (startComparison !== 0) {
+        return startComparison;
       }
-    });
 
-    return events
+      // sorts by which event is longer
+      const endComparison = b.endDateTime.getTime() - a.endDateTime.getTime();
+      if (endComparison !== 0) {
+        return endComparison;
+      }
+
+      // fallback
+      return 0;
+    });
   }
 }
 

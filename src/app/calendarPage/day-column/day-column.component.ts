@@ -1,28 +1,35 @@
-import { Component, ElementRef, HostListener, Input, OnInit, SimpleChanges } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Input, SimpleChanges } from "@angular/core";
 import { CalendarEvent } from "../calendar-event";
 import { PositionedCalendarEvent } from "./positioned-calendar-event";
 import { CalendarNode } from "./calendar-event-tree";
 
 @Component({
   selector: 'app-day-column',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './day-column.component.html',
   styleUrls: ['./day-column.component.css']
 })
 export class DayColumnComponent {
-  constructor(private el: ElementRef) { }
+  constructor(private el: ElementRef, private cdr: ChangeDetectorRef) { }
 
   @Input() events: CalendarEvent[] = [];
   @Input() dayBoundaries!: { dayStart: Date, dayEnd: Date };
 
   isDragging = false;
-  newEventEvent: CalendarEvent | undefined;
   newEventStartY = 0;
   newEventTop = 0;
   newEventHeight = 0;
+  newEventEvent: CalendarEvent | undefined;
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log("Daycolumn", this.events, changes)
+  }
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent): void {
-    console.log('Mouse down:', event);
+    event.stopPropagation
+    // console.log('Mouse down:', event);
+
     this.isDragging = true;
     const elementRectangle = this.el.nativeElement.getBoundingClientRect();
     this.newEventStartY = event.pageY - elementRectangle.top - window.scrollY
@@ -31,7 +38,8 @@ export class DayColumnComponent {
   @HostListener('mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
     if (this.isDragging) {
-      console.log('Mouse move:', event);
+      event.stopPropagation
+      // console.log('Mouse move:', event);
 
       // get cursor position
       const elementRectangle = this.el.nativeElement.getBoundingClientRect();
@@ -58,7 +66,7 @@ export class DayColumnComponent {
       eventEnd.setMinutes(eventEnd.getMinutes() + (quarterEndIndex * 15))
 
       this.newEventEvent = {
-        id: 1000,
+        id: undefined,
         name: "Untitled",
         startDateTime: eventStart,
         endDateTime: eventEnd
@@ -66,16 +74,24 @@ export class DayColumnComponent {
     }
   }
 
-  @HostListener('document:mouseup', ['$event'])
+  @HostListener('mouseup', ['$event'])
   onMouseUp(event: MouseEvent): void {
+    event.stopPropagation
     if (this.isDragging) {
       // Handle mouseup only if the component was actively dragging
-      console.log('Handling mouseup in the active drag component');
-      console.log('Mouse up:', event);
+      // console.log('Handling mouseup in the active drag component');
+      // console.log('Mouse up:', event);
+
       this.isDragging = false;
       this.newEventStartY = 0;
       // this.newEventTop = 0;
       // this.newEventHeight = 0;
+
+      if (this.newEventEvent) {
+        // this.events.push(this.newEventEvent);
+        this.newEventEvent = undefined;
+      }
+      // this.cdr.detectChanges();
     }
   }
 
@@ -93,8 +109,8 @@ export class DayColumnComponent {
         return endComparison;
       }
 
-      // fallback sort by id
-      return a.id - b.id;
+      // fallback
+      return 0;
     });
   }
 

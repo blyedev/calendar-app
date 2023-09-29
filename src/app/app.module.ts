@@ -10,6 +10,10 @@ import { RelationalEventComponent } from './calendarPage/relational-event/relati
 import { GridEventComponent } from './calendarPage/grid-event/grid-event.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NewEventComponent } from './calendarPage/new-event/new-event.component';
+import { FullDayEventsPipe } from './calendarPage/calendar-canvas/full-day-events.pipe';
+import { ShortEventsByDayPipe } from './calendarPage/calendar-canvas/short-events-by-day.pipe';
+import { StringToDatePipe } from './calendarPage/calendar-canvas/string-to-date.pipe';
+import { DayBoundsPipe } from './calendarPage/calendar-canvas/day-bounds.pipe';
 
 @NgModule({
   declarations: [
@@ -19,7 +23,11 @@ import { NewEventComponent } from './calendarPage/new-event/new-event.component'
     WeekRowComponent,
     RelationalEventComponent,
     GridEventComponent,
-    NewEventComponent
+    NewEventComponent,
+    FullDayEventsPipe,
+    ShortEventsByDayPipe,
+    StringToDatePipe,
+    DayBoundsPipe
   ],
   imports: [
     BrowserModule,
