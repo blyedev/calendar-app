@@ -4,7 +4,7 @@ import { CalendarEvent } from '../calendar-event';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { EventApiResponse } from './event-api-response';
-import { switchMap, catchError, map } from 'rxjs/operators';
+import { switchMap, catchError, map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -59,6 +59,7 @@ export class CalendarEventService {
 
     return this.http.post(apiUrl, newApiEvent).pipe(
       switchMap(() => this.getAllEvents()),
+      tap((events) => this.eventsSubject.next(events)), // Emit updated events to the observable
       catchError((error) => {
         console.error('Error creating event:', error);
         throw error;
