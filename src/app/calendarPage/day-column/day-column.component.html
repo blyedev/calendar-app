@@ -1,3 +1,5 @@
-<ng-container *ngFor="let event of getPositionedEvents(this.events); let eventIndex = index">
+<ng-container *ngFor="let event of (this.events | positionEventsRelative: dayBoundaries); let eventIndex = index">
     <app-relational-event [event]="event"></app-relational-event>
 </ng-container>
+<app-new-event *ngIf="this.newEventEvent" [event]="this.newEventEvent" [style.top.px]="newEventTop"
+    [style.height.px]="newEventHeight"></app-new-event>

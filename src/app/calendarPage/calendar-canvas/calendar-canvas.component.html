@@ -1,4 +1,4 @@
-<app-week-row [events]="getFullDayEvents(this.events)"></app-week-row>
+<app-week-row [events]="(events$ | async | fullDayEvents)"></app-week-row>
 <div id="main-canvas">
     <div class="background">
         <div class="hairline"></div>
@@ -27,7 +27,8 @@
         <div class="hairline"></div>
     </div>
     <ng-container *ngFor="let index of [0,1,2,3,4,5,6]">
-        <app-day-column [events]="getShortEventsByDay(this.events, index)"
-            [dayBoundaries]="getDayBoundries(index)"></app-day-column>
+        <app-day-column
+            [events]="(events$ | async | shortEventsByDay: ('2023-09-29T12:00:00' | stringToDate | dayBounds: index))"
+            [dayBoundaries]="('2023-09-29T12:00:00' | stringToDate | dayBounds: index)"></app-day-column>
     </ng-container>
 </div>
