@@ -14,6 +14,7 @@ import { FullDayEventsPipe } from './calendarPage/calendar-canvas/full-day-event
 import { ShortEventsByDayPipe } from './calendarPage/calendar-canvas/short-events-by-day.pipe';
 import { StringToDatePipe } from './calendarPage/calendar-canvas/string-to-date.pipe';
 import { DayBoundsPipe } from './calendarPage/calendar-canvas/day-bounds.pipe';
+import { PositionEventsRelativePipe } from './calendarPage/day-column/position-events-relative.pipe';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { DayBoundsPipe } from './calendarPage/calendar-canvas/day-bounds.pipe';
     FullDayEventsPipe,
     ShortEventsByDayPipe,
     StringToDatePipe,
-    DayBoundsPipe
+    DayBoundsPipe,
+    PositionEventsRelativePipe
   ],
   imports: [
     BrowserModule,
