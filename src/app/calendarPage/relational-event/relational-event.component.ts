@@ -11,18 +11,27 @@ export class RelationalEventComponent {
 
   @HostBinding('style.top.px')
   get topPosition(): number {
-    const hours = this.event.startDateTime.getHours();
-    return hours * 48;
+    const hours = this.event.position.startDateTime.getHours();
+    const minutes = this.event.position.startDateTime.getMinutes();
+    return (hours + minutes / 60) * 48;
   }
 
   @HostBinding('style.height.px')
   get eventHeight(): number {
-    const startHour = this.event.startDateTime.getHours();
-    let endHour = this.event.endDateTime.getHours();
+    // get starthour and minute
+    const startHour = this.event.position.startDateTime.getHours();
+    const startMinutes = this.event.position.startDateTime.getMinutes();
+    const startTime = startHour + startMinutes / 60;
+
+    // get endhour and minute
+    let endHour = this.event.position.endDateTime.getHours();
     if (endHour === 0) {
       endHour = 24
     }
-    const height = (endHour - startHour) * 48;
+    const endMinutes = this.event.position.endDateTime.getMinutes();
+    const endTime = endHour + endMinutes / 60
+
+    const height = (endTime - startTime) * 48;
     return height;
   }
 

@@ -14,3 +14,10 @@ app-relational-event {
     box-sizing: border-box;
     width: calc(100% - 8px);
 }
+
+app-new-event {
+    position: absolute;
+    left: 0;
+    box-sizing: border-box;
+    width: 100%;
+}
