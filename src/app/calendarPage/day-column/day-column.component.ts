@@ -17,7 +17,11 @@ export class DayColumnComponent {
   newEventStartY = 0;
   newEventTop = 0;
   newEventHeight = 0;
-  newEventEvent: CalendarEvent | undefined;
+  newEventEvent: {
+    name: string,
+    startDateTime: Date,
+    endDateTime: Date
+  } | undefined;
 
   ngOnChanges(changes: SimpleChanges) {
     console.log("Daycolumn", this.events, changes)
@@ -64,7 +68,6 @@ export class DayColumnComponent {
       eventEnd.setMinutes(eventEnd.getMinutes() + (quarterEndIndex * 15))
 
       this.newEventEvent = {
-        id: undefined,
         name: "Untitled",
         startDateTime: eventStart,
         endDateTime: eventEnd
