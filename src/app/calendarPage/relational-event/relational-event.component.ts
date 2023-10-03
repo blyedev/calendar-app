@@ -1,5 +1,6 @@
-import { Component, HostBinding, HostListener, Input } from '@angular/core';
+import { Component, ElementRef, HostBinding, HostListener, Input } from '@angular/core';
 import { PositionedCalendarEvent } from '../day-column/positioned-calendar-event';
+import { CalendarEventService } from '../calendar-event-service/calendar-event.service';
 
 @Component({
   selector: 'app-relational-event',
@@ -8,6 +9,31 @@ import { PositionedCalendarEvent } from '../day-column/positioned-calendar-event
 })
 export class RelationalEventComponent {
   @Input() event!: PositionedCalendarEvent; // Assuming you pass the event object to the component using an input property
+
+  constructor(private elementRef: ElementRef, private calendarEventService: CalendarEventService) { }
+
+  @HostListener('click', ['$event'])
+  onClick(e: any) {
+    // Access the native element directly and set focus
+    (this.elementRef.nativeElement as HTMLElement).focus();
+  }
+
+  @HostListener('keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Delete') {
+      // Handle the delete key press
+      console.log('Delete key pressed inside the component.');
+
+      // Call the deleteEvent method from your service
+      this.calendarEventService.deleteEvent(this.event.value.id).subscribe({
+        next: () => console.log('Event deleted successfully'),
+        error: (error) => console.error('Error deleting event:', error),
+        complete: () => {
+          // Additional logic if needed
+        }
+      });
+    }
+  }
 
   @HostBinding('style.top.px')
   get topPosition(): number {
@@ -53,10 +79,5 @@ export class RelationalEventComponent {
   @HostBinding('style.z-index')
   get zIndex(): number {
     return this.event.position.zIndex;
-  }
-
-  @HostListener('click', ['$event'])
-  onClick(e: any) {
-    console.log(this.event);
   }
 }
