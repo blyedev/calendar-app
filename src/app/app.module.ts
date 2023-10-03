@@ -15,6 +15,9 @@ import { ShortEventsByDayPipe } from './calendarPage/calendar-canvas/short-event
 import { StringToDatePipe } from './calendarPage/calendar-canvas/string-to-date.pipe';
 import { DayBoundsPipe } from './calendarPage/calendar-canvas/day-bounds.pipe';
 import { PositionEventsRelativePipe } from './calendarPage/day-column/position-events-relative.pipe';
+import { NewEventFormComponent } from './calendarPage/new-event-form/new-event-form.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { GetNewEventPipe } from './calendarPage/day-column/get-new-event.pipe';
 
 @NgModule({
   declarations: [
@@ -29,12 +32,15 @@ import { PositionEventsRelativePipe } from './calendarPage/day-column/position-e
     ShortEventsByDayPipe,
     StringToDatePipe,
     DayBoundsPipe,
-    PositionEventsRelativePipe
+    PositionEventsRelativePipe,
+    NewEventFormComponent,
+    GetNewEventPipe
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
