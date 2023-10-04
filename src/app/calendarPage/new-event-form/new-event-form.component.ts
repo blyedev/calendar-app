@@ -38,10 +38,21 @@ export class NewEventFormComponent {
 
   onSubmit(): void {
     if (this.eventForm.valid) {
+      // debugger
+      const startDateTimeString = this.eventForm.value.event_start_datetime;
+      const endDateTimeString = this.eventForm.value.event_end_datetime;
+
+      const startDateTime = new Date(startDateTimeString);
+      const endDateTime = new Date(endDateTimeString);
+
+      // Get the time zone offset in minutes
+      const startTimezoneOffset = startDateTime.getTimezoneOffset();
+      const endTimezoneOffset = endDateTime.getTimezoneOffset();
+
       const newEvent = {
         name: this.eventForm.value.title,
-        startDateTime: new Date(this.eventForm.value.event_start_datetime),
-        endDateTime: new Date(this.eventForm.value.event_end_datetime)
+        startDateTime: new Date(startDateTime.getTime() - startTimezoneOffset * 60000),
+        endDateTime: new Date(endDateTime.getTime() - endTimezoneOffset * 60000)
       }
       this.calendarEventService.createEvent(newEvent).subscribe(createdEvent => {
         // Optionally, handle the created event or update the local events array
