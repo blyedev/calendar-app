@@ -1,5 +1,4 @@
-import { Component, HostBinding, Input } from '@angular/core';
-import { CalendarEvent } from '../calendar-event';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-new-event',
@@ -7,6 +6,10 @@ import { CalendarEvent } from '../calendar-event';
   styleUrls: ['./new-event.component.css']
 })
 export class NewEventComponent {
-  @Input() event!: CalendarEvent;
+  @Input() event!: {
+    name: string,
+    startDateTime: Date,
+    endDateTime: Date
+  };
 }
 

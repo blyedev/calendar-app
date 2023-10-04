@@ -8,20 +8,24 @@ import { CalendarEventService } from "../calendar-event-service/calendar-event.s
   styleUrls: ['./day-column.component.css']
 })
 export class DayColumnComponent {
-  constructor(private el: ElementRef, private calendarEventService: CalendarEventService) { }
+  constructor(private el: ElementRef) { }
 
   @Input() events: CalendarEvent[] = [];
   @Input() dayBoundaries!: { dayStart: Date, dayEnd: Date };
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log("Daycolumn", this.events, changes)
+  }
 
   isDragging = false;
   newEventStartY = 0;
   newEventTop = 0;
   newEventHeight = 0;
-  newEventEvent: CalendarEvent | undefined;
-
-  ngOnChanges(changes: SimpleChanges) {
-    console.log("Daycolumn", this.events, changes)
-  }
+  newEventEvent: {
+    name: string,
+    startDateTime: Date,
+    endDateTime: Date
+  } | undefined;
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent): void {
@@ -64,7 +68,6 @@ export class DayColumnComponent {
       eventEnd.setMinutes(eventEnd.getMinutes() + (quarterEndIndex * 15))
 
       this.newEventEvent = {
-        id: undefined,
         name: "Untitled",
         startDateTime: eventStart,
         endDateTime: eventEnd
@@ -74,7 +77,7 @@ export class DayColumnComponent {
 
   @HostListener('window:mouseup', ['$event'])
   onMouseUp(event: MouseEvent): void {
-    event.stopPropagation
+    event.stopPropagation()
     if (this.isDragging) {
       // Handle mouseup only if the component was actively dragging
       // console.log('Handling mouseup in the active drag component');
@@ -82,17 +85,23 @@ export class DayColumnComponent {
 
       this.isDragging = false;
       this.newEventStartY = 0;
-      // this.newEventTop = 0;
-      // this.newEventHeight = 0;
 
       if (this.newEventEvent) {
-        // this.events = [...this.events, this.newEventEvent]; // You may add it to the local events if needed
-        this.calendarEventService.createEvent(this.newEventEvent).subscribe(createdEvent => {
-          // Optionally, handle the created event or update the local events array
-          console.log('Created Event:', createdEvent);
-        });
+        const tempEvent: CalendarEvent = {
+          id: 0,
+          name: this.newEventEvent.name,
+          startDateTime: this.newEventEvent.startDateTime,
+          endDateTime: this.newEventEvent.endDateTime
+        }
+        this.events = [...this.events, tempEvent];
         this.newEventEvent = undefined;
       }
     }
+  }
+
+  handleEventEvent(event: Event): void {
+    event.stopPropagation();
+    console.log("Event in relational-event", event);
+    // Perform your logic for clicks inside the child component
   }
 }
