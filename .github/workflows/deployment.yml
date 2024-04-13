@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: calendar-app-frontend
+  ECR_REPOSITORY: calendar-app-backend
 
 permissions:
   contents: read
