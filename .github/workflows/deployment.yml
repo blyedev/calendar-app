@@ -55,12 +55,13 @@ jobs:
         IMAGE_URI: ${{ steps.build-image.outputs.image }}
         KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        HOST: ${{ secrets.HOST }}
       with:
         host: ${{ secrets.HOST }}
         username: "ec2-user"
         key: ${{ secrets.KEY }}
         port: 22
-        envs: KEY_ID,ACCESS_KEY,AWS_REGION,ECR_REGISTRY,IMAGE_URI
+        envs: KEY_ID,ACCESS_KEY,AWS_REGION,ECR_REGISTRY,HOST,IMAGE_URI
         script: |
           aws configure set aws_access_key_id $KEY_ID
           aws configure set aws_secret_access_key $ACCESS_KEY
@@ -72,4 +73,4 @@ jobs:
             echo "No containers running on port 8000"
           fi
           aws ecr get-login-password --region "$AWS_REGION" | sudo docker login --username AWS --password-stdin "$ECR_REGISTRY"
-          sudo docker run -d -p 8000:8000 "$IMAGE_URI"
+          sudo docker run -d -p 8000:8000 --env HOST="$HOST" "$IMAGE_URI"
