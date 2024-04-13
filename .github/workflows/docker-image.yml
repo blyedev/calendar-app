@@ -65,11 +65,11 @@ jobs:
           aws configure set aws_access_key_id $KEY_ID
           aws configure set aws_secret_access_key $ACCESS_KEY
           aws configure set region $AWS_REGION
-          if [ -n "$(docker ps -q -f publish=80)" ]; then
-            id=$(docker ps -f "publish=80" -q)
-            docker stop $id && docker rm $id
+          if [ -n "$(sudo docker ps -q -f publish=80)" ]; then
+            id=$(sudo docker ps -f "publish=80" -q)
+            sudo docker stop $id && sudo docker rm $id
           else
             echo "No containers running on port 80"
           fi
-          aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
-          docker run -d -p 80:80 "$IMAGE_URI"
+          aws ecr get-login-password --region "$AWS_REGION" | sudo docker login --username AWS --password-stdin "$ECR_REGISTRY"
+          sudo docker run -d -p 80:80 "$IMAGE_URI"
