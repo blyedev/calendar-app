@@ -1,7 +1,14 @@
-<ng-container *ngFor="let event of (this.events | positionEventsRelative: dayBoundaries); let eventIndex = index">
-    <app-relational-event [event]="event" tabindex="0"
-        (mousedown)="this.handleEventEvent($event)"></app-relational-event>
-</ng-container>
-<app-new-event *ngIf="this.newEventEvent" [event]="this.newEventEvent" [style.top.px]="newEventTop"
-    [style.height.px]="newEventHeight"></app-new-event>
-<app-new-event-form *ngIf="(this.events | getNewEvent)" [event]="(this.events | getNewEvent)!"></app-new-event-form>
+@for (event of (this.events | positionEventsRelative: this.dayBounds); track event) {
+  <app-relational-event [event]="event" tabindex="0" (mousedown)="this.handleEventEvent($event)">
+  </app-relational-event>
+}
+
+@if (this.newEventEvent) {
+  <app-new-event [event]="this.newEventEvent" [style.top.px]="newEventTop" [style.height.px]="newEventHeight">
+  </app-new-event>
+}
+
+@if ((this.events | getNewEvent)) {
+  <app-new-event-form [event]="(this.events | getNewEvent)!">
+  </app-new-event-form>
+}

@@ -7,5 +7,5 @@ import { CalendarEvent } from '../calendar-event';
   styleUrls: ['./grid-event.component.css']
 })
 export class GridEventComponent {
-  @Input() event!: CalendarEvent;
+  @Input({ required: true }) event!: CalendarEvent;
 }
