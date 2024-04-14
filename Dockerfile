@@ -13,7 +13,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Use arguments to create certificate files
 ARG ORIGIN_CA_CERT
 ARG ORIGIN_CA_KEY
-RUN echo "$ORIGIN_CA_CERT" > /etc/nginx/ssl/origin_ca_cert.pem \
+RUN mkdir -p /etc/nginx/ssl \
+    && echo "$ORIGIN_CA_CERT" > /etc/nginx/ssl/origin_ca_cert.pem \
     && echo "$ORIGIN_CA_KEY" > /etc/nginx/ssl/origin_ca_key.pem \
     && chmod 600 /etc/nginx/ssl/origin_ca_cert.pem /etc/nginx/ssl/origin_ca_key.pem
 
