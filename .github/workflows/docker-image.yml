@@ -33,16 +33,19 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
+    - name: Build and push Docker image
       id: build-image
       env:
+        ORIGIN_CA_CERT: ${{ secrets.ORIGIN_CA_CERT }}
+        ORIGIN_CA_KEY: ${{ secrets.ORIGIN_CA_KEY }}
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
         IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
       run: |
-        # Build a docker container and
-        # push it to ECR
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker build \
+          --build-arg ORIGIN_CA_CERT="${{ secrets.ORIGIN_CA_CERT }}" \
+          --build-arg ORIGIN_CA_KEY="${{ secrets.ORIGIN_CA_KEY }}" \
+          -t $IMAGE_URI .
         docker push $IMAGE_URI
         echo "image=$IMAGE_URI" >> $GITHUB_OUTPUT
 
@@ -72,4 +75,4 @@ jobs:
             echo "No containers running on port 80"
           fi
           aws ecr get-login-password --region "$AWS_REGION" | sudo docker login --username AWS --password-stdin "$ECR_REGISTRY"
-          sudo docker run -d -p 80:80 --name frontend --network calendar-network "$IMAGE_URI"
+          sudo docker run -d -p 80:80 -p 443:443 --name frontend --network calendar-network "$IMAGE_URI"
