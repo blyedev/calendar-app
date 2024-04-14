@@ -1,6 +1,8 @@
 import { Component, ElementRef, HostListener, Input, SimpleChanges } from "@angular/core";
 import { CalendarEvent } from "../calendar-event";
-import { DayContainer } from "./day-container";
+import { DayBounds } from "./day-bounds";
+import { CalendarEventService } from "../calendar-event-service/calendar-event.service";
+import { BehaviorSubject } from "rxjs";
 
 @Component({
   selector: 'app-day-column',
@@ -8,12 +10,40 @@ import { DayContainer } from "./day-container";
   styleUrls: ['./day-column.component.css']
 })
 export class DayColumnComponent {
-  constructor(private el: ElementRef) { }
+  private eventSubject$: BehaviorSubject<CalendarEvent[]>;
 
-  @Input({ required: true }) dayContainer!: DayContainer;
+  @Input({ required: true }) dayBounds!: DayBounds;
+  events: CalendarEvent[] = [];
+
+  constructor(
+    private el: ElementRef,
+    calendarEventService: CalendarEventService
+  ) {
+    this.eventSubject$ = calendarEventService.getEventsSubject();
+
+    this.eventSubject$.subscribe((events: CalendarEvent[]) => {
+      this.events = this.getDaysEvents(events);
+    })
+  }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("Daycolumn", this.dayContainer.events, changes)
+    console.log("Daycolumn", this.events, changes)
+  }
+
+  private getDaysEvents(events: CalendarEvent[]): CalendarEvent[] {
+    const filteredEvents = events
+      .filter((event) => {
+        const unixDay = 1000 * 60 * 60 * 24;
+        const unixDaySpan = event.endDateTime.getTime() - event.startDateTime.getTime();
+        return Math.floor(unixDaySpan / unixDay) < 1;
+      })
+      .filter((event) => {
+        const startsBeforeEnd: boolean = event.startDateTime.getTime() < this.dayBounds.dayEnd.getTime();
+        const endsAfterStrart: boolean = event.endDateTime.getTime() > this.dayBounds.dayStart.getTime();
+        return startsBeforeEnd && endsAfterStrart;
+      });
+
+    return filteredEvents;
   }
 
   isDragging = false;
@@ -57,9 +87,9 @@ export class DayColumnComponent {
       this.newEventHeight = quarterEndIndex * 12 - this.newEventTop
 
       // create event content
-      const eventStart = new Date(this.dayContainer.dayBounds.dayStart)
+      const eventStart = new Date(this.dayBounds.dayStart)
       eventStart.setMinutes(eventStart.getMinutes() + (quarterStartIndex * 15))
-      const eventEnd = new Date(this.dayContainer.dayBounds.dayStart)
+      const eventEnd = new Date(this.dayBounds.dayStart)
       eventEnd.setMinutes(eventEnd.getMinutes() + (quarterEndIndex * 15))
 
       this.newEventEvent = {
@@ -84,7 +114,7 @@ export class DayColumnComponent {
       this.newEventStartY = 0;
 
       if (this.newEventEvent) {
-        this.dayContainer.events = [...this.dayContainer.events, this.newEventEvent];
+        this.events = [...this.events, this.newEventEvent];
         this.newEventEvent = undefined;
       }
     }

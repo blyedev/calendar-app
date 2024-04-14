@@ -1,6 +1,8 @@
 import { Component, HostBinding, Input } from '@angular/core';
 import { CalendarEvent } from '../calendar-event';
 import { CalendarGridCell } from './calendar-event-grid';
+import { BehaviorSubject } from 'rxjs';
+import { CalendarEventService } from '../calendar-event-service/calendar-event.service';
 
 @Component({
   selector: 'app-week-row',
@@ -8,7 +10,8 @@ import { CalendarGridCell } from './calendar-event-grid';
   styleUrls: ['./week-row.component.css']
 })
 export class WeekRowComponent {
-  @Input() events: CalendarEvent[] = [];
+  private eventSubject$: BehaviorSubject<CalendarEvent[]>;
+  positionedEvents: CalendarGridCell[] = [];
 
   rows: number = 0;
 
@@ -18,7 +21,27 @@ export class WeekRowComponent {
     return height;
   }
 
-  getPositionedEvents(events: CalendarEvent[]) {
+  constructor(calendarEventService: CalendarEventService) {
+    this.eventSubject$ = calendarEventService.getEventsSubject();
+
+    this.eventSubject$.subscribe((events: CalendarEvent[]) => {
+      this.positionedEvents = this.getPositionedEvents(this.getFullDayEvents(events));
+    })
+  }
+
+  private getFullDayEvents(events: CalendarEvent[] | null): CalendarEvent[] {
+    if (!events) {
+      return [];
+    }
+
+    return events.filter((event) => {
+      const unixDay = 1000 * 60 * 60 * 24;
+      const unixDaySpan = event.endDateTime.getTime() - event.startDateTime.getTime();
+      return Math.floor(unixDaySpan / unixDay) >= 1;
+    });
+  }
+
+  private getPositionedEvents(events: CalendarEvent[]): CalendarGridCell[] {
     const laidOutEvents = this.layoutEvents(events);
 
     this.rows = laidOutEvents.length;

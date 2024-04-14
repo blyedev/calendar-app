@@ -13,7 +13,7 @@ export class CalendarEventService {
   private eventsSubject = new BehaviorSubject<CalendarEvent[]>([]);
 
   constructor(private http: HttpClient) {
-    this.refreshEvents;
+    this.refreshEvents();
   }
 
   refreshEvents(): void {

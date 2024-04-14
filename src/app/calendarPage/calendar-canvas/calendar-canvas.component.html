@@ -1,4 +1,4 @@
-<app-week-row [events]="fullDayEvents"></app-week-row>
+<app-week-row></app-week-row>
 <div id="main-canvas">
     <div class="background">
         <div class="hairline"></div>
@@ -26,8 +26,7 @@
         <div class="hairline"></div>
         <div class="hairline"></div>
     </div>
-    <ng-container *ngFor="let index of [0,1,2,3,4,5,6]">
-        <app-day-column [dayContainer]="this.shortEventsByDay[index]">
-        </app-day-column>
-    </ng-container>
+    @for (dayBounds of this.dayBoundsList; track dayBounds) {
+        <app-day-column [dayBounds]="dayBounds"></app-day-column>
+    }
 </div>
