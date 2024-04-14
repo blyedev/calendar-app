@@ -7,7 +7,7 @@ RUN npm run build
 
 # Serve Application using Nginx Server
 FROM nginx:alpine
-COPY --from=build /app/dist/maweb-pms-frontend/ /usr/share/nginx/html
+COPY --from=build /app/dist/calendar-app-frontend/ /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Use arguments to create certificate files
