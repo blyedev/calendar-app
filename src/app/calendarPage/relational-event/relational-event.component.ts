@@ -8,7 +8,7 @@ import { CalendarEventService } from '../calendar-event-service/calendar-event.s
   styleUrls: ['./relational-event.component.css']
 })
 export class RelationalEventComponent {
-  @Input() event!: PositionedCalendarEvent; // Assuming you pass the event object to the component using an input property
+  @Input({ required: true }) event!: PositionedCalendarEvent;
 
   constructor(private elementRef: ElementRef, private calendarEventService: CalendarEventService) { }
 

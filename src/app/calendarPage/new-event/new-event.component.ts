@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { CalendarEvent } from '../calendar-event';
 
 @Component({
   selector: 'app-new-event',
@@ -6,10 +7,6 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./new-event.component.css']
 })
 export class NewEventComponent {
-  @Input() event!: {
-    name: string,
-    startDateTime: Date,
-    endDateTime: Date
-  };
+  @Input({ required: true }) event!: CalendarEvent;
 }
 

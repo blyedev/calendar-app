@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, SimpleChanges } from "@angular/core";
+import { Component, ElementRef, HostListener, Input, SimpleChanges } from "@angular/core";
 import { CalendarEvent } from "../calendar-event";
-import { CalendarEventService } from "../calendar-event-service/calendar-event.service";
+import { DayContainer } from "./day-container";
 
 @Component({
   selector: 'app-day-column',
@@ -10,22 +10,17 @@ import { CalendarEventService } from "../calendar-event-service/calendar-event.s
 export class DayColumnComponent {
   constructor(private el: ElementRef) { }
 
-  @Input() events: CalendarEvent[] = [];
-  @Input() dayBoundaries!: { dayStart: Date, dayEnd: Date };
+  @Input({ required: true }) dayContainer!: DayContainer;
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("Daycolumn", this.events, changes)
+    console.log("Daycolumn", this.dayContainer.events, changes)
   }
 
   isDragging = false;
   newEventStartY = 0;
   newEventTop = 0;
   newEventHeight = 0;
-  newEventEvent: {
-    name: string,
-    startDateTime: Date,
-    endDateTime: Date
-  } | undefined;
+  newEventEvent: CalendarEvent | undefined;
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent): void {
@@ -62,13 +57,15 @@ export class DayColumnComponent {
       this.newEventHeight = quarterEndIndex * 12 - this.newEventTop
 
       // create event content
-      const eventStart = new Date(this.dayBoundaries.dayStart)
+      const eventStart = new Date(this.dayContainer.dayBounds.dayStart)
       eventStart.setMinutes(eventStart.getMinutes() + (quarterStartIndex * 15))
-      const eventEnd = new Date(this.dayBoundaries.dayStart)
+      const eventEnd = new Date(this.dayContainer.dayBounds.dayStart)
       eventEnd.setMinutes(eventEnd.getMinutes() + (quarterEndIndex * 15))
 
       this.newEventEvent = {
+        id: 0,
         name: "Untitled",
+        description: "",
         startDateTime: eventStart,
         endDateTime: eventEnd
       }
@@ -87,13 +84,7 @@ export class DayColumnComponent {
       this.newEventStartY = 0;
 
       if (this.newEventEvent) {
-        const tempEvent: CalendarEvent = {
-          id: 0,
-          name: this.newEventEvent.name,
-          startDateTime: this.newEventEvent.startDateTime,
-          endDateTime: this.newEventEvent.endDateTime
-        }
-        this.events = [...this.events, tempEvent];
+        this.dayContainer.events = [...this.dayContainer.events, this.newEventEvent];
         this.newEventEvent = undefined;
       }
     }
@@ -102,6 +93,5 @@ export class DayColumnComponent {
   handleEventEvent(event: Event): void {
     event.stopPropagation();
     console.log("Event in relational-event", event);
-    // Perform your logic for clicks inside the child component
   }
 }
