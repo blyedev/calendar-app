@@ -14,10 +14,10 @@ import { FullDayEventsPipe } from './calendarPage/calendar-canvas/full-day-event
 import { ShortEventsByDayPipe } from './calendarPage/calendar-canvas/short-events-by-day.pipe';
 import { StringToDatePipe } from './calendarPage/calendar-canvas/string-to-date.pipe';
 import { DayBoundsPipe } from './calendarPage/calendar-canvas/day-bounds.pipe';
-import { PositionEventsRelativePipe } from './calendarPage/day-column/pipes/position-events-relative.pipe';
+import { PositionEventsRelativePipe } from './calendarPage/day-column/position-events-relative.pipe';
 import { NewEventFormComponent } from './calendarPage/new-event-form/new-event-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { GetNewEventPipe } from './calendarPage/day-column/pipes/get-new-event.pipe';
+import { GetNewEventPipe } from './calendarPage/day-column/get-new-event.pipe';
 
 @NgModule({
   declarations: [

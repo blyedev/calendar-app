@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { CalendarEvent } from '../../calendar-event';
-import { CalendarNode } from '../calendar-event-tree';
-import { PositionedCalendarEvent } from '../positioned-calendar-event';
+import { CalendarEvent } from '../calendar-event';
+import { CalendarNode } from './calendar-event-tree';
+import { PositionedCalendarEvent } from './positioned-calendar-event';
 
 @Pipe({
   name: 'positionEventsRelative'
