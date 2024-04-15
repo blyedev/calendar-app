@@ -3,6 +3,7 @@ import { BehaviorSubject } from "rxjs";
 import { CalendarEvent } from "src/app/core/models/calendar-event";
 import { DayBounds } from "src/app/core/models/day-bounds";
 import { CalendarEventService } from "src/app/core/services/calendar-event-service/calendar-event.service";
+import { EventCreationService } from "../event-creation.service";
 
 @Component({
   selector: 'app-day-container',
@@ -10,19 +11,31 @@ import { CalendarEventService } from "src/app/core/services/calendar-event-servi
   styleUrls: ['./day-container.component.css']
 })
 export class DayContainerComponent implements OnChanges {
-  private eventSubject$: BehaviorSubject<CalendarEvent[]>;
-
   @Input({ required: true }) dayBounds!: DayBounds;
+  private eventSubject$: BehaviorSubject<CalendarEvent[]>;
   events: CalendarEvent[] = [];
+
+  private isDragging = false;
+  private dragStartY = 0;
+
+  drawnEventSubject$: BehaviorSubject<CalendarEvent | undefined>;
+  drawnEvent: CalendarEvent | undefined;
 
   constructor(
     private el: ElementRef,
+    public eventCreationService: EventCreationService,
     calendarEventService: CalendarEventService
   ) {
     this.eventSubject$ = calendarEventService.getEventsSubject();
 
     this.eventSubject$.subscribe((events: CalendarEvent[]) => {
       this.events = this.getDaysEvents(events);
+    })
+
+    this.drawnEventSubject$ = this.eventCreationService.getSubject();
+
+    this.drawnEventSubject$.subscribe((drawnEvent: CalendarEvent | undefined) => {
+      this.drawnEvent = drawnEvent;
     })
   }
 
@@ -46,27 +59,21 @@ export class DayContainerComponent implements OnChanges {
     return filteredEvents;
   }
 
-  isDragging = false;
-  newEventStartY = 0;
-  newEventTop = 0;
-  newEventHeight = 0;
-  newEventEvent: CalendarEvent | undefined;
-
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent): void {
-    event.stopPropagation
-    // console.log('Mouse down:', event);
+    event.stopPropagation()
 
     this.isDragging = true;
     const elementRectangle = this.el.nativeElement.getBoundingClientRect();
-    this.newEventStartY = event.pageY - elementRectangle.top - window.scrollY
+    this.dragStartY = event.pageY - elementRectangle.top - window.scrollY
+
+    this.eventCreationService.abortCreating();
   }
 
   @HostListener('window:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
     if (this.isDragging) {
-      event.stopPropagation
-      // console.log('Mouse move:', event);
+      event.stopPropagation()
 
       // get cursor position
       const elementRectangle = this.el.nativeElement.getBoundingClientRect();
@@ -74,17 +81,13 @@ export class DayContainerComponent implements OnChanges {
 
       // get coordinates
       let quarterStartIndex, quarterEndIndex;
-      if (currentY >= this.newEventStartY) {
-        quarterStartIndex = Math.floor(this.newEventStartY / 12)
+      if (currentY >= this.dragStartY) {
+        quarterStartIndex = Math.floor(this.dragStartY / 12)
         quarterEndIndex = Math.ceil(currentY / 12)
       } else {
         quarterStartIndex = Math.floor(currentY / 12)
-        quarterEndIndex = Math.ceil(this.newEventStartY / 12)
+        quarterEndIndex = Math.ceil(this.dragStartY / 12)
       }
-
-      // set event position
-      this.newEventTop = quarterStartIndex * 12;
-      this.newEventHeight = quarterEndIndex * 12 - this.newEventTop
 
       // create event content
       const eventStart = new Date(this.dayBounds.dayStart)
@@ -92,7 +95,7 @@ export class DayContainerComponent implements OnChanges {
       const eventEnd = new Date(this.dayBounds.dayStart)
       eventEnd.setMinutes(eventEnd.getMinutes() + (quarterEndIndex * 15))
 
-      this.newEventEvent = {
+      this.drawnEvent = {
         id: 0,
         name: "Untitled",
         description: "",
@@ -106,16 +109,11 @@ export class DayContainerComponent implements OnChanges {
   onMouseUp(event: MouseEvent): void {
     event.stopPropagation()
     if (this.isDragging) {
-      // Handle mouseup only if the component was actively dragging
-      // console.log('Handling mouseup in the active drag component');
-      // console.log('Mouse up:', event);
 
       this.isDragging = false;
-      this.newEventStartY = 0;
 
-      if (this.newEventEvent) {
-        this.events = [...this.events, this.newEventEvent];
-        this.newEventEvent = undefined;
+      if (this.drawnEvent) {
+        this.eventCreationService.startCreating(this.drawnEvent);
       }
     }
   }
