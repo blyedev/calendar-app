@@ -5,8 +5,10 @@ import { DayContainerComponent } from './day-container/day-container.component';
 import { PositionEventsPipe } from './day-container/position-events.pipe';
 import { EventComponent } from './event/event.component';
 import { DrawnEventComponent } from './drawn-event/drawn-event.component';
-import { CreateEventModalComponent } from './create-event-modal/create-event-modal.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { EventCreationService } from './event-creation.service';
+import { EventCreationModalComponent } from './event-creation-modal/event-creation-modal.component';
+import { IsWithinDayBoundsPipe } from './day-container/is-within-day-bounds.pipe';
 
 
 
@@ -17,11 +19,15 @@ import { ReactiveFormsModule } from '@angular/forms';
     GetCreatedEventPipe,
     EventComponent,
     DrawnEventComponent,
-    CreateEventModalComponent,
+    EventCreationModalComponent,
+    IsWithinDayBoundsPipe,
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
+  ],
+  providers: [
+    EventCreationService
   ],
   exports: [
     DayContainerComponent

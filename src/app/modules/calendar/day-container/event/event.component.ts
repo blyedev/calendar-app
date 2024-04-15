@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostBinding, HostListener, Input } from '@angular/core';
 import { PositionedCalendarEvent } from '../day-container/positioned-calendar-event';
 import { CalendarEventService } from 'src/app/core/services/calendar-event-service/calendar-event.service';
+import { DayBounds } from 'src/app/core/models/day-bounds';
 
 @Component({
   selector: 'app-event',
@@ -9,6 +10,7 @@ import { CalendarEventService } from 'src/app/core/services/calendar-event-servi
 })
 export class EventComponent {
   @Input({ required: true }) event!: PositionedCalendarEvent;
+  @Input({ required: true }) dayBounds!: DayBounds;
 
   constructor(
     private elementRef: ElementRef,
@@ -53,7 +55,7 @@ export class EventComponent {
 
     // get endhour and minute
     let endHour = this.event.position.endDateTime.getHours();
-    if (endHour === 0) {
+    if (this.event.position.endDateTime.valueOf() == this.dayBounds.dayEnd.valueOf()) {
       endHour = 24
     }
     const endMinutes = this.event.position.endDateTime.getMinutes();
