@@ -1,17 +1,18 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { CalendarEvent } from '../calendar-event';
-import { CalendarNode } from './calendar-event-tree';
 import { PositionedCalendarEvent } from './positioned-calendar-event';
+import { CalendarEvent } from 'src/app/core/models/calendar-event';
+import { DayBounds } from 'src/app/core/models/day-bounds';
+import { CalendarNode } from './calendar-event-node';
 
 @Pipe({
-  name: 'positionEventsRelative'
+  name: 'positionEvents'
 })
-export class PositionEventsRelativePipe implements PipeTransform {
-  dayBoundaries!: { dayStart: Date; dayEnd: Date; };
+export class PositionEventsPipe implements PipeTransform {
+  dayBounds!: DayBounds;
 
-  transform(events: CalendarEvent[], dayBoundaries: { dayStart: Date, dayEnd: Date }): PositionedCalendarEvent[] {
+  transform(events: CalendarEvent[], dayBounds: DayBounds): PositionedCalendarEvent[] {
 
-    this.dayBoundaries = dayBoundaries;
+    this.dayBounds = dayBounds;
     // gets events in a nth-tree wrapper where each node is positioned on a 2d array grid
     const laidOutEvents = this.layoutEvents(events, this.sortEvents);
     // wraps events in a positioning wrapper dependant on the layout
@@ -114,7 +115,7 @@ export class PositionEventsRelativePipe implements PipeTransform {
   }
 
   private positionEventAndChildren(previousTrees: PositionedCalendarEvent[], node: CalendarNode, offset: number, columns: CalendarNode[][], columnsIndex: number): PositionedCalendarEvent[] {
-    let widthLimit = this.findWidthLimit(previousTrees, node, columns, columnsIndex);
+    const widthLimit = this.findWidthLimit(previousTrees, node, columns, columnsIndex);
     const elementWidth = (widthLimit - offset) / this.getMaxTreeDepth(node);
 
     const positionedEvents: PositionedCalendarEvent[] = [];
@@ -195,13 +196,13 @@ export class PositionEventsRelativePipe implements PipeTransform {
   }
 
   private adjustDateWithinBoundaries(date: Date): Date {
-    if (date < this.dayBoundaries.dayStart) {
-      return new Date(this.dayBoundaries.dayStart);
-    } else if (date > this.dayBoundaries.dayEnd) {
-      return new Date(this.dayBoundaries.dayEnd);
+    if (date < this.dayBounds.dayStart) {
+      return new Date(this.dayBounds.dayStart);
+    } else if (date > this.dayBounds.dayEnd) {
+      return new Date(this.dayBounds.dayEnd);
     }
     return date;
-  };
+  }
 
   private collidesWithAnyNonAncestors(node: CalendarNode, parent: CalendarNode, columns: CalendarNode[][], columnsIndex: number): boolean {
     let ancestor = node;

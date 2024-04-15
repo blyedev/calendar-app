@@ -1,19 +1,21 @@
 import { Component, ElementRef, HostBinding, HostListener, Input } from '@angular/core';
-import { PositionedCalendarEvent } from '../day-column/positioned-calendar-event';
-import { CalendarEventService } from '../calendar-event-service/calendar-event.service';
+import { PositionedCalendarEvent } from '../day-container/positioned-calendar-event';
+import { CalendarEventService } from 'src/app/core/services/calendar-event-service/calendar-event.service';
 
 @Component({
-  selector: 'app-relational-event',
-  templateUrl: './relational-event.component.html',
-  styleUrls: ['./relational-event.component.css']
+  selector: 'app-event',
+  templateUrl: './event.component.html',
+  styleUrls: ['./event.component.css']
 })
-export class RelationalEventComponent {
+export class EventComponent {
   @Input({ required: true }) event!: PositionedCalendarEvent;
 
-  constructor(private elementRef: ElementRef, private calendarEventService: CalendarEventService) { }
+  constructor(
+    private elementRef: ElementRef,
+    private calendarEventService: CalendarEventService) { }
 
   @HostListener('click', ['$event'])
-  onClick(e: any) {
+  onClick() {
     // Access the native element directly and set focus
     (this.elementRef.nativeElement as HTMLElement).focus();
   }

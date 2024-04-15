@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DayBounds } from '../day-column/day-bounds';
+import { DayBounds } from 'src/app/core/models/day-bounds';
 
 @Component({
   selector: 'app-calendar-canvas',
@@ -16,7 +16,7 @@ export class CalendarCanvasComponent {
     }
   }
 
-  private getDayBounds(currentDate: Date, dayIndex: number): { dayStart: Date, dayEnd: Date } {
+  private getDayBounds(currentDate: Date, dayIndex: number): DayBounds {
     const currentWeekStart = new Date(currentDate);
     const mondayOffset = currentWeekStart.getDay() > 0 ? currentWeekStart.getDay() - 1 : 6;
     currentWeekStart.setDate(currentWeekStart.getDate() - mondayOffset);

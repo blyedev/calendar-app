@@ -1,15 +1,15 @@
-import { Component, HostBinding, Input } from '@angular/core';
-import { CalendarEvent } from '../calendar-event';
+import { Component, HostBinding } from '@angular/core';
 import { CalendarGridCell } from './calendar-event-grid';
 import { BehaviorSubject } from 'rxjs';
-import { CalendarEventService } from '../calendar-event-service/calendar-event.service';
+import { CalendarEvent } from 'src/app/core/models/calendar-event';
+import { CalendarEventService } from 'src/app/core/services/calendar-event-service/calendar-event.service';
 
 @Component({
-  selector: 'app-week-row',
-  templateUrl: './week-row.component.html',
-  styleUrls: ['./week-row.component.css']
+  selector: 'app-week-container',
+  templateUrl: './week-container.component.html',
+  styleUrls: ['./week-container.component.css']
 })
-export class WeekRowComponent {
+export class WeekContainerComponent {
   private eventSubject$: BehaviorSubject<CalendarEvent[]>;
   positionedEvents: CalendarGridCell[] = [];
 

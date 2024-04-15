@@ -1,4 +1,4 @@
-<app-week-row></app-week-row>
+<app-week-container></app-week-container>
 <div id="main-canvas">
     <div class="background">
         <div class="hairline"></div>
@@ -27,6 +27,6 @@
         <div class="hairline"></div>
     </div>
     @for (dayBounds of this.dayBoundsList; track dayBounds) {
-        <app-day-column [dayBounds]="dayBounds"></app-day-column>
+        <app-day-container [dayBounds]="dayBounds"></app-day-container>
     }
 </div>

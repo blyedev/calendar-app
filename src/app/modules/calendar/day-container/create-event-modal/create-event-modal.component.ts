@@ -1,14 +1,14 @@
-import { Component, HostListener, Input } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CalendarEventService } from '../calendar-event-service/calendar-event.service';
-import { CalendarEvent } from '../calendar-event';
+import { CalendarEvent } from 'src/app/core/models/calendar-event';
+import { CalendarEventService } from 'src/app/core/services/calendar-event-service/calendar-event.service';
 
 @Component({
-  selector: 'app-new-event-form',
-  templateUrl: './new-event-form.component.html',
-  styleUrls: ['./new-event-form.component.css']
+  selector: 'app-create-event-modal',
+  templateUrl: './create-event-modal.component.html',
+  styleUrls: ['./create-event-modal.component.css']
 })
-export class NewEventFormComponent {
+export class CreateEventModalComponent implements OnInit {
   eventForm!: FormGroup;
 
   @Input({ required: true }) event!: CalendarEvent;
