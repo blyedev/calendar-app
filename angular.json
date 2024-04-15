@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "maweb-pms-frontend": {
+    "calendar-app-frontend": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/maweb-pms-frontend",
+            "outputPath": "dist/calendar-app-frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -66,10 +66,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "maweb-pms-frontend:build:production"
+              "buildTarget": "calendar-app-frontend:build:production"
             },
             "development": {
-              "browserTarget": "maweb-pms-frontend:build:development"
+              "buildTarget": "calendar-app-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -77,7 +77,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "maweb-pms-frontend:build"
+            "buildTarget": "calendar-app-frontend:build"
           }
         },
         "test": {
@@ -97,8 +97,23 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "c27a6a28-45aa-4aeb-85ce-7332c0624f3f",
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

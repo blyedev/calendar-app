@@ -1,5 +1,0 @@
-<ng-container *ngFor="let event of getPositionedEvents(this.events); let eventIndex = index">
-    <app-grid-event [event]="event.value" [style.top]="'calc( 24px * ' + event.row + ')'"
-        [style.left]="'calc(100% * ' + event.startIndex + ' / 7)'"
-        [style.width]="'calc(100% * (' + event.daySpan + ' + 1) / 7)'"></app-grid-event>
-</ng-container>
