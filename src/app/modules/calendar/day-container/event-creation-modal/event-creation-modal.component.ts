@@ -30,6 +30,13 @@ export class EventCreationModalComponent {
     });
   }
 
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.eventCreationService.abortCreating();
+    }
+  }
+
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent): void {
     event.stopPropagation()
