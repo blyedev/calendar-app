@@ -1,15 +1,15 @@
-import { Component, ElementRef, HostListener, Input, SimpleChanges } from "@angular/core";
-import { CalendarEvent } from "../calendar-event";
-import { DayBounds } from "./day-bounds";
-import { CalendarEventService } from "../calendar-event-service/calendar-event.service";
+import { Component, ElementRef, HostListener, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
+import { CalendarEvent } from "src/app/core/models/calendar-event";
+import { DayBounds } from "src/app/core/models/day-bounds";
+import { CalendarEventService } from "src/app/core/services/calendar-event-service/calendar-event.service";
 
 @Component({
-  selector: 'app-day-column',
-  templateUrl: './day-column.component.html',
-  styleUrls: ['./day-column.component.css']
+  selector: 'app-day-container',
+  templateUrl: './day-container.component.html',
+  styleUrls: ['./day-container.component.css']
 })
-export class DayColumnComponent {
+export class DayContainerComponent implements OnChanges {
   private eventSubject$: BehaviorSubject<CalendarEvent[]>;
 
   @Input({ required: true }) dayBounds!: DayBounds;
@@ -26,7 +26,7 @@ export class DayColumnComponent {
     })
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     console.log("Daycolumn", this.events, changes)
   }
 

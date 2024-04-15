@@ -1,10 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { CalendarEvent } from '../calendar-event';
+import { CalendarEvent } from 'src/app/core/models/calendar-event';
 
 @Pipe({
-  name: 'getNewEvent'
+  name: 'getCreatedEvent'
 })
-export class GetNewEventPipe implements PipeTransform {
+export class GetCreatedEventPipe implements PipeTransform {
 
   transform(events: CalendarEvent[]): CalendarEvent | undefined {
     return events.find((event) => {

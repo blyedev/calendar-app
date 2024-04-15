@@ -1,0 +1,14 @@
+@for (event of (this.events | positionEvents: this.dayBounds); track event) {
+  <app-event [event]="event" tabindex="0" (mousedown)="this.handleEventEvent($event)">
+  </app-event>
+}
+
+@if (this.newEventEvent) {
+  <app-drawn-event [event]="this.newEventEvent" [style.top.px]="newEventTop" [style.height.px]="newEventHeight">
+  </app-drawn-event>
+}
+
+@if ((this.events | getCreatedEvent)) {
+  <app-create-event-modal [event]="(this.events | getCreatedEvent)!">
+  </app-create-event-modal>
+}

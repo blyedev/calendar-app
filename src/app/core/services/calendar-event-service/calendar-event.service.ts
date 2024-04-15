@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, map } from "rxjs";
 import { environment } from "src/environments/environment";
-import { CalendarEvent } from "../calendar-event";
 import { HttpClient } from "@angular/common/http";
 import { EventApiResponse } from "./event-api-response";
+import { CalendarEvent } from "../../models/calendar-event";
 
 @Injectable({
   providedIn: 'root'
@@ -68,11 +68,11 @@ export class CalendarEventService {
       }));
   }
 
-  deleteEvent(eventId: number): Observable<any> {
+  deleteEvent(eventId: number): Observable<void> {
     const endpoint = `events/${eventId}/delete/`;
     const apiUrl = `${this.baseUrl}${endpoint}`;
 
-    return this.http.delete<any>(apiUrl);
+    return this.http.delete<void>(apiUrl);
   }
 
 }
