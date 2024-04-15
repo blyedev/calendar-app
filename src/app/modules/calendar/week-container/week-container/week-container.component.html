@@ -1,5 +1,5 @@
 @for (event of this.positionedEvents; track event) {
-  <app-event [event]="event.value"
+  <app-event [event]="event.value" tabindex="0"
       [style.top]="'calc( 24px * ' + event.row + ')'"
       [style.left]="'calc(100% * ' + event.startIndex + ' / 7)'"
       [style.width]="'calc(100% * (' + event.daySpan + ' + 1) / 7)'">

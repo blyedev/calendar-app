@@ -30,7 +30,10 @@ export class EventComponent {
 
       // Call the deleteEvent method from your service
       this.calendarEventService.deleteEvent(this.event.value.id).subscribe({
-        next: () => console.log('Event deleted successfully'),
+        next: () => {
+          console.log('Event deleted successfully');
+          this.calendarEventService.refreshEvents();
+        },
         error: (error) => console.error('Error deleting event:', error),
         complete: () => {
           // Additional logic if needed
