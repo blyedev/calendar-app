@@ -23,7 +23,7 @@ export class EventCreationModalComponent {
     this.createdEventSubject$.subscribe((event: CalendarEvent | undefined) => {
       this.eventForm = formBuilder.group({
         title: [event?.name, Validators.required],
-        description: [event?.description, Validators.required],
+        description: [event?.description, Validators.nullValidator],
         event_start_datetime: [event?.startDateTime.toISOString().substring(0, 16), Validators.required],
         event_end_datetime: [event?.endDateTime.toISOString().substring(0, 16), Validators.required],
       });
