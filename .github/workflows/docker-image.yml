@@ -1,0 +1,78 @@
+name: Build, Push to ECR and deploy
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: calendar-app-frontend
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build and push Docker image
+      id: build-image
+      env:
+        ORIGIN_CA_CERT: ${{ secrets.ORIGIN_CA_CERT }}
+        ORIGIN_CA_KEY: ${{ secrets.ORIGIN_CA_KEY }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+        IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+      run: |
+        docker build \
+          --build-arg ORIGIN_CA_CERT="${{ secrets.ORIGIN_CA_CERT }}" \
+          --build-arg ORIGIN_CA_KEY="${{ secrets.ORIGIN_CA_KEY }}" \
+          -t $IMAGE_URI .
+        docker push $IMAGE_URI
+        echo "image=$IMAGE_URI" >> $GITHUB_OUTPUT
+
+    - name: deploy on ec2
+      id: deploy-ec2
+      uses: appleboy/ssh-action@v1.0.0
+      env:
+        aws-region: ${{ env.AWS_REGION }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_URI: ${{ steps.build-image.outputs.image }}
+        KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      with:
+        host: ${{ secrets.HOST }}
+        username: "ec2-user"
+        key: ${{ secrets.KEY }}
+        port: 22
+        envs: KEY_ID,ACCESS_KEY,AWS_REGION,ECR_REGISTRY,IMAGE_URI
+        script: |
+          aws configure set aws_access_key_id $KEY_ID
+          aws configure set aws_secret_access_key $ACCESS_KEY
+          aws configure set region $AWS_REGION
+          if [ -n "$(sudo docker ps -q -f publish=80)" ]; then
+            id=$(sudo docker ps -f "publish=80" -q)
+            sudo docker stop $id && sudo docker rm $id
+          else
+            echo "No containers running on port 80"
+          fi
+          aws ecr get-login-password --region "$AWS_REGION" | sudo docker login --username AWS --password-stdin "$ECR_REGISTRY"
+          sudo docker run -d -p 80:80 -p 443:443 --name frontend --network calendar-network "$IMAGE_URI"

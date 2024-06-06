@@ -1,0 +1,20 @@
+@for (event of (this.events | positionEvents: this.dayBounds); track event) {
+  <app-event [event]="event" [dayBounds]="this.dayBounds" tabindex="0"
+    (mousedown)="this.handleEventEvent($event)">
+  </app-event>
+}
+
+@if (this.drawnEvent) {
+  @if ( this.drawnEvent | isWithinDayBounds: this.dayBounds) {
+    <app-drawn-event [event]="this.drawnEvent" [dayBounds]="this.dayBounds">
+    </app-drawn-event>
+  }
+}
+
+@if ((this.drawnEventSubject$ | async) && this.drawnEvent) {
+  @if ( this.drawnEvent | isWithinDayBounds: this.dayBounds) {
+    @if (!(this.drawnEvent.startDateTime < this.dayBounds.dayStart)) {
+        <app-event-creation-modal></app-event-creation-modal>
+    }
+  }
+}
