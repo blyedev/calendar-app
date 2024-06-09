@@ -9,6 +9,27 @@ permissions:
   contents: read
 
 jobs:
+  oidc-debugger:
+    name: OIDC Debugger
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout actions-oidc-debugger
+        uses: actions/checkout@v3
+        with:
+          repository: github/actions-oidc-debugger
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: ./.github/actions/actions-oidc-debugger
+      - name: Debug OIDC Claims
+        uses: ./.github/actions/actions-oidc-debugger
+        with:
+          audience: 'https://github.com/github'
+
   build-backend:
     name: Build backend and push to ECR
     runs-on: ubuntu-latest
