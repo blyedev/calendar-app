@@ -6,31 +6,16 @@ on:
       - main
 
 permissions:
-  id-token: write
   contents: read
-
-jobs:
-  oidc-debugger:
-    name: OIDC Debugger
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout actions-oidc-debugger
-        uses: actions/checkout@v3
-        with:
-          repository: github/actions-oidc-debugger
-          ref: main
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: ./.github/actions/actions-oidc-debugger
-      - name: Debug OIDC Claims
-        uses: ./.github/actions/actions-oidc-debugger
-        with:
-          audience: 'https://github.com/github'
 
   build-backend:
     name: Build backend and push to ECR
     runs-on: ubuntu-latest
     environment: build-backend
+
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: Checkout repo
@@ -53,13 +38,17 @@ jobs:
           ECR_REPOSITORY: calendar-app-backend
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   build-frontend:
     name: Build frontend and push to ECR
     runs-on: ubuntu-latest
     environment: build-frontend
+
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: Checkout repo
@@ -82,7 +71,7 @@ jobs:
           ECR_REPOSITORY: calendar-app-frontend
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./frontend
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   # deploy:
