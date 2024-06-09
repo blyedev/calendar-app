@@ -6,16 +6,13 @@ on:
       - main
 
 permissions:
+  id-token: write
   contents: read
 
 jobs:
   oidc-debugger:
     name: OIDC Debugger
     runs-on: ubuntu-latest
-
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
       - name: Checkout actions-oidc-debugger
@@ -34,10 +31,6 @@ jobs:
     name: Build backend and push to ECR
     runs-on: ubuntu-latest
     environment: build-backend
-
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
       - name: Checkout repo
@@ -67,10 +60,6 @@ jobs:
     name: Build frontend and push to ECR
     runs-on: ubuntu-latest
     environment: build-frontend
-
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
       - name: Checkout repo
