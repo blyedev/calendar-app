@@ -8,6 +8,7 @@ on:
 permissions:
   contents: read
 
+jobs:
   build-backend:
     name: Build backend and push to ECR
     runs-on: ubuntu-latest
