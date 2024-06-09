@@ -1,76 +1,102 @@
-name: Build, Push to ECR and deploy
+name: Build and Deploy Backend and Frontend
 
 on:
   push:
     branches:
       - main
 
-env:
-  AWS_REGION: us-east-1
-  ECR_REPOSITORY: calendar-app-backend
-
 permissions:
   contents: read
 
 jobs:
-  deploy:
-    name: Deploy
+  build-backend:
+    name: Build backend and push to ECR
     runs-on: ubuntu-latest
-    environment: production
+    environment: build-backend
+
+    permissions:
+      id-token: write
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          audience: sts.amazonaws.com
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_ROLE }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-        IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-      run: |
-        # Build a docker container and
-        # push it to ECR
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $IMAGE_URI
-        echo "image=$IMAGE_URI" >> $GITHUB_OUTPUT
+      - name: Build, tag, and push backend Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: calendar-app-backend
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-    - name: deploy on ec2
-      id: deploy-ec2
-      uses: appleboy/ssh-action@v1.0.0
-      env:
-        aws-region: ${{ env.AWS_REGION }}
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_URI: ${{ steps.build-image.outputs.image }}
-        KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        HOST: ${{ secrets.HOST }}
-      with:
-        host: ${{ secrets.HOST }}
-        username: "ec2-user"
-        key: ${{ secrets.KEY }}
-        port: 22
-        envs: KEY_ID,ACCESS_KEY,AWS_REGION,ECR_REGISTRY,HOST,IMAGE_URI
-        script: |
-          aws configure set aws_access_key_id $KEY_ID
-          aws configure set aws_secret_access_key $ACCESS_KEY
-          aws configure set region $AWS_REGION
-          if [ -n "$(sudo docker ps -q -f publish=8000)" ]; then
-            id=$(sudo docker ps -f "publish=8000" -q)
-            sudo docker stop $id && sudo docker rm $id
-          else
-            echo "No containers running on port 8000"
-          fi
-          aws ecr get-login-password --region "$AWS_REGION" | sudo docker login --username AWS --password-stdin "$ECR_REGISTRY"
-          sudo docker run -d -p 8000:8000 --env HOST="$HOST" --name backend --network calendar-network "$IMAGE_URI"
+  build-frontend:
+    name: Build frontend and push to ECR
+    runs-on: ubuntu-latest
+    environment: build-frontend
+
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          audience: sts.amazonaws.com
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_ROLE }}
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push backend Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: calendar-app-frontend
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  # deploy:
+  #   needs: [build-backend, build-frontend]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+  #
+  #     - name: Update ECS task definition
+  #       id: task-def
+  #       env:
+  #         BACKEND_IMAGE: ${{ steps.login-ecr.outputs.registry }}/your-backend-repo:${{ github.sha }}
+  #         FRONTEND_IMAGE: ${{ steps.login-ecr.outputs.registry }}/your-frontend-repo:${{ github.sha }}
+  #       run: |
+  #         sed -i "s|PLACEHOLDER_BACKEND_IMAGE|$BACKEND_IMAGE|g" ecs-task-def.json
+  #         sed -i "s|PLACEHOLDER_FRONTEND_IMAGE|$FRONTEND_IMAGE|g" ecs-task-def.json
+  #         aws ecs register-task-definition --cli-input-json file://ecs-task-def.json
+  #
+  #     - name: Get new task definition revision
+  #       id: new-task-def
+  #       run: |
+  #         NEW_TASK_DEF=$(aws ecs describe-task-definition --task-definition your-task-family)
+  #         echo "::set-output name=task-def-arn::$(echo $NEW_TASK_DEF | jq -r '.taskDefinition.taskDefinitionArn')"
+  #
+  #     - name: Update ECS service to use new task definition
+  #       run: |
+  #         aws ecs update-service --cluster your-cluster --service your-backend-service --task-definition ${{ steps.new-task-def.outputs.task-def-arn }}
+  #         aws ecs update-service --cluster your-cluster --service your-frontend-service --task-definition ${{ steps.new-task-def.outputs.task-def-arn }}

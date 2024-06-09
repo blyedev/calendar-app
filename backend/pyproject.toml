@@ -1,0 +1,17 @@
+[tool.mypy]
+python_executable = "./venv/bin/python"
+exclude = [
+  "migrations",
+  "tests",
+  "manage.py",
+  "(a|w)sgi.py",
+]
+plugins = [
+  "mypy_django_plugin.main",
+]
+
+[[tool.mypy.overrides]]
+module = [
+  "djangorestframework.*",
+  "wagtail.*",
+]
