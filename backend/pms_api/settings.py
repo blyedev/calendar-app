@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
+import requests
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,6 +29,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "blyedev-calendar.com", "calendar.blyedev.com"]
 
+
+try:
+    METADATA_URI = os.environ["ECS_CONTAINER_METADATA_URI"]
+    container_metadata = requests.get(METADATA_URI).json()
+    ALLOWED_HOSTS.append(container_metadata["Networks"][0]["IPv4Addresses"][0])
+except KeyError:
+    print("ECS_CONTAINER_METADATA_URI environment variable is not defined.")
+except requests.RequestException as e:
+    print(f"An error occurred while fetching container metadata: {e}")
+except (KeyError, IndexError) as e:
+    print(f"An error occurred while processing container metadata: {e}")
 
 # Application definition
 
