@@ -11,11 +11,7 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-# Run database migrations
 RUN python manage.py migrate
-
-# Collect static files
-RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
