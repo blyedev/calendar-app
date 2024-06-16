@@ -1,1 +1,1 @@
-export const environment = { apiUrl: 'https://blyedev-calendar.com/api/' };
+export const environment = { apiUrl: 'https://calendar.blyedev.com/api/' };
