@@ -1,11 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { PositionedCalendarEvent } from './positioned-calendar-event';
 import { CalendarEvent } from 'src/app/core/models/calendar-event';
 import { DayBounds } from 'src/app/core/models/day-bounds';
-import { CalendarNode } from './calendar-event-node';
+import { PositionedCalendarEvent } from '../models/positioned-calendar-event';
+import { CalendarNode } from '../models/calendar-event-node';
 
 @Pipe({
-  name: 'positionEvents'
+  name: 'positionEvents',
+  standalone: true,
 })
 export class PositionEventsPipe implements PipeTransform {
   dayBounds!: DayBounds;
@@ -13,39 +14,31 @@ export class PositionEventsPipe implements PipeTransform {
   transform(events: CalendarEvent[], dayBounds: DayBounds): PositionedCalendarEvent[] {
 
     this.dayBounds = dayBounds;
-    // gets events in a nth-tree wrapper where each node is positioned on a 2d array grid
     const laidOutEvents = this.layoutEvents(events, this.sortEvents);
-    // wraps events in a positioning wrapper dependant on the layout
     const positionedEvents = this.positionEvents(laidOutEvents) || []
 
-    // return an array of events in a positioning data wrapper
     return positionedEvents
   }
 
   private sortEvents(events: CalendarEvent[]): CalendarEvent[] {
     return events.sort((a, b) => {
-      // sorts by which event is earlier
       const startComparison = a.startDateTime.getTime() - b.startDateTime.getTime();
       if (startComparison !== 0) {
         return startComparison;
       }
 
-      // sorts by which event is longer
       const endComparison = b.endDateTime.getTime() - a.endDateTime.getTime();
       if (endComparison !== 0) {
         return endComparison;
       }
 
-      // fallback
       return 0;
     });
   }
 
   private layoutEvents(events: CalendarEvent[], sortFunction: (events: CalendarEvent[]) => CalendarEvent[]): CalendarNode[][] {
-    // Use the sorting this algorith is dependant on
     const sortedEvents = sortFunction(events);
 
-    // places each event in columns
     const columns: CalendarNode[][] = [];
     sortedEvents.forEach((ev: CalendarEvent) => {
       // places the event in a relational object wrapper in existing columns if theres room
@@ -119,8 +112,6 @@ export class PositionEventsPipe implements PipeTransform {
     const elementWidth = (widthLimit - offset) / this.getMaxTreeDepth(node);
 
     const positionedEvents: PositionedCalendarEvent[] = [];
-
-    // Function to adjust the date within day boundaries
 
     if (node.topChildren.length === 0) {
       positionedEvents.push({

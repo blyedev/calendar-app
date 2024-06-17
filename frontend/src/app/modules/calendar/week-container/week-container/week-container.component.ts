@@ -3,9 +3,12 @@ import { CalendarGridCell } from './calendar-event-grid';
 import { BehaviorSubject } from 'rxjs';
 import { CalendarEvent } from 'src/app/core/models/calendar-event';
 import { CalendarEventService } from 'src/app/core/services/calendar-event-service/calendar-event.service';
+import { EventComponent } from '../event/event.component';
 
 @Component({
   selector: 'app-week-container',
+  standalone: true,
+  imports: [EventComponent],
   templateUrl: './week-container.component.html',
   styleUrls: ['./week-container.component.css']
 })

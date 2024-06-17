@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
 import { DayBounds } from 'src/app/core/models/day-bounds';
+import { WeekContainerComponent } from '../week-container/week-container/week-container.component';
+import { DayContainerComponent } from '../day-container/day-container/day-container.component';
 
 @Component({
   selector: 'app-calendar-canvas',
+  standalone: true,
+  imports: [WeekContainerComponent, DayContainerComponent],
   templateUrl: './calendar-canvas.component.html',
   styleUrls: ['./calendar-canvas.component.css']
 })

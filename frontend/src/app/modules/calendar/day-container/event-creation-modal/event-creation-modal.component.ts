@@ -1,11 +1,13 @@
 import { Component, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CalendarEvent } from 'src/app/core/models/calendar-event';
-import { EventCreationService } from '../event-creation.service';
 import { BehaviorSubject } from 'rxjs';
+import { EventCreationService } from '../services/event-creation.service';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-event-creation-modal',
+  standalone: true,
+  imports: [ReactiveFormsModule],
   templateUrl: './event-creation-modal.component.html',
   styleUrls: ['./event-creation-modal.component.css']
 })

@@ -4,6 +4,7 @@ import { DayBounds } from 'src/app/core/models/day-bounds';
 
 @Component({
   selector: 'app-drawn-event',
+  standalone: true,
   templateUrl: './drawn-event.component.html',
   styleUrls: ['./drawn-event.component.css']
 })
