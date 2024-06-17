@@ -1,10 +1,11 @@
 import { Component, ElementRef, HostBinding, HostListener, Input } from '@angular/core';
-import { PositionedCalendarEvent } from '../day-container/positioned-calendar-event';
 import { CalendarEventService } from 'src/app/core/services/calendar-event-service/calendar-event.service';
 import { DayBounds } from 'src/app/core/models/day-bounds';
+import { PositionedCalendarEvent } from '../models/positioned-calendar-event';
 
 @Component({
   selector: 'app-event',
+  standalone: true,
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.css']
 })

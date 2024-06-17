@@ -4,6 +4,7 @@ import { CalendarEventService } from 'src/app/core/services/calendar-event-servi
 
 @Component({
   selector: 'app-event',
+  standalone: true,
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.css']
 })

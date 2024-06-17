@@ -4,6 +4,7 @@ import { DayBounds } from 'src/app/core/models/day-bounds';
 
 @Pipe({
   name: 'isWithinDayBounds',
+  standalone: true,
 })
 export class IsWithinDayBoundsPipe implements PipeTransform {
 

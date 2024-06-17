@@ -3,12 +3,30 @@ import { BehaviorSubject } from "rxjs";
 import { CalendarEvent } from "src/app/core/models/calendar-event";
 import { DayBounds } from "src/app/core/models/day-bounds";
 import { CalendarEventService } from "src/app/core/services/calendar-event-service/calendar-event.service";
-import { EventCreationService } from "../event-creation.service";
+import { EventComponent } from "../event/event.component";
+import { DrawnEventComponent } from "../drawn-event/drawn-event.component";
+import { EventCreationModalComponent } from "../event-creation-modal/event-creation-modal.component";
+import { AsyncPipe } from "@angular/common";
+import { PositionEventsPipe } from "../pipes/position-events.pipe";
+import { IsWithinDayBoundsPipe } from "../pipes/is-within-day-bounds.pipe";
+import { EventCreationService } from "../services/event-creation.service";
 
 @Component({
   selector: 'app-day-container',
+  standalone: true,
+  imports: [
+    PositionEventsPipe,
+    EventComponent,
+    IsWithinDayBoundsPipe,
+    DrawnEventComponent,
+    AsyncPipe,
+    EventCreationModalComponent,
+  ],
+  providers: [
+    EventCreationService
+  ],
   templateUrl: './day-container.component.html',
-  styleUrls: ['./day-container.component.css']
+  styleUrls: ['./day-container.component.css'],
 })
 export class DayContainerComponent implements OnChanges {
   @Input({ required: true }) dayBounds!: DayBounds;
@@ -23,7 +41,7 @@ export class DayContainerComponent implements OnChanges {
 
   constructor(
     private el: ElementRef,
-    public eventCreationService: EventCreationService,
+    private eventCreationService: EventCreationService,
     calendarEventService: CalendarEventService
   ) {
     this.eventSubject$ = calendarEventService.getEventsSubject();
