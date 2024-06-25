@@ -99,6 +99,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.render-backend.outputs.task-definition }}
-          service: backend-service
+          service: backend-service-v2
           cluster: ${{ env.CLUSTER_NAME }}
           wait-for-service-stability: true
