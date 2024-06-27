@@ -25,8 +25,9 @@ try:
     METADATA_URI = os.environ["ECS_CONTAINER_METADATA_URI"]
     with urllib.request.urlopen(METADATA_URI) as response:
         container_metadata = json.loads(response.read().decode())
-        ALLOWED_HOSTS.append(container_metadata["Networks"][0]["IPv4Addresses"][0])
-        print(f"Added host ip: {container_metadata["Networks"][0]["IPv4Addresses"][0]}")
+        ip = container_metadata["Networks"][0]["IPv4Addresses"][0]
+        ALLOWED_HOSTS.append(ip)
+        print(f"Added host ip: {ip}")
 except KeyError:
     print("ECS_CONTAINER_METADATA_URI environment variable is not defined.")
 except urllib.error.URLError as e:
