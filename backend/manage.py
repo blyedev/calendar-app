@@ -7,7 +7,13 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "calendar_project.settings")
+    env = os.getenv("DJANGO_ENV", "development")
+    settings_module = (
+        "calendar_project.settings.dev"
+        if env == "development"
+        else "calendar_project.settings.prod"
+    )
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings_module)
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

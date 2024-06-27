@@ -11,6 +11,12 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "calendar_project.settings")
+env = os.getenv("DJANGO_ENV", "development")
+settings_module = (
+    "calendar_project.settings.dev"
+    if env == "development"
+    else "calendar_project.settings.prod"
+)
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings_module)
 
 application = get_asgi_application()
