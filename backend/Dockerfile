@@ -24,6 +24,9 @@ ENV DJANGO_ENV prod
 
 RUN python manage.py collectstatic --noinput
 
+COPY --chown=appuser entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
 EXPOSE 8000
 
-CMD ["/bin/bash", "-c", "python manage.py migrate && gunicorn calendar_project.wsgi:application --bind 0.0.0.0:8000"]
+ENTRYPOINT ["./entrypoint.sh"]
