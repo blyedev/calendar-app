@@ -20,6 +20,7 @@ SECRET_KEY = get_env_variable("DJANGO_SECRET_KEY")
 DEBUG = False
 
 ALLOWED_HOSTS = ["calendar.blyedev.com"]
+CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS]
 
 try:
     METADATA_URI = os.environ["ECS_CONTAINER_METADATA_URI"]
