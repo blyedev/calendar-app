@@ -1,0 +1,20 @@
+:host {
+  position: absolute;
+  box-sizing: border-box;
+  background-color: blueviolet;
+  background-clip: padding-box;
+  border-radius: 4px;
+  border: 2px rgba(0, 0, 0, 0) solid;
+  border-left: 2px aqua solid;
+  padding: 4px;
+  overflow: hidden;
+  color: white;
+  font-family: sans-serif
+}
+
+p {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 12px;
+  margin: 0 0 4px;
+}

@@ -2,13 +2,15 @@
 URL configuration for authentication via knox.
 """
 
-from django.urls import path
+from django.urls import include, path
 from knox import views as knox_views
 
-from .views import LoginView
+from .views import CheckAuthenticationView, LoginView, LogoutView
 
 urlpatterns = [
-    path(r"login/", LoginView.as_view(), name="knox_login"),
-    path(r"logout/", knox_views.LogoutView.as_view(), name="knox_logout"),
-    path(r"logoutall/", knox_views.LogoutAllView.as_view(), name="knox_logoutall"),
+    path(r"check", CheckAuthenticationView.as_view(), name="check_auth"),
+    path(r"rest/", include("rest_framework.urls")),
+    path(r"knox/login/", LoginView.as_view(), name="knox_login"),
+    path(r"knox/logout/", LogoutView.as_view(), name="knox_logout"),
+    # path(r"knox/logoutall/", knox_views.LogoutAllView.as_view(), name="knox_logoutall"),
 ]

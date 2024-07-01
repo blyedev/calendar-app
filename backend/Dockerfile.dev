@@ -1,0 +1,23 @@
+FROM python:3.10-slim
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+
+WORKDIR /app
+
+RUN pip install --upgrade pip
+
+RUN useradd -m appuser;
+ENV PATH="/home/appuser/.local/bin:$PATH"
+
+USER appuser
+WORKDIR /home/appuser/app
+
+COPY --chown=appuser requirements.txt .
+RUN pip install -r requirements.txt
+
+ENV DJANGO_ENV development
+
+CMD ["sh", "-c", "python manage.py runserver 0.0.0.0:8000"]
+
+EXPOSE 8000

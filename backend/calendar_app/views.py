@@ -1,6 +1,5 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import ValidationError
 
 from .models import Calendar, Event
 from .serializers import CalendarSerializer, EventSerializer
@@ -25,21 +24,25 @@ class CalendarRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return Calendar.objects.filter(user=self.request.user)
 
 
-class CalendarEventListCreateView(generics.ListCreateAPIView):
+class EventListCreateView(generics.ListCreateAPIView):
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        calendar = get_object_or_404(
-            Calendar, pk=self.kwargs["calendar_pk"], user=self.request.user
-        )
-        return Event.objects.filter(calendar=calendar)
+        user = self.request.user
+        calendar_param = self.request.query_params.get("calendar")
 
-    def perform_create(self, serializer):
-        calendar = get_object_or_404(
-            Calendar, pk=self.kwargs["calendar_pk"], user=self.request.user
-        )
-        serializer.save(calendar=calendar)
+        if calendar_param:
+            try:
+                # Split the parameter to get a list of UUIDs
+                calendar_ids = calendar_param.split(",")
+                calendars = Calendar.objects.filter(pk__in=calendar_ids, user=user)
+                if not calendars.exists():
+                    raise ValidationError("Invalid calendar UUID(s) provided.")
+                return Event.objects.filter(calendar__in=calendars)
+            except ValueError:
+                raise ValidationError("Invalid UUID format provided.")
+        return Event.objects.filter(calendar__user=user)
 
 
 class EventRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
