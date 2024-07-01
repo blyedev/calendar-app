@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CalendarCanvasComponent } from './modules/calendar/calendar-canvas/calendar-canvas.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CalendarCanvasComponent, RouterOutlet],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'calendar-app-frontend';
