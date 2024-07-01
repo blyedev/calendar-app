@@ -1,21 +1,26 @@
 from django.urls import path
+
 from .views import (
+    CalendarEventListCreateView,
     CalendarListCreateView,
     CalendarRetrieveUpdateDestroyView,
-    EventListCreateView,
     EventRetrieveUpdateDestroyView,
 )
 
 urlpatterns = [
     path("calendars/", CalendarListCreateView.as_view(), name="calendar-list-create"),
     path(
-        "calendars/<int:pk>/",
+        "calendars/<uuid:pk>/",
         CalendarRetrieveUpdateDestroyView.as_view(),
         name="calendar-detail",
     ),
-    path("events/", EventListCreateView.as_view(), name="event-list-create"),
     path(
-        "events/<int:pk>/",
+        "calendars/<uuid:calendar_pk>/events/",
+        CalendarEventListCreateView.as_view(),
+        name="calendar-event-list-create",
+    ),
+    path(
+        "events/<uuid:pk>/",
         EventRetrieveUpdateDestroyView.as_view(),
         name="event-detail",
     ),
