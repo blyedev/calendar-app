@@ -1,7 +1,18 @@
 from django.contrib import admin
+from .models import Event, RecurrenceRule, Calendar
 
-from .models import Event
 
-# Register your models here.
+class RecurrenceRuleInline(admin.StackedInline):
+    model = RecurrenceRule
+    can_delete = False
+    verbose_name_plural = "Recurrence Rule"
 
-admin.site.register(Event)
+
+class EventAdmin(admin.ModelAdmin):
+    inlines = [RecurrenceRuleInline]
+    list_display = ("summary", "calendar", "dtstart", "dtend")
+    search_fields = ("summary", "description")
+
+
+admin.site.register(Calendar)
+admin.site.register(Event, EventAdmin)

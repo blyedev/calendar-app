@@ -20,10 +20,22 @@ INSTALLED_APPS = [
     "health_check.db",
     "health_check.cache",
     "health_check.contrib.migrations",
-    "rest_framework",
     "corsheaders",
+    "rest_framework",
+    "knox",
+    "auth_app",
     "calendar_app",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "knox.auth.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
