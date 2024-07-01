@@ -6,8 +6,8 @@ from django.db import models
 
 class Calendar(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    uid = models.CharField(
-        max_length=255, unique=True, default=uuid.uuid4, editable=False
+    uid = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, unique=True
     )
 
     name = models.CharField(max_length=255)
