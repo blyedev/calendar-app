@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions
 from rest_framework.exceptions import PermissionDenied
 
@@ -24,19 +25,20 @@ class CalendarRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return Calendar.objects.filter(user=self.request.user)
 
 
-class EventListCreateView(generics.ListCreateAPIView):
+class CalendarEventListCreateView(generics.ListCreateAPIView):
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Event.objects.filter(calendar__user=self.request.user)
+        calendar = get_object_or_404(
+            Calendar, pk=self.kwargs["calendar_pk"], user=self.request.user
+        )
+        return Event.objects.filter(calendar=calendar)
 
     def perform_create(self, serializer):
-        calendar = Calendar.objects.get(pk=self.request.data["calendar"])
-        if calendar.user != self.request.user:
-            raise PermissionDenied(
-                "You do not have permission to add an event to this calendar."
-            )
+        calendar = get_object_or_404(
+            Calendar, pk=self.kwargs["calendar_pk"], user=self.request.user
+        )
         serializer.save(calendar=calendar)
 
 
