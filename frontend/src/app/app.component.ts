@@ -1,7 +1,6 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
