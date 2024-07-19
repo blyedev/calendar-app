@@ -7,6 +7,7 @@ class CalendarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Calendar
         fields = ["user", "uid", "name", "description", "dtstamp", "last_modified"]
+        read_only_fields = ("user", "uid", "dtstamp", "last_modified")
 
 
 class RecurrenceRuleSerializer(serializers.ModelSerializer):
@@ -31,6 +32,7 @@ class EventSerializer(serializers.ModelSerializer):
             "last_modified",
             "rrule",
         ]
+        read_only_fields = ("uid", "dtstamp", "last_modified")
 
     def create(self, validated_data):
         rrule_data = validated_data.pop("rrule", None)

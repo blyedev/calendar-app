@@ -47,7 +47,7 @@ export class AuthService {
   }
 
   login(credentials: Credentials): Observable<AuthResponse> {
-    const endpoint = `${this.apiUrl}/rest/login/`;
+    const endpoint = `${this.apiUrl}/knox/login/`;
 
     return this.http.post<AuthResponse>(endpoint, credentials).pipe(
       tap({
@@ -62,8 +62,19 @@ export class AuthService {
     );
   }
 
-  logout(): void {
-    this.isAuthSubject.next(false);
-    this.router.navigate(['/login']);
+  logout(): Observable<void> {
+    const endpoint = `${this.apiUrl}/knox/logout/`;
+
+    return this.http.post<any>(endpoint, null).pipe(
+      tap({
+        next: () => {
+          this.isAuthSubject.next(false);
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      }),
+    );
   }
 }

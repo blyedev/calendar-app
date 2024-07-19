@@ -1,7 +1,14 @@
-<nav>
-  <a [routerLink]="['/']"> Home </a>
-  <a [routerLink]="['/login']"> Login </a>
-  <a [routerLink]="['/calendar']"> Calendar </a>
-</nav>
+<header>
+  <img src="favicon.ico" />
+  <nav>
+    <a [routerLink]="['/']"> Home </a>
+    <a [routerLink]="['/calendar']"> Calendar </a>
+  </nav>
+  @if (authService.isAuth$ | async; as isAuth) {
+    <a (click)="logout()" class="cta"> Logout </a>
+  } @else {
+    <a [routerLink]="['/login']" class="cta"> Login </a>
+  }
+</header>
 
 <router-outlet />

@@ -1,11 +1,13 @@
 from django.contrib.auth import login
-from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie
 from knox.views import LoginView as KnoxLoginView
+from knox.views import LogoutAllView as KnoxLogoutView
 from rest_framework import permissions, status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
+from rest_framework.settings import api_settings
 
 
 class CheckAuthenticationView(GenericAPIView):
@@ -27,3 +29,7 @@ class LoginView(KnoxLoginView):
         user = serializer.validated_data["user"]
         login(request, user)
         return super(LoginView, self).post(request, format=None)
+
+
+class LogoutView(KnoxLogoutView):
+    authentication_classes = api_settings.DEFAULT_AUTHENTICATION_CLASSES
