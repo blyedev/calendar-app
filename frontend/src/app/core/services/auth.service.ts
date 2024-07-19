@@ -1,38 +1,65 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment.development';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import {
+  AuthPingResponse,
+  AuthResponse,
+  Credentials,
+} from '../models/auth.models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
+  private apiUrl = environment.apiUrl + '/auth';
 
-  private apiUrl = environment.apiUrl;
   private isAuthSubject: BehaviorSubject<boolean>;
   public isAuth$: Observable<boolean>;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {
     this.isAuthSubject = new BehaviorSubject<boolean>(false);
     this.isAuth$ = this.isAuthSubject.asObservable();
   }
 
-  login(credentials: { username: string, password: string }): void {
-    const endpoint = `${this.apiUrl}/auth/login/`;
-    this.http.post(endpoint, credentials)
-      .subscribe({
-        next: (x) => {
-          console.log('Observer got a next value: ' + x);
+  checkSession(): Observable<AuthPingResponse> {
+    const endpoint = `${this.apiUrl}/check`;
+
+    return this.http.get<AuthPingResponse>(endpoint).pipe(
+      tap({
+        next: (res: AuthPingResponse) => {
+          if (res.is_authenticated) {
+            console.log('User already has a valid session');
+          } else {
+            console.log('User does not have a valid session');
+          }
+          this.isAuthSubject.next(res.is_authenticated);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      }),
+    );
+  }
+
+  login(credentials: Credentials): Observable<AuthResponse> {
+    const endpoint = `${this.apiUrl}/rest/login/`;
+
+    return this.http.post<AuthResponse>(endpoint, credentials).pipe(
+      tap({
+        next: (res: AuthResponse) => {
+          console.log('Login succeeded with response: ' + JSON.stringify(res));
           this.isAuthSubject.next(true);
         },
         error: (err) => {
-          console.error('Observer got an error: ' + err)
+          console.error(err);
         },
-        complete: () => {
-          console.log('Observer got a complete notification')
-        },
-      });
+      }),
+    );
   }
 
   logout(): void {
