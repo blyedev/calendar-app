@@ -1,6 +1,5 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions
-from rest_framework.exceptions import PermissionDenied
 
 from .models import Calendar, Event
 from .serializers import CalendarSerializer, EventSerializer
