@@ -17,7 +17,7 @@ export class CalendarAPIService {
     const endpoint = `${this.apiUrl}/`;
 
     return this.http
-      .post<CalendarAPIResponse>(endpoint, this.calendarToMessage(calendar))
+      .put<CalendarAPIResponse>(endpoint, this.calendarToMessage(calendar))
       .pipe(map(this.calendarFromResponse));
   }
 
@@ -41,7 +41,7 @@ export class CalendarAPIService {
     const endpoint = `${this.apiUrl}/${calendar.uid}/`;
 
     return this.http
-      .put<CalendarAPIResponse>(endpoint, this.calendarToMessage(calendar))
+      .patch<CalendarAPIResponse>(endpoint, this.calendarToMessage(calendar))
       .pipe(map(this.calendarFromResponse));
   }
 

@@ -10,14 +10,14 @@ export interface Calendar {
 }
 
 export interface CalendarEvent {
-  calendarUID?: string;
+  calendarUID: string;
   uid?: string;
 
   summary: string;
   description?: string;
   eventStart: Date;
   eventEnd: Date;
-  recurrenceRule?: RecurrenceRule;
+  recurrenceRule?: RecurrenceRule | null;
 
   createdAt?: Date;
   lastModified?: Date;

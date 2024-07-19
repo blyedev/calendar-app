@@ -14,6 +14,17 @@ export interface CalendarAPIResponse {
   last_modified: string;
 }
 
+export interface CalendarEventAPIMessage {
+  calendar: string;
+
+  summary: string;
+  description?: string;
+  dtstart: string;
+  dtend: string;
+
+  rrule?: RecurrenceRuleAPIResponse | null;
+}
+
 export interface CalendarEventAPIResponse {
   calendar: string;
   uid: string;
