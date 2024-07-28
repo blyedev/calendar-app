@@ -1,14 +1,11 @@
 import { Component } from '@angular/core';
-import { Calendar } from 'src/app/core/models/calendar.models';
-import { CalendarAPIService } from 'src/app/core/services/calendar-api.service';
+import { CalendarCanvasComponent } from '../calendar-canvas/calendar-canvas.component';
 
 @Component({
   selector: 'app-calendar-page',
   standalone: true,
-  imports: [],
+  imports: [CalendarCanvasComponent],
   templateUrl: './calendar-page.component.html',
   styleUrl: './calendar-page.component.css',
 })
-export class CalendarPageComponent {
-  constructor(private calendarService: CalendarAPIService) {}
-}
+export class CalendarPageComponent {}

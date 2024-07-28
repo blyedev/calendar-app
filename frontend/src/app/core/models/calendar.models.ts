@@ -1,31 +1,35 @@
-export interface Calendar {
-  user?: number;
-  uid?: string;
+interface CalendarObjectBase {
+  readonly uid?: string;
 
-  name: string;
-  description?: string;
-
-  createdAt?: Date;
-  lastModified?: Date;
+  readonly createdAt?: Date;
+  readonly lastModified?: Date;
 }
 
-export interface CalendarEvent {
-  calendarUID: string;
-  uid?: string;
+export interface Calendar extends CalendarObjectBase {
+  readonly user?: number;
 
-  summary: string;
-  description?: string;
-  eventStart: Date;
-  eventEnd: Date;
-  recurrenceRule?: RecurrenceRule | null;
+  readonly name: string;
+  readonly description?: string;
+}
 
-  createdAt?: Date;
-  lastModified?: Date;
+export interface CalendarEvent extends CalendarObjectBase {
+  readonly calendarUID: string;
+
+  readonly summary: string;
+  readonly description?: string;
+  readonly eventStart: Date;
+  readonly eventEnd: Date;
+  readonly recurrenceRule?: RecurrenceRule | null;
 }
 
 export interface RecurrenceRule {
-  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
-  interval?: number;
-  count?: number;
-  until?: Date;
+  readonly frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+  readonly interval?: number;
+  readonly count?: number;
+  readonly until?: Date;
+}
+
+export interface TimeSpan {
+  readonly start: Date;
+  readonly end: Date;
 }

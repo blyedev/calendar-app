@@ -1,32 +1,32 @@
-<app-week-container></app-week-container>
+<app-week-container [weekSpan]="weekSpan"></app-week-container>
 <div id="main-canvas">
-    <div class="background">
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-        <div class="hairline"></div>
-    </div>
-    @for (dayBounds of this.dayBoundsList; track dayBounds) {
-        <app-day-container [dayBounds]="dayBounds"></app-day-container>
-    }
+  <div class="background">
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+    <div class="hairline"></div>
+  </div>
+  @for (daySpan of this.daySpans; track daySpan) {
+    <app-day-container [daySpan]="daySpan"></app-day-container>
+  }
 </div>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { Observable, tap, ReplaySubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import {
   AuthPingResponse,
@@ -15,14 +15,14 @@ import {
 export class AuthService {
   private apiUrl = environment.apiUrl + '/auth';
 
-  private isAuthSubject: BehaviorSubject<boolean>;
+  private isAuthSubject: ReplaySubject<boolean>;
   public isAuth$: Observable<boolean>;
 
   constructor(
     private http: HttpClient,
     private router: Router,
   ) {
-    this.isAuthSubject = new BehaviorSubject<boolean>(false);
+    this.isAuthSubject = new ReplaySubject<boolean>(1);
     this.isAuth$ = this.isAuthSubject.asObservable();
   }
 
@@ -65,7 +65,7 @@ export class AuthService {
   logout(): Observable<void> {
     const endpoint = `${this.apiUrl}/knox/logout/`;
 
-    return this.http.post<any>(endpoint, null).pipe(
+    return this.http.post<void>(endpoint, null).pipe(
       tap({
         next: () => {
           this.isAuthSubject.next(false);

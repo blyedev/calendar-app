@@ -1,13 +1,13 @@
 export interface AuthPingResponse {
-  is_authenticated: boolean;
+  readonly is_authenticated: boolean;
 }
 
 export interface AuthResponse {
-  expiry: string;
-  token: string;
+  readonly expiry: string;
+  readonly token: string;
 }
 
 export interface Credentials {
-  username: string;
-  password: string;
+  readonly username: string;
+  readonly password: string;
 }

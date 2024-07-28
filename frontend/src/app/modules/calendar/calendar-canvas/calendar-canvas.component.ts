@@ -1,38 +1,52 @@
 import { Component } from '@angular/core';
-import { DayBounds } from 'src/app/core/models/day-bounds';
-import { WeekContainerComponent } from '../week-container/week-container/week-container.component';
+import { TimeSpan } from 'src/app/core/models/calendar.models';
 import { DayContainerComponent } from '../day-container/day-container/day-container.component';
+import { WeekContainerComponent } from '../week-container/week-container/week-container.component';
 
 @Component({
   selector: 'app-calendar-canvas',
   standalone: true,
   imports: [WeekContainerComponent, DayContainerComponent],
   templateUrl: './calendar-canvas.component.html',
-  styleUrls: ['./calendar-canvas.component.css']
+  styleUrls: ['./calendar-canvas.component.css'],
 })
 export class CalendarCanvasComponent {
-
-  dayBoundsList: DayBounds[] = [];
+  public weekSpan: TimeSpan;
+  public daySpans: TimeSpan[];
 
   constructor() {
-    for (let i = 0; i < 7; i++) {
-      this.dayBoundsList.push(this.getDayBounds(new Date, i));
+    const now: Date = new Date();
+
+    this.weekSpan = this.getWeekSpanFromDate(now);
+    this.daySpans = this.getDaySpans(this.weekSpan.start, 7);
+  }
+
+  private getWeekSpanFromDate(date: Date): TimeSpan {
+    const weekStart = new Date(date);
+    const mondayOffset = weekStart.getDay() > 0 ? weekStart.getDay() - 1 : 6;
+    weekStart.setDate(weekStart.getDate() - mondayOffset);
+    weekStart.setHours(0, 0, 0, 0);
+
+    const weekEnd: Date = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 7);
+
+    return { start: weekStart, end: weekEnd };
+  }
+
+  private getDaySpans(startDate: Date, count: number): TimeSpan[] {
+    const daySpans: TimeSpan[] = [];
+
+    const currDate = new Date(startDate);
+    for (let i = 0; i < count; i++) {
+      const dayStart = new Date(currDate);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(dayStart);
+      dayEnd.setDate(dayEnd.getDate() + 1);
+
+      daySpans.push({ start: dayStart, end: dayEnd });
+      currDate.setDate(currDate.getDate() + 1);
     }
+
+    return daySpans;
   }
-
-  private getDayBounds(currentDate: Date, dayIndex: number): DayBounds {
-    const currentWeekStart = new Date(currentDate);
-    const mondayOffset = currentWeekStart.getDay() > 0 ? currentWeekStart.getDay() - 1 : 6;
-    currentWeekStart.setDate(currentWeekStart.getDate() - mondayOffset);
-    currentWeekStart.setHours(0, 0, 0, 0);
-
-    // Create dayStart and dayEnd based on the given dayIndex
-    const dayStart = new Date(currentWeekStart);
-    dayStart.setDate(dayStart.getDate() + dayIndex);
-    const dayEnd = new Date(dayStart);
-    dayEnd.setDate(dayEnd.getDate() + 1);
-
-    return { dayStart, dayEnd };
-  }
-
 }

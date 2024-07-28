@@ -60,12 +60,10 @@ export class CalendarEventAPIService {
       .pipe(map(this.calendarEventFromResponse));
   }
 
-  deleteEvent(uid: string): Observable<CalendarEvent> {
+  deleteEvent(uid: string): Observable<void> {
     const endpoint = `${this.apiUrl}/${uid}/`;
 
-    return this.http
-      .delete<CalendarEventAPIResponse>(endpoint)
-      .pipe(map(this.calendarEventFromResponse));
+    return this.http.delete<void>(endpoint);
   }
 
   private calendarEventFromResponse(

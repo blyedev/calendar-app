@@ -1,2 +1,5 @@
-<p>[{{ event.value.id }}] {{ event.value.name }}</p>
-<p>{{ event.value.startDateTime.getHours() }} - {{ event.value.endDateTime.getHours() }}</p>
+<p>[x] {{ event.event.summary }}</p>
+<p>
+  {{ event.event.eventStart.getHours() }} -
+  {{ event.event.eventEnd.getHours() }}
+</p>
