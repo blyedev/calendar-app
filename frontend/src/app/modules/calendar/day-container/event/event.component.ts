@@ -1,5 +1,5 @@
 import { Component, HostBinding, Input } from '@angular/core';
-import { TimeSpan } from 'src/app/core/models/calendar.models';
+import { Interval } from 'src/app/core/models/calendar.models';
 import { DayPosEvent } from '../../models/day-positioning.models';
 
 @Component({
@@ -11,11 +11,11 @@ import { DayPosEvent } from '../../models/day-positioning.models';
 })
 export class EventComponent {
   @Input({ required: true }) event!: DayPosEvent;
-  @Input({ required: true }) dayBounds!: TimeSpan;
+  @Input({ required: true }) dayBounds!: Interval;
 
   @HostBinding('style.top.px')
   get topPosition(): number {
-    const startTime = this.event.primAxisPos.startTime;
+    const startTime = this.event.primAxisPos.start;
     const hours = startTime.getHours();
     const minutes = startTime.getMinutes();
     return (hours + minutes / 60) * 48;
@@ -23,13 +23,13 @@ export class EventComponent {
 
   @HostBinding('style.height.px')
   get eventHeight(): number {
-    const startDateTime = this.event.primAxisPos.startTime;
+    const startDateTime = this.event.primAxisPos.start;
     const startHour = startDateTime.getHours();
     const startMinutes = startDateTime.getMinutes();
     const startTime = startHour + startMinutes / 60;
 
     // get endhour and minute
-    const endDateTime = this.event.primAxisPos.endTime;
+    const endDateTime = this.event.primAxisPos.end;
     let endHour = endDateTime.getHours();
     if (endDateTime.valueOf() == this.dayBounds.end.valueOf()) {
       endHour = 24;

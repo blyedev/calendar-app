@@ -1,26 +1,27 @@
-import { CalendarEvent, TimeSpan } from 'src/app/core/models/calendar.models';
+import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
 import {
-  calculateDayOffset,
-  calEventComparator,
-  ifDaysCollide,
+  compareCalendarEvents,
+  eventDaysOverlap,
 } from './calendar-event.utils';
 import {
   WeekPartPosEvent,
   WeekPosEvent,
 } from '../models/week-positioning.models';
 import { reduceToMatrix } from './positioning-utils';
+import { calculateDaysDuration } from './interval.utils';
 
 const addWeekPrimPos =
-  (weekSpan: TimeSpan) =>
+  (weekSpan: Interval) =>
   (event: CalendarEvent): WeekPartPosEvent => {
     const startIndex = Math.max(
       0,
-      calculateDayOffset(weekSpan.start, event.eventStart),
+      calculateDaysDuration({ start: weekSpan.start, end: event.start }),
     );
 
     const daySpan = Math.min(
-      calculateDayOffset(weekSpan.start, weekSpan.end) - 1 - startIndex,
-      calculateDayOffset(weekSpan.start, event.eventEnd) - startIndex,
+      calculateDaysDuration(weekSpan) - 1 - startIndex,
+      calculateDaysDuration({ start: weekSpan.start, end: event.end }) -
+        startIndex,
     );
 
     return {
@@ -43,15 +44,14 @@ const addWeekSecPos =
     };
   };
 
-export const weekPositionEvents = (
-  events: ReadonlyArray<CalendarEvent>,
-  weekSpan: TimeSpan,
-): ReadonlyArray<WeekPosEvent> => {
-  return events
-    .toSorted(calEventComparator)
-    .map(addWeekPrimPos(weekSpan))
-    .reduce(reduceToMatrix<WeekPartPosEvent>(ifDaysCollide), [])
-    .flatMap((evList, i) => {
-      return evList.map(addWeekSecPos(i));
-    });
-};
+export const weekPositionEvents =
+  (weekSpan: Interval) =>
+  (events: ReadonlyArray<CalendarEvent>): ReadonlyArray<WeekPosEvent> => {
+    return events
+      .toSorted(compareCalendarEvents)
+      .map(addWeekPrimPos(weekSpan))
+      .reduce(reduceToMatrix<WeekPartPosEvent>(eventDaysOverlap), [])
+      .flatMap((evList, i) => {
+        return evList.map(addWeekSecPos(i));
+      });
+  };

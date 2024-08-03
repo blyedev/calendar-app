@@ -5,13 +5,17 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { CalendarEvent, TimeSpan } from 'src/app/core/models/calendar.models';
+import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
 import { EventComponent } from '../event/event.component';
 import { Subscription, map } from 'rxjs';
 import { CalendarDataService } from '../../services/calendar-data.service';
 import { weekPositionEvents } from '../../utils/week-positioning.utils';
-import { filterFullDay } from '../../utils/calendar-event.utils';
+import {
+  isFullDay,
+  isOverlappingInterval,
+} from '../../utils/calendar-event.utils';
 import { WeekPosEvent } from '../../models/week-positioning.models';
+import { filterList } from 'src/app/core/operators/filter-list.operator';
 
 @Component({
   selector: 'app-week-container',
@@ -21,7 +25,7 @@ import { WeekPosEvent } from '../../models/week-positioning.models';
   styleUrl: './week-container.component.css',
 })
 export class WeekContainerComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) weekSpan!: TimeSpan;
+  @Input({ required: true }) weekSpan!: Interval;
 
   positionedEvents: readonly WeekPosEvent[];
   dataSubscription: Subscription | undefined;
@@ -42,8 +46,9 @@ export class WeekContainerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.dataSubscription = this.calendarDataService.events$
       .pipe(
-        map((list: CalendarEvent[]) => list.filter(filterFullDay)),
-        map((list: CalendarEvent[]) => weekPositionEvents(list, this.weekSpan)),
+        filterList(isOverlappingInterval(this.weekSpan)),
+        filterList(isFullDay),
+        map(weekPositionEvents(this.weekSpan)),
       )
       .subscribe({
         next: (val: readonly WeekPosEvent[]): void => {

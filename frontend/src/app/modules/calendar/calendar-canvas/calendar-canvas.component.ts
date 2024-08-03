@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TimeSpan } from 'src/app/core/models/calendar.models';
+import { Interval } from 'src/app/core/models/calendar.models';
 import { DayContainerComponent } from '../day-container/day-container/day-container.component';
 import { WeekContainerComponent } from '../week-container/week-container/week-container.component';
 
@@ -11,8 +11,8 @@ import { WeekContainerComponent } from '../week-container/week-container/week-co
   styleUrls: ['./calendar-canvas.component.css'],
 })
 export class CalendarCanvasComponent {
-  public weekSpan: TimeSpan;
-  public daySpans: TimeSpan[];
+  public weekSpan: Interval;
+  public daySpans: Interval[];
 
   constructor() {
     const now: Date = new Date();
@@ -21,7 +21,7 @@ export class CalendarCanvasComponent {
     this.daySpans = this.getDaySpans(this.weekSpan.start, 7);
   }
 
-  private getWeekSpanFromDate(date: Date): TimeSpan {
+  private getWeekSpanFromDate(date: Date): Interval {
     const weekStart = new Date(date);
     const mondayOffset = weekStart.getDay() > 0 ? weekStart.getDay() - 1 : 6;
     weekStart.setDate(weekStart.getDate() - mondayOffset);
@@ -33,8 +33,8 @@ export class CalendarCanvasComponent {
     return { start: weekStart, end: weekEnd };
   }
 
-  private getDaySpans(startDate: Date, count: number): TimeSpan[] {
-    const daySpans: TimeSpan[] = [];
+  private getDaySpans(startDate: Date, count: number): Interval[] {
+    const daySpans: Interval[] = [];
 
     const currDate = new Date(startDate);
     for (let i = 0; i < count; i++) {

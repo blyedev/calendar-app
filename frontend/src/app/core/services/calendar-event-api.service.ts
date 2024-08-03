@@ -75,8 +75,8 @@ export class CalendarEventAPIService {
 
       summary: apiResponse.summary,
       description: apiResponse.description,
-      eventStart: new Date(apiResponse.dtstart),
-      eventEnd: new Date(apiResponse.dtend),
+      start: new Date(apiResponse.dtstart),
+      end: new Date(apiResponse.dtend),
       recurrenceRule: null,
 
       createdAt: new Date(apiResponse.dtstamp),
@@ -92,8 +92,8 @@ export class CalendarEventAPIService {
 
       summary: calendarEvent.summary,
       description: calendarEvent.description,
-      dtstart: calendarEvent.eventStart.toISOString(),
-      dtend: calendarEvent.eventEnd.toISOString(),
+      dtstart: calendarEvent.start.toISOString(),
+      dtend: calendarEvent.end.toISOString(),
 
       rrule: null,
     };

@@ -1,25 +1,23 @@
-import { CalendarEvent, TimeSpan } from 'src/app/core/models/calendar.models';
+import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
 import {
-  calEventComparator,
-  ifEventBlocksVisualBox,
-  ifEventsOverlap,
+  compareCalendarEvents,
+  eventOverlapsWithVisBox,
+  eventsOverlap,
 } from './calendar-event.utils';
 import { DayPartPosEvent, DayPosEvent } from '../models/day-positioning.models';
 import { reduceToMatrix } from './positioning-utils';
 import { ReadonlyMatrix } from '../models/positioning.models';
 
 const addDayPrimPos =
-  (weekSpan: TimeSpan) =>
+  (weekSpan: Interval) =>
   (event: CalendarEvent): DayPartPosEvent => {
     return {
       event: event,
       primAxisPos: {
-        startTime: new Date(
-          Math.max(event.eventStart.getTime(), weekSpan.start.getTime()),
+        start: new Date(
+          Math.max(event.start.getTime(), weekSpan.start.getTime()),
         ),
-        endTime: new Date(
-          Math.min(event.eventEnd.getTime(), weekSpan.end.getTime()),
-        ),
+        end: new Date(Math.min(event.end.getTime(), weekSpan.end.getTime())),
       },
     };
   };
@@ -33,10 +31,10 @@ const getLeft = (
     return 0;
   }
   var x = alreadyPositioned[i - 1].filter((posEv) =>
-    ifEventsOverlap(posEv.event, ev.event),
+    eventsOverlap(posEv.event, ev.event),
   );
   var y = x.filter((posEv) =>
-    ifEventBlocksVisualBox(posEv.primAxisPos.startTime, ev.event),
+    eventOverlapsWithVisBox(ev.event, posEv.primAxisPos),
   );
 
   if (y.length > 0) {
@@ -57,7 +55,7 @@ const getCollidingTreeDepth = (
 
   const y = arr[i + 1].filter((childEv) => {
     return parents.some((ev) =>
-      ifEventBlocksVisualBox(ev.primAxisPos.startTime, childEv.event),
+      eventOverlapsWithVisBox(childEv.event, ev.primAxisPos),
     );
   });
 
@@ -66,7 +64,7 @@ const getCollidingTreeDepth = (
   }
 
   const x = arr[i + 1].filter((childEv) => {
-    return parents.some((ev) => ifEventsOverlap(ev.event, childEv.event));
+    return parents.some((ev) => eventsOverlap(ev.event, childEv.event));
   });
 
   if (x.length == 0) {
@@ -86,7 +84,7 @@ const getNonChildCollider = (
     .filter((testedEvent) => {
       return !currentChildren.some((child) => child.event == testedEvent.event);
     })
-    .filter((nonChild) => ifEventsOverlap(ev.event, nonChild.event));
+    .filter((nonChild) => eventsOverlap(ev.event, nonChild.event));
 
   if (nonChildColliders.length > 0) {
     return i;
@@ -98,7 +96,7 @@ const getNonChildCollider = (
 
   const newChildren = arr[i + 1].filter((childEv) => {
     return currentChildren.some((event) =>
-      ifEventsOverlap(event.event, childEv.event),
+      eventsOverlap(event.event, childEv.event),
     );
   });
 
@@ -147,14 +145,13 @@ const testReduce = (
   return [...acc, postionedList];
 };
 
-export const dayPositionEvents = (
-  events: ReadonlyArray<CalendarEvent>,
-  daySpan: TimeSpan,
-): ReadonlyArray<DayPosEvent> => {
-  return events
-    .toSorted(calEventComparator)
-    .map(addDayPrimPos(daySpan))
-    .reduce(reduceToMatrix<DayPartPosEvent>(ifEventsOverlap), [])
-    .reduce(testReduce, [])
-    .flat();
-};
+export const dayPositionEvents =
+  (daySpan: Interval) =>
+  (events: ReadonlyArray<CalendarEvent>): ReadonlyArray<DayPosEvent> => {
+    return events
+      .toSorted(compareCalendarEvents)
+      .map(addDayPrimPos(daySpan))
+      .reduce(reduceToMatrix<DayPartPosEvent>(eventsOverlap), [])
+      .reduce(testReduce, [])
+      .flat();
+  };

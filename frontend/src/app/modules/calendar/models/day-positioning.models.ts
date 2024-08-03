@@ -1,4 +1,4 @@
-import { CalendarEvent } from 'src/app/core/models/calendar.models';
+import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
 
 export interface DayPosEvent extends DayPartPosEvent {
   readonly secAxisPos: SecAxisPos;
@@ -6,12 +6,7 @@ export interface DayPosEvent extends DayPartPosEvent {
 
 export interface DayPartPosEvent {
   event: CalendarEvent;
-  readonly primAxisPos: PrimAxisPos;
-}
-
-interface PrimAxisPos {
-  readonly startTime: Date;
-  readonly endTime: Date;
+  readonly primAxisPos: Interval;
 }
 
 interface SecAxisPos {
