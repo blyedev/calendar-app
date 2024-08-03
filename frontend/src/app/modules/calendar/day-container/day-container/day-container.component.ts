@@ -1,8 +1,9 @@
-import { Component, Signal, inject, input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Interval } from 'src/app/core/models/calendar.models';
 import { CalendarDataService } from '../../services/calendar-data.service';
 import { DayPosEvent } from '../../models/day-positioning.models';
-import { map, switchMap } from 'rxjs';
+import { Subscription } from 'rxjs/internal/Subscription';
+import { map } from 'rxjs';
 import {
   isNonFullDay,
   isOverlappingInterval,
@@ -10,7 +11,6 @@ import {
 import { dayPositionEvents } from '../../utils/day-positioning.utils';
 import { EventComponent } from '../event/event.component';
 import { filterList } from 'src/app/core/operators/filter-list.operator';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-day-container',
@@ -19,24 +19,31 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
   templateUrl: './day-container.component.html',
   styleUrl: './day-container.component.css',
 })
-export class DayContainerComponent {
-  private readonly calendarDataService = inject(CalendarDataService);
-  readonly daySpan = input.required<Interval>();
+export class DayContainerComponent implements OnInit, OnDestroy {
+  @Input({ required: true }) daySpan!: Interval;
 
-  readonly positionedEvents: Signal<readonly DayPosEvent[]>;
+  positionedEvents: readonly DayPosEvent[];
+  dataSubscription: Subscription | undefined;
 
-  constructor() {
-    this.positionedEvents = toSignal(
-      toObservable(this.daySpan).pipe(
-        switchMap((daySpan: Interval) =>
-          this.calendarDataService.events$.pipe(
-            filterList(isOverlappingInterval(daySpan)),
-            filterList(isNonFullDay),
-            map(dayPositionEvents(daySpan)),
-          ),
-        ),
-      ),
-      { initialValue: [] },
-    );
+  constructor(private calendarDataService: CalendarDataService) {
+    this.positionedEvents = [];
+  }
+
+  ngOnInit(): void {
+    this.dataSubscription = this.calendarDataService.events$
+      .pipe(
+        filterList(isOverlappingInterval(this.daySpan)),
+        filterList(isNonFullDay),
+        map(dayPositionEvents(this.daySpan)),
+      )
+      .subscribe({
+        next: (val: readonly DayPosEvent[]): void => {
+          this.positionedEvents = val;
+        },
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.dataSubscription?.unsubscribe();
   }
 }
