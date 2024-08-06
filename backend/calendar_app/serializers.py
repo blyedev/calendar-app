@@ -22,7 +22,7 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = [
-            "calendar",
+            "calendar_id",
             "uid",
             "summary",
             "description",
