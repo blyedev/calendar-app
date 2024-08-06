@@ -1,7 +1,6 @@
 :host {
   position: absolute;
   box-sizing: border-box;
-  height: 24px;
   background-color: blueviolet;
   border-radius: 4px;
   border: 2px white solid;
@@ -13,5 +12,8 @@
 }
 
 p {
-  margin: 0;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 12px;
+  margin: 0 0 4px;
 }

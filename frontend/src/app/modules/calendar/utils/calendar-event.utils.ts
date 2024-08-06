@@ -1,9 +1,6 @@
 import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
-import {
-  intervalDaysOverlap,
-  intervalOverlapsWithAny,
-  intervalsOverlap,
-} from './interval.utils';
+import { intervalOverlapsWithAny, intervalsOverlap } from './interval.utils';
+import { intervalDaysOverlap } from './interval-day.utils';
 
 export function eventsOverlap(...events: CalendarEvent[]): boolean {
   return intervalsOverlap(...events);
@@ -13,7 +10,7 @@ export function eventDaysOverlap(...events: CalendarEvent[]): boolean {
   return intervalDaysOverlap(...events);
 }
 
-export function getVisBox(interval: Interval): Interval {
+export function calculateVisBox(interval: Interval): Interval {
   const visBoxStart = new Date(interval.start);
   const visBoxEnd = new Date(visBoxStart);
   visBoxEnd.setMinutes(visBoxEnd.getMinutes() + 45);
@@ -28,7 +25,7 @@ export function eventOverlapsWithVisBox(
   event: CalendarEvent,
   ...visBoxEvents: Interval[]
 ): boolean {
-  return intervalOverlapsWithAny(event, ...visBoxEvents.map(getVisBox));
+  return intervalOverlapsWithAny(event, ...visBoxEvents.map(calculateVisBox));
 }
 
 export const isFullDay = (event: CalendarEvent): boolean => {

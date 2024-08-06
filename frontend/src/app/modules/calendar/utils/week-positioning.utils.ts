@@ -1,57 +1,51 @@
 import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
 import {
-  compareCalendarEvents,
-  eventDaysOverlap,
-} from './calendar-event.utils';
-import {
-  WeekPartPosEvent,
-  WeekPosEvent,
-} from '../models/week-positioning.models';
-import { reduceToMatrix } from './positioning-utils';
-import { calculateDaysDuration } from './interval.utils';
+  PosEvent,
+  AdjustEventFunction,
+  MatrixPosEvent,
+} from '../models/positioning.models';
+import { adjustIntervalDay, calculateDaysDuration } from './interval-day.utils';
+import { getMatrixConstructor } from './positioning-utils';
+import { eventDaysOverlap } from './calendar-event.utils';
 
-const addWeekPrimPos =
-  (weekSpan: Interval) =>
-  (event: CalendarEvent): WeekPartPosEvent => {
-    const startIndex = Math.max(
-      0,
-      calculateDaysDuration({ start: weekSpan.start, end: event.start }),
-    );
+const adjustEventDay: AdjustEventFunction = (interval) => (event) => ({
+  event: event,
+  displayInterval: adjustIntervalDay(interval, event),
+});
 
-    const daySpan = Math.min(
-      calculateDaysDuration(weekSpan) - 1 - startIndex,
-      calculateDaysDuration({ start: weekSpan.start, end: event.end }) -
-        startIndex,
-    );
-
+const calculatePosition =
+  (timespan: Interval) =>
+  (matrixEvent: MatrixPosEvent): PosEvent => {
+    const timespanDur = calculateDaysDuration(timespan);
     return {
-      event: event,
-      primAxisPos: {
-        startIndex: startIndex,
-        daySpan: daySpan,
+      ...matrixEvent,
+      vertical: {
+        top: 24 * matrixEvent.layer,
+        height: 24,
+      },
+      horizontal: {
+        left:
+          calculateDaysDuration({
+            start: timespan.start,
+            end: matrixEvent.displayInterval.start,
+          }) / timespanDur,
+        width: calculateDaysDuration(matrixEvent.displayInterval) / timespanDur,
       },
     };
   };
 
-const addWeekSecPos =
-  (row: number) =>
-  (event: WeekPartPosEvent): WeekPosEvent => {
-    return {
-      ...event,
-      secAxisPos: {
-        row: row,
-      },
-    };
-  };
+export const gridPositionEvents =
+  (timespan: Interval) =>
+  (events: ReadonlyArray<CalendarEvent>): ReadonlyArray<PosEvent> => {
+    const constructRowMatrix = getMatrixConstructor(
+      timespan,
+      adjustEventDay,
+      eventDaysOverlap,
+    );
 
-export const weekPositionEvents =
-  (weekSpan: Interval) =>
-  (events: ReadonlyArray<CalendarEvent>): ReadonlyArray<WeekPosEvent> => {
-    return events
-      .toSorted(compareCalendarEvents)
-      .map(addWeekPrimPos(weekSpan))
-      .reduce(reduceToMatrix<WeekPartPosEvent>(eventDaysOverlap), [])
-      .flatMap((evList, i) => {
-        return evList.map(addWeekSecPos(i));
-      });
+    const matrix = constructRowMatrix(events);
+
+    return matrix.flatMap((evList) => {
+      return evList.map(calculatePosition(timespan));
+    });
   };

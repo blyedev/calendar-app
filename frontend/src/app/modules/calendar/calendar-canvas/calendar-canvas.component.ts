@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Interval } from 'src/app/core/models/calendar.models';
-import { DayContainerComponent } from '../day-container/day-container/day-container.component';
-import { WeekContainerComponent } from '../week-container/week-container/week-container.component';
+import { WeekContainerComponent } from '../week-container/week-container.component';
+import { DayContainerComponent } from '../day-container/day-container.component';
 
 @Component({
   selector: 'app-calendar-canvas',

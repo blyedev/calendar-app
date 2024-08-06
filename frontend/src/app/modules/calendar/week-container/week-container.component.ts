@@ -5,17 +5,17 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
+import { Interval } from 'src/app/core/models/calendar.models';
 import { EventComponent } from '../event/event.component';
 import { Subscription, map } from 'rxjs';
-import { CalendarDataService } from '../../services/calendar-data.service';
-import { weekPositionEvents } from '../../utils/week-positioning.utils';
+import { filterList } from 'src/app/core/operators/filter-list.operator';
+import { PosEvent } from '../models/positioning.models';
+import { CalendarDataService } from '../services/calendar-data.service';
 import {
   isFullDay,
   isOverlappingInterval,
-} from '../../utils/calendar-event.utils';
-import { WeekPosEvent } from '../../models/week-positioning.models';
-import { filterList } from 'src/app/core/operators/filter-list.operator';
+} from '../utils/calendar-event.utils';
+import { gridPositionEvents } from '../utils/week-positioning.utils';
 
 @Component({
   selector: 'app-week-container',
@@ -27,7 +27,7 @@ import { filterList } from 'src/app/core/operators/filter-list.operator';
 export class WeekContainerComponent implements OnInit, OnDestroy {
   @Input({ required: true }) weekSpan!: Interval;
 
-  positionedEvents: readonly WeekPosEvent[];
+  positionedEvents: readonly PosEvent[];
   dataSubscription: Subscription | undefined;
 
   private rows: number;
@@ -48,12 +48,12 @@ export class WeekContainerComponent implements OnInit, OnDestroy {
       .pipe(
         filterList(isOverlappingInterval(this.weekSpan)),
         filterList(isFullDay),
-        map(weekPositionEvents(this.weekSpan)),
+        map(gridPositionEvents(this.weekSpan)),
       )
       .subscribe({
-        next: (val: readonly WeekPosEvent[]): void => {
+        next: (val: readonly PosEvent[]): void => {
           this.positionedEvents = val;
-          this.rows = Math.max(...val.map((ev) => ev.secAxisPos.row + 1), 0);
+          this.rows = Math.max(...val.map((ev) => ev.layer + 1), 0);
         },
       });
   }

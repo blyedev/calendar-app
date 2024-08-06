@@ -23,50 +23,23 @@ export function intervalOverlapsWithAny(
   });
 }
 
-export function intervalDaysOverlap(...intervals: Interval[]): boolean {
-  const adjustedIntervals = intervals.map((interval) => {
-    const start = new Date(interval.start);
-    const end = new Date(interval.end);
-
-    start.setHours(0, 0, 0, 0);
-    end.setHours(0, 0, 0, 0);
-    if (end < interval.end) {
-      end.setDate(end.getDate() + 1);
-    }
-    return { start, end };
-  });
-
-  return intervalsOverlap(...adjustedIntervals);
-}
-
-export function intervalDayOverlapsWithAny(
-  original: Interval,
-  ...intervals: Interval[]
-): boolean {
-  return intervals.some((iv) => {
-    return intervalDaysOverlap(original, iv);
-  });
+export function adjustInterval(
+  referenceInterval: Interval,
+  targetInterval: Interval,
+): Interval {
+  const adjustedStart =
+    targetInterval.start < referenceInterval.start
+      ? new Date(referenceInterval.start)
+      : new Date(targetInterval.start);
+  const adjustedEnd =
+    targetInterval.end > referenceInterval.end
+      ? new Date(referenceInterval.end)
+      : new Date(targetInterval.end);
+  return { start: adjustedStart, end: adjustedEnd };
 }
 
 export function calculateUnixDuration(interval: Interval): number {
   const start = new Date(interval.start).getTime();
   const end = new Date(interval.end).getTime();
   return end - start;
-}
-
-export function calculateDaysDuration(interval: Interval): number {
-  const start = new Date(interval.start);
-  const end = new Date(interval.end);
-
-  start.setHours(0, 0, 0, 0);
-  end.setHours(0, 0, 0, 0);
-  if (end < interval.end) {
-    end.setDate(end.getDate() + 1);
-  }
-
-  const startTime = start.getTime();
-  const endTime = end.getTime();
-  const millisecondsPerDay = 24 * 60 * 60 * 1000;
-
-  return (endTime - startTime) / millisecondsPerDay;
 }
