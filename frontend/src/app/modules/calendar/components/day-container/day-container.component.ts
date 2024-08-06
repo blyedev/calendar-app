@@ -6,13 +6,13 @@ import { AsyncPipe } from '@angular/common';
 import { filterList } from 'src/app/core/operators/filter-list.operator';
 import { map } from 'rxjs/internal/operators/map';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { CalendarDataService } from '../services/calendar-data.service';
-import { PosEvent } from '../models/positioning.models';
+import { CalendarDataService } from '../../services/calendar-data.service';
+import { PosEvent } from '../../models/positioning.models';
 import {
   isNonFullDay,
   isOverlappingInterval,
-} from '../utils/calendar-event.utils';
-import { columnPositionEvents } from '../utils/day-positioning.utils';
+} from '../../utils/calendar-event.utils';
+import { columnPositionEvents } from '../../utils/day-positioning.utils';
 
 @Component({
   selector: 'app-day-container',

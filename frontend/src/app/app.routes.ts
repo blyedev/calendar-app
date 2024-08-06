@@ -19,7 +19,7 @@ export const routes: Routes = [
   {
     path: 'calendar',
     loadComponent: () =>
-      import('./modules/calendar/calendar-page/calendar-page.component').then(
+      import('./modules/calendar/calendar-page.component').then(
         (m) => m.CalendarPageComponent,
       ),
     canActivate: [authGuard],

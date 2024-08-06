@@ -1,6 +1,6 @@
 import { Component, HostListener, Input, inject } from '@angular/core';
 import { CalendarEvent } from 'src/app/core/models/calendar.models';
-import { CalendarDataService } from '../services/calendar-data.service';
+import { CalendarDataService } from '../../services/calendar-data.service';
 
 @Component({
   selector: 'app-event',

@@ -9,13 +9,13 @@ import { Interval } from 'src/app/core/models/calendar.models';
 import { EventComponent } from '../event/event.component';
 import { Subscription, map } from 'rxjs';
 import { filterList } from 'src/app/core/operators/filter-list.operator';
-import { PosEvent } from '../models/positioning.models';
-import { CalendarDataService } from '../services/calendar-data.service';
+import { PosEvent } from '../../models/positioning.models';
+import { CalendarDataService } from '../../services/calendar-data.service';
 import {
   isFullDay,
   isOverlappingInterval,
-} from '../utils/calendar-event.utils';
-import { gridPositionEvents } from '../utils/week-positioning.utils';
+} from '../../utils/calendar-event.utils';
+import { gridPositionEvents } from '../../utils/week-positioning.utils';
 
 @Component({
   selector: 'app-week-container',

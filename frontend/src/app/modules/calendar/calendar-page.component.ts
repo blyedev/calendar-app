@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CalendarCanvasComponent } from '../calendar-canvas/calendar-canvas.component';
+import { CalendarCanvasComponent } from './components/calendar-canvas/calendar-canvas.component';
 
 @Component({
   selector: 'app-calendar-page',
