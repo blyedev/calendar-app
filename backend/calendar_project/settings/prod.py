@@ -19,7 +19,6 @@ SECRET_KEY = get_env_variable("DJANGO_SECRET_KEY")
 
 DEBUG = False
 
-ALLOWED_HOSTS = ["calendar.blyedev.com"]
 
 try:
     METADATA_URI = os.environ["ECS_CONTAINER_METADATA_URI"]

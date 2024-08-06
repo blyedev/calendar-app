@@ -1,32 +1,50 @@
-FROM python:3.10-slim
+FROM python:3.12-slim as base
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl && \
+    apt-get install -y --no-install-recommends curl postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
-
 RUN useradd -m appuser;
-ENV PATH="/home/appuser/.local/bin:$PATH"
 
 USER appuser
 WORKDIR /home/appuser/app
 
+ENV PATH="/home/appuser/.local/bin:$PATH"
+
+RUN pip install --upgrade pip
+
 COPY --chown=appuser requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY --chown=appuser . .
+FROM base as dev
+
+ENV DJANGO_ENV development
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python manage.py health_check || exit 1
+
+ENTRYPOINT ["sh", "-c", \
+    "python manage.py migrate && \
+    python manage.py createsuperuser --noinput --username root || true && \
+    python manage.py runserver 0.0.0.0:8000"]
+
+CMD [""]
+
+EXPOSE 8000
+
+FROM base as prod
 
 ENV DJANGO_ENV prod
 
+COPY --chown=appuser . .
 RUN python manage.py collectstatic --noinput
 
 COPY --chown=appuser entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
-EXPOSE 8000
-
 ENTRYPOINT ["./entrypoint.sh"]
+
+EXPOSE 8000

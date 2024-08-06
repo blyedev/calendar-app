@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  angular:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      # target: dev
+    volumes:
+      - .:/app
+    ports:
+      - "4200:4200"
