@@ -1,0 +1,11 @@
+@for (event of this.positionedEvents(); track event) {
+  <app-event
+    [event]="event.event"
+    tabindex="0"
+    [style.top]="event.vertical.top + 'px'"
+    [style.height]="event.vertical.height + 'px'"
+    [style.left]="'calc(100% * ' + event.horizontal.left + ')'"
+    [style.width]="'calc(100% * ' + event.horizontal.width + ')'"
+  >
+  </app-event>
+}

@@ -1,0 +1,16 @@
+:host {
+  flex: 1;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  height: 100%;
+  position: relative;
+  border-right: #D7d7d7 1px solid;
+}
+
+app-drawn-event {
+  position: absolute;
+  left: 0;
+  box-sizing: border-box;
+  width: 100%;
+}
