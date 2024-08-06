@@ -17,7 +17,7 @@ def get_env_variable(var_name, default=None):
 
 SECRET_KEY = get_env_variable("DJANGO_SECRET_KEY")
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["calendar.blyedev.com"]
 CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS]
