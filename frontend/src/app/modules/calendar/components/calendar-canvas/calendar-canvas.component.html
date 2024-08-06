@@ -1,4 +1,4 @@
-<app-week-container [weekSpan]="weekSpan"></app-week-container>
+<app-row-container [timespan]="rowTimespan"></app-row-container>
 <div id="main-canvas">
   <div class="background">
     <div class="hairline"></div>
@@ -26,7 +26,7 @@
     <div class="hairline"></div>
     <div class="hairline"></div>
   </div>
-  @for (daySpan of this.daySpans; track daySpan) {
-    <app-day-container [daySpan]="daySpan"></app-day-container>
+  @for (colTSpan of this.columnTimespans; track colTSpan) {
+    <app-column-container [timespan]="colTSpan"></app-column-container>
   }
 </div>

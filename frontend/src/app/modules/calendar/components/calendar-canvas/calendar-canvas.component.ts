@@ -1,24 +1,24 @@
 import { Component } from '@angular/core';
 import { Interval } from 'src/app/core/models/calendar.models';
-import { WeekContainerComponent } from '../week-container/week-container.component';
-import { DayContainerComponent } from '../day-container/day-container.component';
+import { ColumnContainerComponent } from '../column-container/column-container.component';
+import { RowContainerComponent } from '../row-container/row-container.component';
 
 @Component({
   selector: 'app-calendar-canvas',
   standalone: true,
-  imports: [WeekContainerComponent, DayContainerComponent],
+  imports: [ColumnContainerComponent, RowContainerComponent],
   templateUrl: './calendar-canvas.component.html',
   styleUrls: ['./calendar-canvas.component.css'],
 })
 export class CalendarCanvasComponent {
-  public weekSpan: Interval;
-  public daySpans: Interval[];
+  public rowTimespan: Interval;
+  public columnTimespans: Interval[];
 
   constructor() {
     const now: Date = new Date();
 
-    this.weekSpan = this.getWeekSpanFromDate(now);
-    this.daySpans = this.getDaySpans(this.weekSpan.start, 7);
+    this.rowTimespan = this.getWeekSpanFromDate(now);
+    this.columnTimespans = this.getDaySpans(this.rowTimespan.start, 7);
   }
 
   private getWeekSpanFromDate(date: Date): Interval {

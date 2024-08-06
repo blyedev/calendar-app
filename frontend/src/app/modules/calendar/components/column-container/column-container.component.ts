@@ -12,24 +12,24 @@ import {
   isNonFullDay,
   isOverlappingInterval,
 } from '../../utils/calendar-event.utils';
-import { columnPositionEvents } from '../../utils/day-positioning.utils';
+import { columnPositionEvents } from '../../utils/column-positioning.utils';
 
 @Component({
-  selector: 'app-day-container',
+  selector: 'app-column-container',
   standalone: true,
   imports: [EventComponent, AsyncPipe],
-  templateUrl: './day-container.component.html',
-  styleUrls: ['./day-container.component.css'],
+  templateUrl: './column-container.component.html',
+  styleUrls: ['./column-container.component.css'],
 })
-export class DayContainerComponent {
+export class ColumnContainerComponent {
   private readonly calendarDataService = inject(CalendarDataService);
-  readonly daySpan = input.required<Interval>();
+  readonly timespan = input.required<Interval>();
 
   readonly positionedEvents: Signal<readonly PosEvent[]>;
 
   constructor() {
     this.positionedEvents = toSignal(
-      toObservable(this.daySpan).pipe(
+      toObservable(this.timespan).pipe(
         switchMap((daySpan: Interval) =>
           this.calendarDataService.events$.pipe(
             filterList(isOverlappingInterval(daySpan)),

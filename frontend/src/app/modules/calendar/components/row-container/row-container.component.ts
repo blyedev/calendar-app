@@ -15,17 +15,17 @@ import {
   isFullDay,
   isOverlappingInterval,
 } from '../../utils/calendar-event.utils';
-import { gridPositionEvents } from '../../utils/week-positioning.utils';
+import { gridPositionEvents } from '../../utils/row-positioning.utils';
 
 @Component({
-  selector: 'app-week-container',
+  selector: 'app-row-container',
   standalone: true,
   imports: [EventComponent],
-  templateUrl: './week-container.component.html',
-  styleUrl: './week-container.component.css',
+  templateUrl: './row-container.component.html',
+  styleUrl: './row-container.component.css',
 })
-export class WeekContainerComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) weekSpan!: Interval;
+export class RowContainerComponent implements OnInit, OnDestroy {
+  @Input({ required: true }) timespan!: Interval;
 
   positionedEvents: readonly PosEvent[];
   dataSubscription: Subscription | undefined;
@@ -46,9 +46,9 @@ export class WeekContainerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.dataSubscription = this.calendarDataService.events$
       .pipe(
-        filterList(isOverlappingInterval(this.weekSpan)),
+        filterList(isOverlappingInterval(this.timespan)),
         filterList(isFullDay),
-        map(gridPositionEvents(this.weekSpan)),
+        map(gridPositionEvents(this.timespan)),
       )
       .subscribe({
         next: (val: readonly PosEvent[]): void => {
