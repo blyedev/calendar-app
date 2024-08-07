@@ -38,8 +38,8 @@ ENV DJANGO_ENV prod
 COPY --chown=appuser . .
 RUN python manage.py collectstatic --noinput
 
-COPY --chown=appuser entrypoint.sh .
-RUN chmod +x entrypoint.sh
+# COPY --chown=appuser entrypoint.sh .
+# RUN chmod +x entrypoint.sh
 
 ENTRYPOINT ["sh", "-c", \
     "python manage.py migrate calendar_app zero && \
