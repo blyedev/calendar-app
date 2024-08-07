@@ -10,8 +10,7 @@ RUN apt-get update && \
 RUN useradd -m appuser;
 
 USER appuser
-WORKDIR /home/appuser
-# RUN chown -R appuser:appuser .
+WORKDIR /home/appuser/app
 
 ENV PATH="/home/appuser/.local/bin:$PATH"
 
