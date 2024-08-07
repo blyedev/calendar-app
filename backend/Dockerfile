@@ -40,12 +40,9 @@ ENV DJANGO_ENV prod
 COPY --chown=appuser . .
 RUN python manage.py collectstatic --noinput
 
-# COPY --chown=appuser entrypoint.sh .
-# RUN chmod +x entrypoint.sh
+COPY --chown=appuser entrypoint.sh .
+RUN chmod +x entrypoint.sh
 
-ENTRYPOINT ["sh", "-c", \
-    "python manage.py migrate && \
-    python manage.py createsuperuser --noinput --username root || true && \
-    gunicorn calendar_project.wsgi:application --bind 0.0.0.0:8000"]
+ENTRYPOINT ["./entrypoint.sh"]
 
 EXPOSE 8000
