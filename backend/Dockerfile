@@ -44,8 +44,7 @@ RUN python manage.py collectstatic --noinput
 # RUN chmod +x entrypoint.sh
 
 ENTRYPOINT ["sh", "-c", \
-    "python manage.py migrate calendar_app zero && \
-    python manage.py migrate && \
+    "python manage.py migrate && \
     python manage.py createsuperuser --noinput --username root || true && \
     gunicorn calendar_project.wsgi:application --bind 0.0.0.0:8000"]
 
