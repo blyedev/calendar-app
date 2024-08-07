@@ -23,6 +23,9 @@ FROM base as dev
 
 ENV DJANGO_ENV development
 
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python manage.py health_check || exit 1
+
 ENTRYPOINT ["sh", "-c", \
     "python manage.py migrate && \
     python manage.py createsuperuser --noinput --username root || true && \
