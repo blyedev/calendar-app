@@ -26,6 +26,11 @@ INSTALLED_APPS = [
     "calendar_app",
 ]
 
+
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "calendar.blyedev.com"]
+
+CSRF_TRUSTED_ORIGINS = ["https://calendar.blyedev.com"]
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
