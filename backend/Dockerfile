@@ -1,4 +1,4 @@
-FROM python:3.10-slim as base
+FROM python:3.12-slim as base
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -7,13 +7,15 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends curl && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
-
 RUN useradd -m appuser;
+
+USER appuser
+WORKDIR /home/appuser
+# RUN chown -R appuser:appuser .
+
 ENV PATH="/home/appuser/.local/bin:$PATH"
 
-WORKDIR /home/appuser/app
-USER appuser
+RUN pip install --upgrade pip
 
 COPY --chown=appuser requirements.txt .
 RUN pip install -r requirements.txt
@@ -23,7 +25,7 @@ FROM base as dev
 ENV DJANGO_ENV development
 
 ENTRYPOINT ["sh", "-c", \
-    python manage.py migrate && \
+    "python manage.py migrate && \
     python manage.py createsuperuser --noinput --username root || true && \
     python manage.py runserver 0.0.0.0:8000"]
 
