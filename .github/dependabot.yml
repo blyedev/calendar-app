@@ -1,6 +1,5 @@
 version: 2
 updates:
-  # Update Python dependencies for the Django backend
   - package-ecosystem: "pip"
     directory: "/backend"
     schedule:
@@ -9,7 +8,6 @@ updates:
       - "backend"
       - "dependencies"
 
-  # Update npm packages for the Angular frontend
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
@@ -18,7 +16,6 @@ updates:
       - "frontend"
       - "dependencies"
 
-  # Update GitHub Actions in workflows
   - package-ecosystem: "github-actions"
     directory: "/.github/workflows"
     schedule:
@@ -27,7 +24,6 @@ updates:
       - "ci"
       - "dependencies"
 
-  # Enable version updates for Docker (backend)
   - package-ecosystem: "docker"
     directory: "/backend"
     schedule:
@@ -41,7 +37,6 @@ updates:
       - "backend"
       - "docker"
 
-  # Enable version updates for Docker (frontend)
   - package-ecosystem: "docker"
     directory: "/frontend"
     schedule:
