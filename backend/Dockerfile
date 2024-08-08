@@ -1,4 +1,4 @@
-FROM python:3.12-slim as poetry
+FROM python:3.12-slim AS poetry
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl && \
@@ -10,7 +10,7 @@ RUN pip install poetry
 COPY pyproject.toml poetry.lock ./
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-FROM python:3.12-slim as base
+FROM python:3.12-slim AS base
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -31,7 +31,7 @@ RUN pip install --upgrade pip
 COPY --from=poetry /requirements.txt .
 RUN pip install -r requirements.txt
 
-FROM base as dev
+FROM base AS dev
 
 ENV DJANGO_ENV development
 
@@ -47,7 +47,7 @@ CMD [""]
 
 EXPOSE 8000
 
-FROM base as prod
+FROM base AS prod
 
 ENV DJANGO_ENV prod
 
