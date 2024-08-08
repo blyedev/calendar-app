@@ -2,7 +2,7 @@ pip==24.2
 asgiref==3.8.1
 cffi==1.16.0
 cryptography==42.0.8
-Django==5.0.6
+django==5.0.6
 django-cors-headers==4.4.0
 django-health-check==3.18.3
 django-rest-knox==4.2.0
