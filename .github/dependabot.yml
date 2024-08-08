@@ -1,0 +1,56 @@
+version: 2
+updates:
+  # Update Python dependencies for the Django backend
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "daily"
+    labels:
+      - "backend"
+      - "dependencies"
+
+  # Update npm packages for the Angular frontend
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "daily"
+    labels:
+      - "frontend"
+      - "dependencies"
+
+  # Update GitHub Actions in workflows
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows"
+    schedule:
+      interval: "daily"
+    labels:
+      - "ci"
+      - "dependencies"
+
+  # Enable version updates for Docker (backend)
+  - package-ecosystem: "docker"
+    directory: "/backend"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    labels:
+      - "backend"
+      - "docker"
+
+  # Enable version updates for Docker (frontend)
+  - package-ecosystem: "docker"
+    directory: "/frontend"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    labels:
+      - "frontend"
+      - "docker"
