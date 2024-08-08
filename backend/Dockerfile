@@ -1,3 +1,15 @@
+FROM python:3.12-slim as poetry
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip install --upgrade pip
+RUN pip install poetry
+
+COPY pyproject.toml poetry.lock ./
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
+
 FROM python:3.12-slim as base
 
 ENV PYTHONUNBUFFERED 1
@@ -7,7 +19,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends curl postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
-RUN useradd -m appuser;
+RUN useradd -m appuser
 
 USER appuser
 WORKDIR /home/appuser/app
@@ -16,7 +28,7 @@ ENV PATH="/home/appuser/.local/bin:$PATH"
 
 RUN pip install --upgrade pip
 
-COPY --chown=appuser requirements.txt .
+COPY --from=poetry /requirements.txt .
 RUN pip install -r requirements.txt
 
 FROM base as dev
