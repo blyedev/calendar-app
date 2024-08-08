@@ -9,9 +9,8 @@ updates:
       - "dependencies"
     groups:
       backend-dependencies:
-        dependency-type: "production"
-      backend-dev-dependencies:
-        dependency-type: "development"
+        patterns:
+        - "*"
 
   - package-ecosystem: "npm"
     directory: "/frontend"
@@ -22,9 +21,8 @@ updates:
       - "dependencies"
     groups:
       frontend-dependencies:
-        dependency-type: "production"
-      frontend-dev-dependencies:
-        dependency-type: "development"
+        patterns:
+        - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/.github/workflows"
