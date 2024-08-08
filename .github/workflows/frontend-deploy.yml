@@ -96,7 +96,7 @@ jobs:
           image: ${{ needs.build-frontend.outputs.image }}
 
       - name: Deploy Amazon ECS frontend task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render-frontend.outputs.task-definition }}
           service: frontend-service-v2
