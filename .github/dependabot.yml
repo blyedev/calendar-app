@@ -7,8 +7,11 @@ updates:
     labels:
       - "backend"
       - "dependencies"
-    group:
-      name: "backend-poetry-dependencies"
+    groups:
+      backend-dependencies:
+        dependency-type: "production"
+      backend-dev-dependencies:
+        dependency-type: "development"
 
   - package-ecosystem: "npm"
     directory: "/frontend"
@@ -17,8 +20,11 @@ updates:
     labels:
       - "frontend"
       - "dependencies"
-    group:
-      name: "frontend-npm-dependencies"
+    groups:
+      frontend-dependencies:
+        dependency-type: "production"
+      frontend-dev-dependencies:
+        dependency-type: "development"
 
   - package-ecosystem: "github-actions"
     directory: "/.github/workflows"
@@ -27,8 +33,10 @@ updates:
     labels:
       - "ci"
       - "dependencies"
-    group:
-      name: "github-actions-dependencies"
+    groups:
+      ci-dependencies:
+        patterns:
+        - "*"
 
   - package-ecosystem: "docker"
     directory: "/backend"
@@ -42,8 +50,10 @@ updates:
     labels:
       - "backend"
       - "docker"
-    group:
-      name: "backend-docker-dependencies"
+    groups:
+      backend-docker:
+        patterns:
+        - "*"
 
   - package-ecosystem: "docker"
     directory: "/frontend"
@@ -57,5 +67,7 @@ updates:
     labels:
       - "frontend"
       - "docker"
-    group:
-      name: "frontend-docker-dependencies"
+    groups:
+      frontend-docker:
+        patterns:
+        - "*"
