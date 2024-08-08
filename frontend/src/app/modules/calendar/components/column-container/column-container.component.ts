@@ -12,7 +12,7 @@ import {
   isNonFullDay,
   isOverlappingInterval,
 } from '../../utils/calendar-event.utils';
-import { columnPositionEvents } from '../../utils/column-positioning.utils';
+import { columnPositionEvents } from '../../utils/positioning/column-positioning.utils';
 
 @Component({
   selector: 'app-column-container',

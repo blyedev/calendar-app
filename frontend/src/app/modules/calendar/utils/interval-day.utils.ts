@@ -14,6 +14,15 @@ export function calculateIntervalDay(interval: Interval): Interval {
   return { start, end };
 }
 
+export function intervalDaysOverlap(
+  interval1: Interval,
+  interval2: Interval,
+): boolean {
+  const intervalDay1 = calculateIntervalDay(interval1);
+  const intervalDay2 = calculateIntervalDay(interval2);
+  return intervalsOverlap(intervalDay1, intervalDay2);
+}
+
 export function intervalDayOverlapsWithAny(
   original: Interval,
   ...intervals: Interval[]
@@ -32,16 +41,9 @@ export function adjustIntervalDay(
   return adjustInterval(refIntervalDay, targetIntervalDay);
 }
 
-export function intervalDaysOverlap(...intervals: Interval[]): boolean {
-  const intervalDays = intervals.map(calculateIntervalDay);
-  return intervalsOverlap(...intervalDays);
-}
-
-export function calculateDaysDuration(interval: Interval): number {
-  const intervalDay = calculateIntervalDay(interval);
-
-  const startTime = intervalDay.start.getTime();
-  const endTime = intervalDay.end.getTime();
+export function calculateDaysDuration(startDate: Date, endDate: Date): number {
+  const startTime = startDate.getTime();
+  const endTime = endDate.getTime();
   const millisecondsPerDay = 24 * 60 * 60 * 1000;
 
   return (endTime - startTime) / millisecondsPerDay;
