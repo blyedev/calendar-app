@@ -1,0 +1,71 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "daily"
+    labels:
+      - "backend"
+      - "dependencies"
+    groups:
+      backend-dependencies:
+        patterns:
+        - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "daily"
+    labels:
+      - "frontend"
+      - "dependencies"
+    groups:
+      frontend-dependencies:
+        patterns:
+        - "*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows"
+    schedule:
+      interval: "daily"
+    labels:
+      - "ci"
+      - "dependencies"
+    groups:
+      ci-dependencies:
+        patterns:
+        - "*"
+
+  - package-ecosystem: "docker"
+    directory: "/backend"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    labels:
+      - "backend"
+      - "docker"
+    groups:
+      backend-docker:
+        patterns:
+        - "*"
+
+  - package-ecosystem: "docker"
+    directory: "/frontend"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+    labels:
+      - "frontend"
+      - "docker"
+    groups:
+      frontend-docker:
+        patterns:
+        - "*"

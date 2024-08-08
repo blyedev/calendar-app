@@ -1,11 +1,19 @@
-FROM node:20-slim AS build
+FROM node:22-slim AS install
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci
+
+FROM install AS build
 
 COPY . .
 RUN npm run build
+
+FROM install AS dev
+
+EXPOSE 4200
+
+CMD ["npm", "start"]
 
 FROM nginx:alpine
 

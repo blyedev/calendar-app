@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - 'backend/**'
-      - '.github/workflows/**'
+      - '.github/workflows/backend-deploy.yml'
 
 permissions:
   contents: read
@@ -96,7 +96,7 @@ jobs:
           image: ${{ needs.build-backend.outputs.image }}
 
       - name: Deploy Amazon ECS backend task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render-backend.outputs.task-definition }}
           service: backend-service-v2
