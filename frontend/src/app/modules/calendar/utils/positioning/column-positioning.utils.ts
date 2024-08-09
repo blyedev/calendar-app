@@ -25,10 +25,10 @@ const getLeft = (
   if (i == 0) {
     return 0;
   }
-  var x = alreadyPositioned[i - 1].filter((posEv) =>
+  const x = alreadyPositioned[i - 1].filter((posEv) =>
     eventsOverlap(posEv.event, ev.event),
   );
-  var y = x.filter((posEv) =>
+  const y = x.filter((posEv) =>
     eventOverlapsWithVisBox(ev.event, posEv.displayInterval),
   );
 
@@ -108,8 +108,8 @@ const getWidth = (
   i: number,
   arr: ReadonlyMatrix<AdjustedEvent>,
 ): number => {
-  var childCount = getCollidingTreeDepth([ev], i, arr);
-  var nonChildColliderIndex = getNonChildCollider(ev, [ev], i, arr);
+  const childCount = getCollidingTreeDepth([ev], i, arr);
+  const nonChildColliderIndex = getNonChildCollider(ev, [ev], i, arr);
   const maxWidth =
     nonChildColliderIndex != -1
       ? (nonChildColliderIndex - i) / (arr.length - i)
@@ -141,11 +141,11 @@ const testReduce =
   (timespan: Interval) =>
   (
     acc: ReadonlyMatrix<PosEvent>,
-    evList: ReadonlyArray<MatrixPosEvent>,
+    evList: readonly MatrixPosEvent[],
     i: number,
     arr: ReadonlyMatrix<MatrixPosEvent>,
   ): ReadonlyMatrix<PosEvent> => {
-    const postionedList: ReadonlyArray<PosEvent> = evList.map((ev) => {
+    const postionedList: readonly PosEvent[] = evList.map((ev) => {
       const left = getLeft(acc, ev, i);
       const width = (1 - left) * getWidth(acc, ev, i, arr);
       return {
@@ -162,7 +162,7 @@ const testReduce =
 
 export const columnPositionEvents =
   (timespan: Interval) =>
-  (events: ReadonlyArray<CalendarEvent>): ReadonlyArray<PosEvent> => {
+  (events: readonly CalendarEvent[]): readonly PosEvent[] => {
     const constructRowMatrix = getMatrixConstructor(timespan);
 
     const matrix = constructRowMatrix(events);

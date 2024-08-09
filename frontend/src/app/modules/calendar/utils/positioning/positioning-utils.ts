@@ -44,7 +44,7 @@ export const getMatrixConstructor =
     adjustEventFunction: AdjustEventFunction = adjustEvent,
     collisionCheck: EventCollisionCheck = eventsOverlap,
   ) =>
-  (events: ReadonlyArray<CalendarEvent>): Matrix => {
+  (events: readonly CalendarEvent[]): Matrix => {
     return events
       .toSorted(compareCalendarEvents)
       .map(adjustEventFunction(containingInterval))

@@ -27,7 +27,7 @@ export interface PosEvent extends MatrixPosEvent {
   readonly horizontal: HorizontalPos;
 }
 
-export type ReadonlyMatrix<T> = ReadonlyArray<ReadonlyArray<T>>;
+export type ReadonlyMatrix<T> = readonly (readonly T[])[];
 
 export type EventCollisionCheck = (
   event1: CalendarEvent,

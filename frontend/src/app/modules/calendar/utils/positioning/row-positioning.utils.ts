@@ -43,7 +43,7 @@ const calculatePosition =
 
 export const gridPositionEvents =
   (timespan: Interval) =>
-  (events: ReadonlyArray<CalendarEvent>): ReadonlyArray<PosEvent> => {
+  (events: readonly CalendarEvent[]): readonly PosEvent[] => {
     const constructRowMatrix = getMatrixConstructor(
       timespan,
       adjustEventDay,
