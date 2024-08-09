@@ -5,8 +5,8 @@ import {
   EventCollisionCheck,
   MatrixPosEvent,
   ReadonlyMatrix,
-} from '../models/positioning.models';
-import { compareCalendarEvents, eventsOverlap } from './calendar-event.utils';
+} from '../../models/positioning.models';
+import { compareCalendarEvents, eventsOverlap } from '../calendar-event.utils';
 import { adjustEvent } from './column-positioning.utils';
 
 type Matrix = ReadonlyMatrix<MatrixPosEvent>;
@@ -44,7 +44,7 @@ export const getMatrixConstructor =
     adjustEventFunction: AdjustEventFunction = adjustEvent,
     collisionCheck: EventCollisionCheck = eventsOverlap,
   ) =>
-  (events: ReadonlyArray<CalendarEvent>): Matrix => {
+  (events: readonly CalendarEvent[]): Matrix => {
     return events
       .toSorted(compareCalendarEvents)
       .map(adjustEventFunction(containingInterval))

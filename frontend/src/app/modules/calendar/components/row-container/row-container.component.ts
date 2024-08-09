@@ -15,7 +15,7 @@ import {
   isFullDay,
   isOverlappingInterval,
 } from '../../utils/calendar-event.utils';
-import { gridPositionEvents } from '../../utils/row-positioning.utils';
+import { gridPositionEvents } from '../../utils/positioning/row-positioning.utils';
 
 @Component({
   selector: 'app-row-container',

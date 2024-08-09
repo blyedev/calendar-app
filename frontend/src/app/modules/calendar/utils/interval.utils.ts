@@ -1,17 +1,10 @@
 import { Interval } from 'src/app/core/models/calendar.models';
 
-export function intervalsOverlap(...intervals: Interval[]): boolean {
-  for (let i = 0; i < intervals.length; i++) {
-    for (let j = i + 1; j < intervals.length; j++) {
-      if (
-        intervals[i].end > intervals[j].start &&
-        intervals[i].start < intervals[j].end
-      ) {
-        return true;
-      }
-    }
-  }
-  return false;
+export function intervalsOverlap(
+  interval1: Interval,
+  interval2: Interval,
+): boolean {
+  return interval1.end > interval2.start && interval1.start < interval2.end;
 }
 
 export function intervalOverlapsWithAny(

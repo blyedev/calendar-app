@@ -2,12 +2,18 @@ import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
 import { intervalOverlapsWithAny, intervalsOverlap } from './interval.utils';
 import { intervalDaysOverlap } from './interval-day.utils';
 
-export function eventsOverlap(...events: CalendarEvent[]): boolean {
-  return intervalsOverlap(...events);
+export function eventsOverlap(
+  event1: CalendarEvent,
+  event2: CalendarEvent,
+): boolean {
+  return intervalsOverlap(event1, event2);
 }
 
-export function eventDaysOverlap(...events: CalendarEvent[]): boolean {
-  return intervalDaysOverlap(...events);
+export function eventDaysOverlap(
+  event1: CalendarEvent,
+  event2: CalendarEvent,
+): boolean {
+  return intervalDaysOverlap(event1, event2);
 }
 
 export function calculateVisBox(interval: Interval): Interval {
