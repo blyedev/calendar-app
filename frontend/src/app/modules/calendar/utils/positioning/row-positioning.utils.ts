@@ -8,8 +8,8 @@ import {
   adjustIntervalDay,
   calculateDaysDuration,
 } from '../interval-day.utils';
-import { getMatrixConstructor } from './positioning-utils';
 import { eventDaysOverlap } from '../calendar-event.utils';
+import { getMatrixConstructor } from './positioning.utils';
 
 const adjustEventDay: AdjustEventFunction = (interval) => (event) => ({
   event: event,

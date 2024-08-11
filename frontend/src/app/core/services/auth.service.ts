@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, ReplaySubject } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from 'src/environments/environment';
 import {
   AuthPingResponse,
   AuthResponse,
@@ -32,15 +32,7 @@ export class AuthService {
     return this.http.get<AuthPingResponse>(endpoint).pipe(
       tap({
         next: (res: AuthPingResponse) => {
-          if (res.is_authenticated) {
-            console.log('User already has a valid session');
-          } else {
-            console.log('User does not have a valid session');
-          }
           this.isAuthSubject.next(res.is_authenticated);
-        },
-        error: (err) => {
-          console.log(err);
         },
       }),
     );
@@ -51,12 +43,13 @@ export class AuthService {
 
     return this.http.post<AuthResponse>(endpoint, credentials).pipe(
       tap({
-        next: (res: AuthResponse) => {
-          console.log('Login succeeded with response: ' + JSON.stringify(res));
+        next: () => {
           this.isAuthSubject.next(true);
         },
-        error: (err) => {
-          console.error(err);
+        error: (error) => {
+          if (error.status === 400 && error.error?.non_field_errors) {
+            this.isAuthSubject.next(false);
+          }
         },
       }),
     );
@@ -70,9 +63,6 @@ export class AuthService {
         next: () => {
           this.isAuthSubject.next(false);
           this.router.navigate(['/login']);
-        },
-        error: (err) => {
-          console.error(err);
         },
       }),
     );
