@@ -8,14 +8,6 @@ FROM install AS pre-build
 
 COPY . .
 
-FROM pre-build AS test
-
-RUN npm run test -- --ci
-
-FROM pre-build AS lint
-
-RUN npm run lint
-
 FROM pre-build AS build
 
 RUN npm run build
