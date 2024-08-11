@@ -7,7 +7,7 @@ on:
       - dev
     paths:
       - 'frontend/**'
-      - '.github/workflows/frontend-ci.yml'
+      - '.github/workflows/frontend-test.yml'
 
 jobs:
   lint:
