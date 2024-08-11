@@ -4,22 +4,20 @@ import { CalendarDataService } from '../../services/calendar-data.service';
 import { ComponentFixture } from '@angular/core/testing';
 import { CalendarEvent } from 'src/app/core/models/calendar.models';
 
-class MockCalendarDataService {
-  deleteEvent(uid: string) {}
-}
-
 describe('EventComponent', () => {
   let component: EventComponent;
   let fixture: ComponentFixture<EventComponent>;
-  let mockCalendarDataService: MockCalendarDataService;
+  let calendarDataServiceMock: { deleteEvent: jest.Mock };
 
   beforeEach(async () => {
-    mockCalendarDataService = new MockCalendarDataService();
+    calendarDataServiceMock = {
+      deleteEvent: jest.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [EventComponent],
       providers: [
-        { provide: CalendarDataService, useValue: mockCalendarDataService },
+        { provide: CalendarDataService, useValue: calendarDataServiceMock },
       ],
     }).compileComponents();
 
@@ -47,9 +45,8 @@ describe('EventComponent', () => {
   });
 
   it('should call deleteEvent on CalendarDataService when Delete key is pressed', () => {
-    const deleteEventSpy = jest.spyOn(mockCalendarDataService, 'deleteEvent');
+    const deleteEventSpy = calendarDataServiceMock.deleteEvent;
 
-    // Trigger the keydown event
     const event = new KeyboardEvent('keydown', { key: 'Delete' });
     component.onKeyDown(event);
 

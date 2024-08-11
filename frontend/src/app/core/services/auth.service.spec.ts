@@ -12,7 +12,6 @@ import {
   Credentials,
 } from '../models/auth.models';
 import { provideHttpClient } from '@angular/common/http';
-import { ReplaySubject } from 'rxjs/internal/ReplaySubject';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -35,9 +34,6 @@ describe('AuthService', () => {
 
   afterEach(() => {
     httpMock.verify();
-
-    (service as any).isAuthSubject = new ReplaySubject<boolean>(1);
-    (service as any).isAuth$ = (service as any).isAuthSubject.asObservable();
   });
 
   it('should be created', () => {
