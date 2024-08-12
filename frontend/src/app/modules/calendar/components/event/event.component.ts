@@ -18,7 +18,6 @@ export class EventComponent {
   @HostListener('keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Delete') {
-      console.log('Delete key pressed inside the component.');
       this.calendarDataService.deleteEvent(this.event.uid!);
     }
   }
