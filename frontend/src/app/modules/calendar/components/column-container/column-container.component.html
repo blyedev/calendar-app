@@ -1,4 +1,4 @@
-@for (event of this.positionedEvents(); track event) {
+@for (event of this.positionedEvents(); track event.event.uid) {
   <app-event
     [event]="event.event"
     tabindex="0"

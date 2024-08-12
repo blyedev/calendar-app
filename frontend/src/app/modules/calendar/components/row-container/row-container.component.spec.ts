@@ -1,16 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { RowContainerComponent } from './row-container.component';
-import { Observable, of } from 'rxjs';
+import { signal } from '@angular/core'; // Import Angular's signal API
 import { EventService } from '../../services/event.service';
 import { CalendarEvent } from 'src/app/core/models/calendar.models';
 
 describe('RowContainerComponent', () => {
   let component: RowContainerComponent;
-  let eventServiceMock: { events$: Observable<CalendarEvent[]> };
+  let eventServiceMock: { events: ReturnType<typeof signal> };
 
   beforeEach(async () => {
     eventServiceMock = {
-      events$: of([]),
+      events: signal<CalendarEvent[]>([]),
     };
 
     await TestBed.configureTestingModule({

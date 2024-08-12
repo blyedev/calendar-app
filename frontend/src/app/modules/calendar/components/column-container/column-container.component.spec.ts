@@ -1,21 +1,27 @@
 import { TestBed } from '@angular/core/testing';
 import { ColumnContainerComponent } from './column-container.component';
-import { Observable, of } from 'rxjs';
 import { EventService } from '../../services/event.service';
 import { CalendarEvent } from 'src/app/core/models/calendar.models';
+import { signal } from '@angular/core';
+import { EventCreationService } from '../../services/event-creation.service';
 
 describe('ColumnContainerComponent', () => {
   let component: ColumnContainerComponent;
-  let eventServiceMock: { events$: Observable<CalendarEvent[]> };
+  let eventServiceMock: { events: ReturnType<typeof signal> };
+  let eventCreationServiceMock: {};
 
   beforeEach(async () => {
     eventServiceMock = {
-      events$: of([]),
+      events: signal<CalendarEvent[]>([]),
     };
+    eventCreationServiceMock = {};
 
     await TestBed.configureTestingModule({
       imports: [ColumnContainerComponent],
-      providers: [{ provide: EventService, useValue: eventServiceMock }],
+      providers: [
+        { provide: EventService, useValue: eventServiceMock },
+        { provide: EventCreationService, useValue: eventCreationServiceMock },
+      ],
     }).compileComponents();
 
     const fixture = TestBed.createComponent(ColumnContainerComponent);
