@@ -8,9 +8,6 @@ import {
 } from '@angular/core';
 import { Interval } from 'src/app/core/models/calendar.models';
 import { EventComponent } from '../event/event.component';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { filterList } from 'src/app/core/operators/filter-list.operator';
-import { map, switchMap } from 'rxjs/operators';
 import { PosEvent } from '../../models/positioning.models';
 import {
   isFullDay,
@@ -39,18 +36,16 @@ export class RowContainerComponent {
   }
 
   constructor() {
-    this.positionedEvents = toSignal(
-      toObservable(this.timespan).pipe(
-        switchMap((daySpan: Interval) =>
-          this.eventService.events$.pipe(
-            filterList(isOverlappingInterval(daySpan)),
-            filterList(isFullDay),
-            map(gridPositionEvents(daySpan)),
-          ),
-        ),
-      ),
-      { initialValue: [] },
-    );
+    this.positionedEvents = computed(() => {
+      const daySpan = this.timespan();
+
+      const filteredEvents = this.eventService
+        .events()
+        .filter(isOverlappingInterval(daySpan))
+        .filter(isFullDay);
+
+      return gridPositionEvents(daySpan)(filteredEvents);
+    });
 
     this.rows = computed(() => {
       const events = this.positionedEvents();

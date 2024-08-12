@@ -1,6 +1,4 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
-import { tap, map } from 'rxjs/operators';
+import { Injectable, Signal, computed, signal } from '@angular/core';
 import { CalendarEvent } from 'src/app/core/models/calendar.models';
 import { CalendarEventAPIService } from 'src/app/core/services/calendar-event-api.service';
 
@@ -8,67 +6,54 @@ import { CalendarEventAPIService } from 'src/app/core/services/calendar-event-ap
   providedIn: 'root',
 })
 export class EventService {
-  private eventsSubject: BehaviorSubject<CalendarEvent[]>;
-  private singularEventSubject: BehaviorSubject<CalendarEvent | null>;
+  private eventsSignal = signal<CalendarEvent[]>([]);
+  private mixinEventSignal = signal<CalendarEvent | null>(null);
 
-  private _events$: Observable<CalendarEvent[]>;
+  readonly events: Signal<CalendarEvent[]> = computed(() => {
+    const events = this.eventsSignal();
+    const mixinEvent = this.mixinEventSignal();
+
+    if (mixinEvent) {
+      return [...events, mixinEvent];
+    }
+    return events;
+  });
 
   constructor(private calendarEventAPIService: CalendarEventAPIService) {
-    this.eventsSubject = new BehaviorSubject<CalendarEvent[]>([]);
-    this.singularEventSubject = new BehaviorSubject<CalendarEvent | null>(null);
-
-    this._events$ = combineLatest([
-      this.eventsSubject.asObservable(),
-      this.singularEventSubject.asObservable(),
-    ]).pipe(
-      map(([events, singularEvent]) => {
-        if (singularEvent) {
-          return [...events, singularEvent];
-        }
-        return events;
-      }),
-    );
-
     this.loadEvents();
-  }
-
-  public get events$(): Observable<CalendarEvent[]> {
-    return this._events$;
   }
 
   loadEvents(calendarUIDs?: string[]): void {
     this.calendarEventAPIService
       .getEvents(calendarUIDs)
-      .pipe(tap((events: CalendarEvent[]) => this.eventsSubject.next(events)))
-      .subscribe();
+      .subscribe((events: CalendarEvent[]) => {
+        this.eventsSignal.set(events);
+      });
   }
 
   addEvent(event: CalendarEvent): void {
     this.calendarEventAPIService
       .addEvent(event)
-      .pipe(tap(() => this.loadEvents()))
-      .subscribe();
+      .subscribe(() => this.loadEvents());
   }
 
   updateEvent(event: CalendarEvent): void {
     this.calendarEventAPIService
       .updateEvent(event)
-      .pipe(tap(() => this.loadEvents()))
-      .subscribe();
+      .subscribe(() => this.loadEvents());
   }
 
   deleteEvent(uid: string): void {
     this.calendarEventAPIService
       .deleteEvent(uid)
-      .pipe(tap(() => this.loadEvents()))
-      .subscribe();
+      .subscribe(() => this.loadEvents());
   }
 
-  addSingularEvent(event: CalendarEvent): void {
-    this.singularEventSubject.next(event);
+  setMixinEvent(event: CalendarEvent): void {
+    this.mixinEventSignal.set(event);
   }
 
-  removeSingularEvent(): void {
-    this.singularEventSubject.next(null);
+  removeMixinEvent(): void {
+    this.mixinEventSignal.set(null);
   }
 }

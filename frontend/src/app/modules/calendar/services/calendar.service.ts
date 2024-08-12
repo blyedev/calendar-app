@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { Observable } from 'rxjs/internal/Observable';
 import { tap } from 'rxjs/internal/operators/tap';
 import { Calendar } from 'src/app/core/models/calendar.models';
 import { CalendarAPIService } from 'src/app/core/services/calendar-api.service';
@@ -11,18 +11,16 @@ import { CalendarAPIService } from 'src/app/core/services/calendar-api.service';
 export class CalendarService {
   private calendarsSubject: BehaviorSubject<Calendar[]>;
 
-  private _calendars$: Observable<Calendar[]>;
+  readonly calendars: Signal<Calendar[]>;
 
   constructor(private calendarAPIService: CalendarAPIService) {
     this.calendarsSubject = new BehaviorSubject<Calendar[]>([]);
 
-    this._calendars$ = this.calendarsSubject.asObservable();
+    this.calendars = toSignal(this.calendarsSubject.asObservable(), {
+      initialValue: [],
+    });
 
     this.loadCalendars();
-  }
-
-  public get calendars$(): Observable<Calendar[]> {
-    return this._calendars$;
   }
 
   loadCalendars(): void {
