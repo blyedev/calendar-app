@@ -1,15 +1,16 @@
 import {
   Component,
   HostBinding,
+  Signal,
+  computed,
   inject,
   input,
-  OnDestroy,
-  OnInit,
 } from '@angular/core';
 import { Interval } from 'src/app/core/models/calendar.models';
 import { EventComponent } from '../event/event.component';
-import { Subscription, map } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { filterList } from 'src/app/core/operators/filter-list.operator';
+import { map, switchMap } from 'rxjs/operators';
 import { PosEvent } from '../../models/positioning.models';
 import {
   isFullDay,
@@ -23,44 +24,37 @@ import { EventService } from '../../services/event.service';
   standalone: true,
   imports: [EventComponent],
   templateUrl: './row-container.component.html',
-  styleUrl: './row-container.component.css',
+  styleUrls: ['./row-container.component.css'],
 })
-export class RowContainerComponent implements OnInit, OnDestroy {
-  private readonly eventService = inject(EventService);
+export class RowContainerComponent {
   readonly timespan = input.required<Interval>();
-
-  positionedEvents: readonly PosEvent[];
-  dataSubscription: Subscription | undefined;
-
-  private rows: number;
+  private readonly eventService = inject(EventService);
+  readonly positionedEvents: Signal<readonly PosEvent[]>;
+  readonly rows: Signal<number>;
 
   @HostBinding('style.height.px')
   get containerHeight(): number {
-    const height = (this.rows * 48) / 2;
+    const height = (this.rows() * 48) / 2;
     return height;
   }
 
   constructor() {
-    this.positionedEvents = [];
-    this.rows = 0;
-  }
+    this.positionedEvents = toSignal(
+      toObservable(this.timespan).pipe(
+        switchMap((daySpan: Interval) =>
+          this.eventService.events$.pipe(
+            filterList(isOverlappingInterval(daySpan)),
+            filterList(isFullDay),
+            map(gridPositionEvents(daySpan)),
+          ),
+        ),
+      ),
+      { initialValue: [] },
+    );
 
-  ngOnInit(): void {
-    this.dataSubscription = this.eventService.events$
-      .pipe(
-        filterList(isOverlappingInterval(this.timespan())),
-        filterList(isFullDay),
-        map(gridPositionEvents(this.timespan())),
-      )
-      .subscribe({
-        next: (val: readonly PosEvent[]): void => {
-          this.positionedEvents = val;
-          this.rows = Math.max(...val.map((ev) => ev.layer + 1), 0);
-        },
-      });
-  }
-
-  ngOnDestroy(): void {
-    this.dataSubscription?.unsubscribe();
+    this.rows = computed(() => {
+      const events = this.positionedEvents();
+      return Math.max(...events.map((ev) => ev.layer + 1), 0);
+    });
   }
 }
