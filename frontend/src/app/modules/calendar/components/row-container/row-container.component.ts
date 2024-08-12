@@ -1,7 +1,8 @@
 import {
   Component,
   HostBinding,
-  Input,
+  inject,
+  input,
   OnDestroy,
   OnInit,
 } from '@angular/core';
@@ -10,12 +11,12 @@ import { EventComponent } from '../event/event.component';
 import { Subscription, map } from 'rxjs';
 import { filterList } from 'src/app/core/operators/filter-list.operator';
 import { PosEvent } from '../../models/positioning.models';
-import { CalendarDataService } from '../../services/calendar-data.service';
 import {
   isFullDay,
   isOverlappingInterval,
 } from '../../utils/calendar-event.utils';
 import { gridPositionEvents } from '../../utils/positioning/row-positioning.utils';
+import { EventService } from '../../services/event.service';
 
 @Component({
   selector: 'app-row-container',
@@ -25,7 +26,8 @@ import { gridPositionEvents } from '../../utils/positioning/row-positioning.util
   styleUrl: './row-container.component.css',
 })
 export class RowContainerComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) timespan!: Interval;
+  private readonly eventService = inject(EventService);
+  readonly timespan = input.required<Interval>();
 
   positionedEvents: readonly PosEvent[];
   dataSubscription: Subscription | undefined;
@@ -38,17 +40,17 @@ export class RowContainerComponent implements OnInit, OnDestroy {
     return height;
   }
 
-  constructor(private calendarDataService: CalendarDataService) {
+  constructor() {
     this.positionedEvents = [];
     this.rows = 0;
   }
 
   ngOnInit(): void {
-    this.dataSubscription = this.calendarDataService.events$
+    this.dataSubscription = this.eventService.events$
       .pipe(
-        filterList(isOverlappingInterval(this.timespan)),
+        filterList(isOverlappingInterval(this.timespan())),
         filterList(isFullDay),
-        map(gridPositionEvents(this.timespan)),
+        map(gridPositionEvents(this.timespan())),
       )
       .subscribe({
         next: (val: readonly PosEvent[]): void => {

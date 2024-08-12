@@ -1,4 +1,4 @@
-import { Component, Signal, inject, input } from '@angular/core';
+import { Component, HostListener, Signal, inject, input } from '@angular/core';
 import { Interval } from 'src/app/core/models/calendar.models';
 import { EventComponent } from '../event/event.component';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
@@ -6,13 +6,13 @@ import { AsyncPipe } from '@angular/common';
 import { filterList } from 'src/app/core/operators/filter-list.operator';
 import { map } from 'rxjs/internal/operators/map';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
-import { CalendarDataService } from '../../services/calendar-data.service';
 import { PosEvent } from '../../models/positioning.models';
 import {
   isNonFullDay,
   isOverlappingInterval,
 } from '../../utils/calendar-event.utils';
 import { columnPositionEvents } from '../../utils/positioning/column-positioning.utils';
+import { EventService } from '../../services/event.service';
 
 @Component({
   selector: 'app-column-container',
@@ -22,7 +22,7 @@ import { columnPositionEvents } from '../../utils/positioning/column-positioning
   styleUrls: ['./column-container.component.css'],
 })
 export class ColumnContainerComponent {
-  private readonly calendarDataService = inject(CalendarDataService);
+  private readonly eventService = inject(EventService);
   readonly timespan = input.required<Interval>();
 
   readonly positionedEvents: Signal<readonly PosEvent[]>;
@@ -31,7 +31,7 @@ export class ColumnContainerComponent {
     this.positionedEvents = toSignal(
       toObservable(this.timespan).pipe(
         switchMap((daySpan: Interval) =>
-          this.calendarDataService.events$.pipe(
+          this.eventService.events$.pipe(
             filterList(isOverlappingInterval(daySpan)),
             filterList(isNonFullDay),
             map(columnPositionEvents(daySpan)),
@@ -40,5 +40,23 @@ export class ColumnContainerComponent {
       ),
       { initialValue: [] },
     );
+  }
+
+  @HostListener('mousedown', ['$event'])
+  onMouseDown(event: MouseEvent): void {
+    event.stopPropagation();
+    console.log(event);
+  }
+
+  @HostListener('window:mousemove', ['$event'])
+  onMouseMove(event: MouseEvent): void {
+    event.stopPropagation();
+    // console.log(event);
+  }
+
+  @HostListener('window:mouseup', ['$event'])
+  onMouseUp(event: MouseEvent): void {
+    event.stopPropagation();
+    console.log(event);
   }
 }
