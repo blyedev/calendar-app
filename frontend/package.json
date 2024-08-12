@@ -6,8 +6,8 @@
     "start": "ng serve --host 0.0.0.0",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "jest",
-    "test:local": "jest --maxWorkers 2",
+    "test": "jest --maxWorkers 2",
+    "test:ci": "jest --coverage",
     "test:watch": "jest --watch",
     "lint": "ng lint"
   },
