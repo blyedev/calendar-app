@@ -56,5 +56,5 @@ jobs:
         working-directory: frontend
 
       - name: Run tests
-        run: npm run test -- --coverage
+        run: npm run test:ci
         working-directory: frontend

@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  angular:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./angular.json:/app/angular.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.app.json:/app/tsconfig.app.json
+      - ./tsconfig.spec.json:/app/tsconfig.spec.json
+      - ./eslint.config.js:/app/eslint.config.js
+    ports:
+      - "4200:4200"
