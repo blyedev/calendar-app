@@ -1,29 +1,36 @@
 import { TestBed } from '@angular/core/testing';
 import { ColumnContainerComponent } from './column-container.component';
-import { CalendarDataService } from '../../services/calendar-data.service';
-import { of } from 'rxjs';
-import { Interval } from 'src/app/core/models/calendar.models';
-
-class MockCalendarDataService {
-  events$ = of([]);
-}
+import { EventService } from '../../services/event.service';
+import { CalendarEvent } from 'src/app/core/models/calendar.models';
+import { signal } from '@angular/core';
+import { EventCreationService } from '../../services/event-creation.service';
 
 describe('ColumnContainerComponent', () => {
   let component: ColumnContainerComponent;
+  let eventServiceMock: { events: ReturnType<typeof signal> };
+  let eventCreationServiceMock: {};
 
   beforeEach(async () => {
+    eventServiceMock = {
+      events: signal<CalendarEvent[]>([]),
+    };
+    eventCreationServiceMock = {};
+
     await TestBed.configureTestingModule({
       imports: [ColumnContainerComponent],
       providers: [
-        { provide: CalendarDataService, useClass: MockCalendarDataService },
+        { provide: EventService, useValue: eventServiceMock },
+        { provide: EventCreationService, useValue: eventCreationServiceMock },
       ],
     }).compileComponents();
 
     const fixture = TestBed.createComponent(ColumnContainerComponent);
     component = fixture.componentInstance;
 
-    const testTimespan: Interval = { start: new Date(), end: new Date() };
-    fixture.componentRef.setInput('timespan', testTimespan);
+    fixture.componentRef.setInput('timespan', {
+      start: new Date(),
+      end: new Date(),
+    });
 
     fixture.detectChanges();
   });

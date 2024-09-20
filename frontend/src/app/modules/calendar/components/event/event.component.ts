@@ -1,6 +1,6 @@
-import { Component, HostListener, Input, inject } from '@angular/core';
+import { Component, HostListener, inject, input } from '@angular/core';
 import { CalendarEvent } from 'src/app/core/models/calendar.models';
-import { CalendarDataService } from '../../services/calendar-data.service';
+import { EventService } from '../../services/event.service';
 
 @Component({
   selector: 'app-event',
@@ -10,15 +10,13 @@ import { CalendarDataService } from '../../services/calendar-data.service';
   styleUrl: './event.component.css',
 })
 export class EventComponent {
-  private calendarDataService: CalendarDataService =
-    inject(CalendarDataService);
-
-  @Input({ required: true }) event!: CalendarEvent;
+  private eventService: EventService = inject(EventService);
+  readonly event = input.required<CalendarEvent>();
 
   @HostListener('keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Delete') {
-      this.calendarDataService.deleteEvent(this.event.uid!);
+      this.eventService.deleteEvent(this.event().uid!);
     }
   }
 }
