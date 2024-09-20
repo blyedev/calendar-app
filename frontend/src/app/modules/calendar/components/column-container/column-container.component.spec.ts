@@ -8,7 +8,7 @@ import { EventCreationService } from '../../services/event-creation.service';
 describe('ColumnContainerComponent', () => {
   let component: ColumnContainerComponent;
   let eventServiceMock: { events: ReturnType<typeof signal> };
-  let eventCreationServiceMock: {};
+  let eventCreationServiceMock: object;
 
   beforeEach(async () => {
     eventServiceMock = {
