@@ -1,8 +1,8 @@
 version: "3.8"
 
 include:
-  - ./backend/compose.dev.yml
-  - ./frontend/compose.dev.yml
+  - ./backend/docker-compose.yml
+  - ./frontend/docker-compose.yml
 
 services:
   reverse-proxy:
