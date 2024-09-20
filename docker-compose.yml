@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 include:
   - ./backend/compose.dev.yml
@@ -13,6 +13,6 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - django
-      - angular 
+      - angular
     logging:
       driver: "none"
