@@ -18,11 +18,10 @@ import { EventService } from '../../services/event.service';
 import { EventCreationService } from '../../services/event-creation.service';
 
 @Component({
-  selector: 'app-column-container',
-  standalone: true,
-  imports: [EventComponent, AsyncPipe],
-  templateUrl: './column-container.component.html',
-  styleUrls: ['./column-container.component.css'],
+    selector: 'app-column-container',
+    imports: [EventComponent, AsyncPipe],
+    templateUrl: './column-container.component.html',
+    styleUrls: ['./column-container.component.css']
 })
 export class ColumnContainerComponent {
   readonly timespan = input.required<Interval>();
