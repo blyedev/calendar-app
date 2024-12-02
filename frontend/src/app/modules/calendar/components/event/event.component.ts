@@ -3,11 +3,10 @@ import { CalendarEvent } from 'src/app/core/models/calendar.models';
 import { EventService } from '../../services/event.service';
 
 @Component({
-  selector: 'app-event',
-  standalone: true,
-  imports: [],
-  templateUrl: './event.component.html',
-  styleUrl: './event.component.css',
+    selector: 'app-event',
+    imports: [],
+    templateUrl: './event.component.html',
+    styleUrl: './event.component.css'
 })
 export class EventComponent {
   private eventService: EventService = inject(EventService);
