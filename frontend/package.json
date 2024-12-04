@@ -9,7 +9,12 @@
     "test": "jest --maxWorkers 2",
     "test:ci": "jest --coverage",
     "test:watch": "jest --watch",
-    "lint": "ng lint"
+    "lint": "npm run lint:ng && npm run lint:css",
+    "lint:fix": "npm run lint:ng:fix && npm run lint:css:fix",
+    "lint:ng": "ng lint",
+    "lint:ng:fix": "ng lint --fix",
+    "lint:css": "stylelint \"**/*.css\"",
+    "lint:css:fix": "stylelint \"**/*.css\" --fix"
   },
   "private": true,
   "dependencies": {
@@ -35,6 +40,11 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-preset-angular": "^14.2.2",
+    "stylelint": "^16.11.0",
+    "stylelint-config-clean-order": "^6.1.0",
+    "stylelint-config-standard": "^36.0.1",
+    "stylelint-no-unsupported-browser-features": "^8.0.2",
+    "stylelint-value-no-unknown-custom-properties": "^6.0.1",
     "typescript": "~5.5.4",
     "typescript-eslint": "8.1.0"
   },
@@ -54,5 +64,13 @@
         "statements": 70
       }
     }
-  }
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "Firefox ESR",
+    "last 2 Edge major versions",
+    "last 2 Safari major versions",
+    "last 2 iOS major versions",
+    "last 2 Android major versions"
+  ]
 }
