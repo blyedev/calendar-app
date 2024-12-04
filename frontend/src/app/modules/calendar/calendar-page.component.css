@@ -1,6 +1,6 @@
 :host {
   display: inline-block;
-  height: calc(100vh - 64px - 4px);
-  /* adjust for a bug i guess? */
+
   width: 100%;
+  height: calc(100vh - 64px - 4px);
 }

@@ -1,10 +1,13 @@
 :host {
-  flex: 1;
+  position: relative;
+
   display: flex;
+  flex: 1;
   flex-flow: column nowrap;
   justify-content: flex-start;
+
   height: 100%;
-  position: relative;
+
   border-right: #D7d7d7 1px solid;
 }
 
