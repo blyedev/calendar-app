@@ -8,23 +8,15 @@
     "stylelint-value-no-unknown-custom-properties"
   ],
   "rules": {
-    "selector-pseudo-class-allowed-list": [
-      "host"
-    ],
+    "selector-pseudo-class-allowed-list": ["host"],
     "no-empty-source": null,
     "plugin/no-unsupported-browser-features": true,
     "csstools/value-no-unknown-custom-properties": [
       true,
       {
-        "importFrom": [
-          "src/styles.css"
-        ]
+        "importFrom": ["src/styles.css"]
       }
     ]
   },
-  "ignoreFiles": [
-    "**/.angular/**",
-    "**/dist/**",
-    "**/node_modules/**"
-  ]
+  "ignoreFiles": ["**/.angular/**", "**/dist/**", "**/node_modules/**"]
 }
