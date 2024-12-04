@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { Interval } from 'src/app/core/models/calendar.models';
 import { EventComponent } from '../event/event.component';
-import { AsyncPipe } from '@angular/common';
 import {
   isNonFullDay,
   isOverlappingInterval,
@@ -18,10 +17,10 @@ import { EventService } from '../../services/event.service';
 import { EventCreationService } from '../../services/event-creation.service';
 
 @Component({
-    selector: 'app-column-container',
-    imports: [EventComponent, AsyncPipe],
-    templateUrl: './column-container.component.html',
-    styleUrls: ['./column-container.component.css']
+  selector: 'app-column-container',
+  imports: [EventComponent],
+  templateUrl: './column-container.component.html',
+  styleUrls: ['./column-container.component.css'],
 })
 export class ColumnContainerComponent {
   readonly timespan = input.required<Interval>();
