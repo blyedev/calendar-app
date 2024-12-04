@@ -19,15 +19,10 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
-    "lib": [
-      "ES2023",
-      "dom"
-    ],
+    "lib": ["ES2023", "dom"],
     "baseUrl": "./",
     "paths": {
-      "src/*": [
-        "./src/*"
-      ]
+      "src/*": ["./src/*"]
     }
   },
   "angularCompilerOptions": {

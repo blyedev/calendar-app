@@ -4,10 +4,10 @@ import { ColumnContainerComponent } from '../column-container/column-container.c
 import { RowContainerComponent } from '../row-container/row-container.component';
 
 @Component({
-    selector: 'app-calendar-canvas',
-    imports: [ColumnContainerComponent, RowContainerComponent],
-    templateUrl: './calendar-canvas.component.html',
-    styleUrls: ['./calendar-canvas.component.css']
+  selector: 'app-calendar-canvas',
+  imports: [ColumnContainerComponent, RowContainerComponent],
+  templateUrl: './calendar-canvas.component.html',
+  styleUrls: ['./calendar-canvas.component.css'],
 })
 export class CalendarCanvasComponent {
   public rowTimespan: Interval;
