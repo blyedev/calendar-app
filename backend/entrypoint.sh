@@ -1,6 +1,7 @@
 #!/bin/bash
 
+set -e
 
-python manage.py migrate
-python manage.py createsuperuser --noinput --username root
-gunicorn calendar_project.wsgi:application --bind 0.0.0.0:8000
+python manage.py migrate --noinput
+python manage.py createsuperuser --noinput --username root || true
+exec "$@"

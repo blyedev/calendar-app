@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   db:
     image: postgres:latest
@@ -9,16 +7,21 @@ services:
       - POSTGRES_DB=your_db_name
       - POSTGRES_USER=your_db_user
       - POSTGRES_PASSWORD=your_db_password
-    logging:
-      driver: "none"
 
   django:
     build:
       context: .
       dockerfile: Dockerfile
       target: dev
-    volumes:
-      - .:/home/appuser/app
+    develop:
+      watch:
+        - path: ./
+          action: sync
+          target: /app
+        - path: ./pyproject.toml
+          action: rebuild
+        - path: ./poetry.lock
+          action: rebuild
     ports:
       - "8000:8000"
     depends_on:
