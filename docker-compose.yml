@@ -1,5 +1,3 @@
-version: "3.8"
-
 include:
   - ./backend/docker-compose.yml
   - ./frontend/docker-compose.yml
@@ -14,5 +12,3 @@ services:
     depends_on:
       - django
       - angular
-    logging:
-      driver: "none"
