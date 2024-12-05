@@ -18,7 +18,7 @@ class Event(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return self.summary or self.uid
+        return self.summary or str(self.uid)
 
 
 class RecurrenceRule(models.Model):

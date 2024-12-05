@@ -3,20 +3,20 @@ from rest_framework import serializers
 from .models import Calendar, Event, RecurrenceRule
 
 
-class CalendarSerializer(serializers.ModelSerializer):
+class CalendarSerializer(serializers.ModelSerializer[Calendar]):
     class Meta:
         model = Calendar
         fields = ["user", "uid", "name", "description", "dtstamp", "last_modified"]
         read_only_fields = ("user", "uid", "dtstamp", "last_modified")
 
 
-class RecurrenceRuleSerializer(serializers.ModelSerializer):
+class RecurrenceRuleSerializer(serializers.ModelSerializer[RecurrenceRule]):
     class Meta:
         model = RecurrenceRule
         fields = ["frequency", "interval", "count", "until"]
 
 
-class EventSerializer(serializers.ModelSerializer):
+class EventSerializer(serializers.ModelSerializer[Event]):
     rrule = RecurrenceRuleSerializer(required=False, allow_null=True)
 
     class Meta:

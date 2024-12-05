@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Event, RecurrenceRule, Calendar
+
+from .models import Calendar, Event, RecurrenceRule
 
 
 class RecurrenceRuleInline(admin.StackedInline):

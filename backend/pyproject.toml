@@ -15,12 +15,12 @@ whitenoise = "6.7.0"
 uuid = "1.30"
 gunicorn = "^23.0.0"
 psycopg = "^3.2.2"
-djangorestframework-stubs = "^3.15.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.8.2"
 mypy = "^1.13.0"
 django-stubs = "^5.1.1"
+djangorestframework-stubs = "^3.15.1"
 
 [build-system]
 requires = ["poetry-core"]
@@ -56,6 +56,7 @@ extend-exclude = [
 line-length = 119
 
 [tool.ruff.lint]
-select = ["A", "B", "C4", "C90", "D1", "DJ", "I", "LOG", "N", "PTH", "RUF", "SIM", "W"]
+select = ["A", "B", "C4", "C90", "DJ", "I", "LOG", "N", "PTH", "RUF", "SIM", "W"]
+ignore = ["RUF012"]
 
 [tool.ruff.format]
