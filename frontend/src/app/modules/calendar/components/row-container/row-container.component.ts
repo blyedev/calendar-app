@@ -17,10 +17,10 @@ import { gridPositionEvents } from '../../utils/positioning/row-positioning.util
 import { EventService } from '../../services/event.service';
 
 @Component({
-    selector: 'app-row-container',
-    imports: [EventComponent],
-    templateUrl: './row-container.component.html',
-    styleUrls: ['./row-container.component.css']
+  selector: 'app-row-container',
+  imports: [EventComponent],
+  templateUrl: './row-container.component.html',
+  styleUrls: ['./row-container.component.css'],
 })
 export class RowContainerComponent {
   readonly timespan = input.required<Interval>();

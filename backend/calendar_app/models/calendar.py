@@ -6,12 +6,10 @@ from django.db import models
 
 class Calendar(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    uid = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, unique=True
-    )
+    uid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
 
     name = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(blank=True, default="")
 
     dtstamp = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)

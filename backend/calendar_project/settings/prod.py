@@ -1,5 +1,5 @@
-import os
 import json
+import os
 import urllib.request
 
 from .base import *
@@ -31,8 +31,6 @@ except KeyError:
     print("ECS_CONTAINER_METADATA_URI environment variable is not defined.")
 except urllib.error.URLError as e:
     print(f"An error occurred while fetching container metadata: {e}")
-except (KeyError, IndexError) as e:
-    print(f"An error occurred while processing container metadata: {e}")
 
 
 DATABASES = {

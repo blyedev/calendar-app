@@ -3,11 +3,10 @@ name = "calendar-app-backend"
 version = "0.1.0"
 description = "The backend for a calendar application inspired by google cal and the ical format"
 authors = ["blyedev <adam.smielewski@gmail.com>"]
-readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 Django = "5.1.1"
 djangorestframework = "3.15.2"
 django-health-check = "3.18.3"
@@ -17,12 +16,20 @@ uuid = "1.30"
 gunicorn = "^23.0.0"
 psycopg = "^3.2.2"
 
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.8.2"
+mypy = "^1.13.0"
+django-stubs = "^5.1.1"
+djangorestframework-stubs = "^3.15.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.django-stubs]
+django_settings_module = "calendar_project.settings.dev"
+
 [tool.mypy]
-python_executable = "./venv/bin/python"
 exclude = [
   "migrations",
   "tests",
@@ -31,10 +38,25 @@ exclude = [
 ]
 plugins = [
   "mypy_django_plugin.main",
+  "mypy_drf_plugin.main"
 ]
 
 [[tool.mypy.overrides]]
 module = [
-  "djangorestframework.*",
+  "knox.*",
   "wagtail.*",
 ]
+ignore_missing_imports = true
+
+[tool.ruff]
+extend-exclude = [
+  "migrations",
+  "manage.py",
+]
+line-length = 119
+
+[tool.ruff.lint]
+select = ["A", "B", "C4", "C90", "DJ", "I", "LOG", "N", "PTH", "RUF", "SIM", "W"]
+ignore = ["RUF012"]
+
+[tool.ruff.format]
