@@ -16,8 +16,10 @@
     "lint:fix": "npm run lint:ng:fix && npm run lint:css:fix",
     "lint:ng": "ng lint",
     "lint:ng:fix": "ng lint --fix",
+    "lint:ng:ci": "ng lint --max-warnings=0",
     "lint:css": "stylelint \"**/*.css\"",
-    "lint:css:fix": "stylelint \"**/*.css\" --fix"
+    "lint:css:fix": "stylelint \"**/*.css\" --fix",
+    "lint:css:ci": "stylelint --custom-formatter @csstools/stylelint-formatter-github \"**/*.css\""
   },
   "private": true,
   "dependencies": {
@@ -37,6 +39,7 @@
     "@angular/build": "^19.0.2",
     "@angular/cli": "^19.0.2",
     "@angular/compiler-cli": "^19.0.1",
+    "@csstools/stylelint-formatter-github": "^1.0.0",
     "@types/jest": "^29.5.12",
     "angular-eslint": "18.3.0",
     "eslint": "^9.9.0",
