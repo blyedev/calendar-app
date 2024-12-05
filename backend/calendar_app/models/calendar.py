@@ -9,7 +9,7 @@ class Calendar(models.Model):
     uid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
 
     name = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(blank=True, default="")
 
     dtstamp = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)

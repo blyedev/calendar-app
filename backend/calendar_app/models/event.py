@@ -8,7 +8,7 @@ class Event(models.Model):
     uid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
 
     summary = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(blank=True, default="")
     dtstart = models.DateTimeField()
     dtend = models.DateTimeField()
 
