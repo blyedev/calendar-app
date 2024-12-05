@@ -19,21 +19,12 @@ djangorestframework-stubs = "^3.15.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.8.2"
-black = "^24.10.0"
 mypy = "^1.13.0"
 django-stubs = "^5.1.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.black]
-line-length = 119
-target-version = ['py311']
-extend-exclude = "(migrations)"
-# Exclude these even if they're passed explicitly as a CLI argument.
-# This is necessary for pre-commit to not reformat them.
-force-exclude = "(migrations)"
 
 [tool.django-stubs]
 django_settings_module = "calendar_project.settings.dev"
@@ -58,8 +49,13 @@ module = [
 ignore_missing_imports = true
 
 [tool.ruff]
-extend-exclude = ["migrations"]
-extend-select = ["A", "B", "C4", "C90", "COM", "D", "DJ", "I", "LOG", "N", "PTH", "RUF", "SIM", "W"]
-fix = false
+extend-exclude = [
+  "migrations",
+  "manage.py",
+]
 line-length = 119
-target-version = "py311"
+
+[tool.ruff.lint]
+select = ["A", "B", "C4", "C90", "D1", "DJ", "I", "LOG", "N", "PTH", "RUF", "SIM", "W"]
+
+[tool.ruff.format]
