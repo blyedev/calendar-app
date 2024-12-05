@@ -61,12 +61,12 @@ jobs:
       - name: Install Dependencies
         run: poetry install --sync
 
-      - name: Run Ruff Linter
-        run: poetry run ruff check .
-
       - name: Run MyPy Static Typing Check
         run: poetry run mypy .
 
-      - name: Run Formatter Check
-        run: poetry run black --check .
+      - name: Run Ruff Linter
+        run: poetry run ruff check .
+
+      - name: Run Ruff Formatter
+        run: poetry run ruff format --check
 
