@@ -5,9 +5,7 @@ from django.db import models
 
 class Event(models.Model):
     calendar = models.ForeignKey("calendar", on_delete=models.CASCADE)
-    uid = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, unique=True
-    )
+    uid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
 
     summary = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
