@@ -9,7 +9,17 @@
     "test": "jest --maxWorkers 2",
     "test:ci": "jest --coverage",
     "test:watch": "jest --watch",
-    "lint": "ng lint"
+    "prettier:check": "prettier --check \"**/*.{ts,html,css,json}\"",
+    "prettier:fix": "prettier --write \"**/*.{ts,html,css,json}\"",
+    "format": "npm run prettier:fix",
+    "lint": "npm run lint:ng && npm run lint:css",
+    "lint:fix": "npm run lint:ng:fix && npm run lint:css:fix",
+    "lint:ng": "ng lint",
+    "lint:ng:fix": "ng lint --fix",
+    "lint:ng:ci": "ng lint --max-warnings=0",
+    "lint:css": "stylelint \"**/*.css\"",
+    "lint:css:fix": "stylelint \"**/*.css\" --fix",
+    "lint:css:ci": "stylelint --custom-formatter @csstools/stylelint-formatter-github \"**/*.css\""
   },
   "private": true,
   "dependencies": {
@@ -29,12 +39,19 @@
     "@angular/build": "^19.0.2",
     "@angular/cli": "^19.0.2",
     "@angular/compiler-cli": "^19.0.1",
+    "@csstools/stylelint-formatter-github": "^1.0.0",
     "@types/jest": "^29.5.12",
     "angular-eslint": "18.3.0",
     "eslint": "^9.9.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-preset-angular": "^14.2.2",
+    "prettier": "^3.4.2",
+    "stylelint": "^16.11.0",
+    "stylelint-config-clean-order": "^6.1.0",
+    "stylelint-config-standard": "^36.0.1",
+    "stylelint-no-unsupported-browser-features": "^8.0.2",
+    "stylelint-value-no-unknown-custom-properties": "^6.0.1",
     "typescript": "~5.5.4",
     "typescript-eslint": "8.1.0"
   },
@@ -54,5 +71,13 @@
         "statements": 70
       }
     }
-  }
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "Firefox ESR",
+    "last 2 Edge major versions",
+    "last 2 Safari major versions",
+    "last 2 iOS major versions",
+    "last 2 Android major versions"
+  ]
 }

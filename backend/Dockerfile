@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-ENV POETRY_VERSION=1.8.3
+ENV POETRY_VERSION=1.8.4
 RUN pip install --no-cache-dir "poetry==$POETRY_VERSION"
 
 WORKDIR /app

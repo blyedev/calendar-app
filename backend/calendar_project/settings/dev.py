@@ -1,4 +1,5 @@
 import os
+
 from .base import *
 
 SECRET_KEY = "django-insecure-&wtt80y-1q89ox=t&u^#s!t3s@%sc(i8uwin77h-5sra5$+y6y"

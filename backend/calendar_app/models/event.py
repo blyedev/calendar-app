@@ -5,12 +5,10 @@ from django.db import models
 
 class Event(models.Model):
     calendar = models.ForeignKey("calendar", on_delete=models.CASCADE)
-    uid = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, unique=True
-    )
+    uid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
 
     summary = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(blank=True, default="")
     dtstart = models.DateTimeField()
     dtend = models.DateTimeField()
 
@@ -18,7 +16,7 @@ class Event(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return self.summary or self.uid
+        return self.summary or str(self.uid)
 
 
 class RecurrenceRule(models.Model):
