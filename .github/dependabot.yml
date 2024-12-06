@@ -1,5 +1,26 @@
 version: 2
 updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "ci"
+      - "dependencies"
+
+  - package-ecosystem: "docker"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "backend"
+      - "docker"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+
   - package-ecosystem: "pip"
     directory: "/backend"
     schedule:
@@ -7,10 +28,18 @@ updates:
     labels:
       - "backend"
       - "dependencies"
-    groups:
-      backend-dependencies:
-        patterns:
-        - "*"
+
+  - package-ecosystem: "docker"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "frontend"
+      - "docker"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
 
   - package-ecosystem: "npm"
     directory: "/frontend"
@@ -20,52 +49,20 @@ updates:
       - "frontend"
       - "dependencies"
     groups:
-      frontend-dependencies:
+      angular:
+        applies-to: version-updates
         patterns:
-        - "*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/.github/workflows"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "ci"
-      - "dependencies"
-    groups:
-      ci-dependencies:
-        patterns:
-        - "*"
-
-  - package-ecosystem: "docker"
-    directory: "/backend"
-    schedule:
-      interval: "weekly"
-    ignore:
-      - dependency-name: "*"
+        - "@angular*"
         update-types:
-          - "version-update:semver-major"
-          - "version-update:semver-minor"
-    labels:
-      - "backend"
-      - "docker"
-    groups:
-      backend-docker:
+        - "minor"
+        - "patch"
+      minor-and-patch:
+        applies-to: security-updates
         patterns:
-        - "*"
-
-  - package-ecosystem: "docker"
-    directory: "/frontend"
-    schedule:
-      interval: "weekly"
-    ignore:
-      - dependency-name: "*"
+        - "@angular*"
         update-types:
-          - "version-update:semver-major"
-          - "version-update:semver-minor"
-    labels:
-      - "frontend"
-      - "docker"
-    groups:
-      frontend-docker:
-        patterns:
-        - "*"
+        - "patch"
+        - "minor"
+    ignore:
+      - dependency-name: "@angular*"
+        update-types: ["version-update:semver-major"]

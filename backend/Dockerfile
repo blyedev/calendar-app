@@ -1,7 +1,7 @@
 # ===========================
 # Base Stage
 # ===========================
-FROM python:3.12-slim AS base
+FROM python:3.12.8-slim AS base
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
