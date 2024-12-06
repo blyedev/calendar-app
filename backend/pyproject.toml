@@ -1,8 +1,11 @@
-[tool.poetry]
+[project]
 name = "calendar-app-backend"
 version = "0.1.0"
 description = "The backend for a calendar application inspired by google cal and the ical format"
-authors = ["blyedev <adam.smielewski@gmail.com>"]
+requires-python = ">=3.12"
+authors = [{name="blyedev", email = "adam.smielewski@gmail.com"}]
+
+[tool.poetry]
 package-mode = false
 
 [tool.poetry.dependencies]
@@ -15,6 +18,7 @@ whitenoise = "6.8.2"
 uuid = "1.30"
 gunicorn = "^23.0.0"
 psycopg = "^3.2.2"
+django-allauth = {extras = ["socialaccount"], version = "^65.3.0"}
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.8.2"
@@ -27,7 +31,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.django-stubs]
-django_settings_module = "calendar_project.settings.dev"
+django_settings_module = "calendar_project.settings"
 
 [tool.mypy]
 exclude = [
@@ -56,7 +60,72 @@ extend-exclude = [
 line-length = 119
 
 [tool.ruff.lint]
-select = ["A", "B", "C4", "C90", "DJ", "I", "LOG", "N", "PTH", "RUF", "SIM", "W"]
-ignore = ["RUF012"]
+select = [
+    "A", # flake8-builtins
+    #    "ANN", # flake8-annotations
+    "ARG",   # flake8-unused-arguments
+    "ASYNC", # flake8-async
+    "B",     # flake8-bugbear
+    #    "BLE",    # flake8-blind-except
+    "C4", # flake8-comprehensions
+    #    "C90",    # cognitive complexity
+    #    "COM",    # flake8-commas
+    #    "D", # pydocstyle
+    "DJ",
+    "DTZ", # flake8-datetimez
+    "E",   # pycodestyle errors
+    "EM",  # flake8-errmsg
+    #    "ERA",    # flake8-eradicate
+    "EXE", # flake8-executable
+    "F",   # pyflakes
+    "FA",  # flake8-future-annotations
+    #    "FBT",    # boolean trap
+    "FLY",  # flynt
+    "FURB", # refurb
+    #    "G",      # flake8-logging-format
+    "I",    # isort
+    "ICN",  # flake8-import-conventions
+    "INT",  # flake8-gettext
+    "ISC",  # implicit-str-concat
+    "LOG",  # flake8-logging
+    "N",    # pep8-naming
+    "PERF", # perflint
+    "PGH",  # pygrep-hooks
+    "PIE",  # flake8-pie
+    #    "PL",     # pylint
+    #    "PT",     # flake8-pytest-style
+    "PTH",    # flake8-use-pathlib
+    #    "PYI",    # flake8-pyi
+    #    "Q",      # flake8-quotes
+    "RET",  # flake8-return
+    "RSE",  # flake8-raise
+    "RUF",  # Ruff-specific lints
+    "S",    # flake8-bandit
+    "SIM",  # flake8-simplify
+    "SLF",  # flake8-self
+    "SLOT", # flake8-slots
+    #    "T20",    # flake8-print
+    "TCH", # flake8-type-checking
+    "TID", # ban relative imports
+    "TRY", # tryceratops
+    "UP",  # pyupgrade
+    "W",   # pycodestyle warnings
+    "YTT", # flake8-2020
+]
+
+ignore = [
+    "B028",   # No explicit `stacklevel` keyword argument found
+    "COM812", # ignore when using ruff-format
+    "G004",   # Logging statement uses f-string
+    "ISC001", # ignore when using ruff-format
+    "N818",   # Exception name should be named with an Error suffix
+    "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
+    "S404",   # `subprocess` module is possibly insecure
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = [
+    "F401", 
+]
 
 [tool.ruff.format]

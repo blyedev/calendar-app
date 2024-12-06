@@ -3,7 +3,6 @@ URL configuration for authentication via knox.
 """
 
 from django.urls import include, path
-from knox import views as knox_views
 
 from .views import CheckAuthenticationView, LoginView, LogoutView
 

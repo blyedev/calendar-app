@@ -38,10 +38,12 @@ class EventListCreateView(generics.ListCreateAPIView):
                 calendar_ids = calendar_param.split(",")
                 calendars = Calendar.objects.filter(pk__in=calendar_ids, user=user)
                 if not calendars.exists():
-                    raise ValidationError("Invalid calendar UUID(s) provided.")
+                    msg = "Invalid calendar UUID(s) provided."
+                    raise ValidationError(msg)
                 return Event.objects.filter(calendar__in=calendars)
             except ValueError as err:
-                raise ValidationError("Invalid UUID format provided.") from err
+                msg = "Invalid UUID format provided."
+                raise ValidationError(msg) from err
         return Event.objects.filter(calendar__user=user)
 
 

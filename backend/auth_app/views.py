@@ -14,7 +14,7 @@ class CheckAuthenticationView(GenericAPIView):
     permission_classes = (permissions.AllowAny,)
 
     @method_decorator(ensure_csrf_cookie)
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # noqa: ARG002
         is_authenticated = request.user.is_authenticated
         response_data = {"is_authenticated": is_authenticated}
         return Response(response_data, status=status.HTTP_200_OK)
@@ -23,12 +23,12 @@ class CheckAuthenticationView(GenericAPIView):
 class LoginView(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
-    def post(self, request, post_format=None):
+    def post(self, request, post_format=None):  # noqa: ARG002
         serializer = AuthTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
         login(request, user)
-        return super(LoginView, self).post(request, format=None)
+        return super(LoginView, self).post(request, format=None)  # noqa: UP008
 
 
 class LogoutView(KnoxLogoutView):
