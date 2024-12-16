@@ -63,8 +63,9 @@ updates:
         update-types:
         - "patch"
         - "minor"
-      lint:
+      eslint:
         patterns:
+          - 'typescript-eslint'
           - '@typescript-eslint/*'
           - 'eslint'
           - 'eslint-*'
