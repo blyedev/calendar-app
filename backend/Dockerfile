@@ -8,6 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
+    dos2unix \
     curl \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
@@ -36,7 +37,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN chmod +x entrypoint.sh
+RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
 
