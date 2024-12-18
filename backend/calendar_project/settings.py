@@ -54,11 +54,19 @@ INSTALLED_APPS = [
     "health_check.db",
     "health_check.cache",
     "health_check.contrib.migrations",
-    "allauth",
     "allauth.account",
+    "allauth.headless",
+    # 'allauth.socialaccount',
+    # 'allauth.mfa',
+    # 'allauth.usersessions',
     "rest_framework",
     "calendar_app",
 ]
+
+if DEBUG:
+    INSTALLED_APPS += [
+        "django_extensions",
+    ]
 
 CSRF_TRUSTED_ORIGINS = ["https://calendar.blyedev.com"]
 
@@ -102,10 +110,14 @@ TEMPLATES = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
-]
+HEADLESS_ONLY = True
+
+# These are the URLs to be implemented by your single-page application.
+HEADLESS_FRONTEND_URLS = {
+    "account_confirm_email": "https://app.project.org/account/verify-email/{key}",
+    "account_reset_password_from_key": "https://app.org/account/password/reset/key/{key}",
+    "account_signup": "https://app.org/account/signup",
+}
 
 WSGI_APPLICATION = "calendar_project.wsgi.application"
 
