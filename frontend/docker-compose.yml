@@ -4,14 +4,21 @@ services:
       context: .
       dockerfile: Dockerfile
       target: dev
+    restart: on-failure:3
     develop:
       watch:
-        - path: ./
-          action: sync
-          target: /app
+        - path: ./docker-compose.yml
+          action: rebuild
+        - path: ./Dockerfile
+          action: rebuild
         - path: ./package.json
           action: rebuild
         - path: ./package-lock.json
           action: rebuild
+        - path: ./angular.json
+          action: rebuild
+        - path: ./
+          action: sync
+          target: /app
     ports:
       - "4200:4200"

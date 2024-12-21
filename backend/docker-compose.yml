@@ -3,6 +3,7 @@ services:
     image: postgres:latest
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: always
     environment:
       - POSTGRES_DB=your_db_name
       - POSTGRES_USER=your_db_user
@@ -13,15 +14,23 @@ services:
       context: .
       dockerfile: Dockerfile
       target: dev
+    restart: on-failure:3
     develop:
       watch:
-        - path: ./
-          action: sync
-          target: /app
+        - path: ./docker-compose.yml
+          action: rebuild
+        - path: ./Dockerfile
+          action: rebuild
         - path: ./pyproject.toml
           action: rebuild
         - path: ./poetry.lock
           action: rebuild
+        - path: ./calendar_project/settings.py
+          action: sync+restart
+          target: ./app/calendar_project/settings.py
+        - path: ./
+          action: sync
+          target: /app
     ports:
       - "8000:8000"
     depends_on:

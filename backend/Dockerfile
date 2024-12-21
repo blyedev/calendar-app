@@ -31,6 +31,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # ===========================
 FROM base AS dev
 
+RUN poetry install --no-interaction --no-ansi --no-root
+
 ENV DJANGO_ENV=development
 
 WORKDIR /app
