@@ -1,70 +1,86 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap, ReplaySubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { catchError, map, Observable, of } from 'rxjs';
 import {
-  AuthPingResponse,
-  AuthResponse,
-  Credentials,
-} from '../models/auth.models';
+  AuthenticatedResponse,
+  ConfigurationResponse,
+  NotAuthenticatedResponse,
+  SessionResponse,
+} from '../models/auth-responses.models';
+import { EmailCredentials, UsernameCredentials } from '../models/auth.models';
+import { LoggingService } from './logging.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = environment.apiUrl + '/auth';
-
-  private isAuthSubject: ReplaySubject<boolean>;
-  public isAuth$: Observable<boolean>;
-
+  private authUrl = new URL(environment.authUrl, window.location.origin);
   constructor(
     private http: HttpClient,
-    private router: Router,
-  ) {
-    this.isAuthSubject = new ReplaySubject<boolean>(1);
-    this.isAuth$ = this.isAuthSubject.asObservable();
+    private logger: LoggingService,
+  ) {}
+
+  public fetchConfig() {
+    const url = new URL('browser/v1/config', this.authUrl);
+    return this.http
+      .get<ConfigurationResponse>(url.pathname, { observe: 'response' })
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.logger.error('Unexpected 4XX or 5XX status code');
+          throw error;
+        }),
+      );
   }
 
-  checkSession(): Observable<AuthPingResponse> {
-    const endpoint = `${this.apiUrl}/check`;
-
-    return this.http.get<AuthPingResponse>(endpoint).pipe(
-      tap({
-        next: (res: AuthPingResponse) => {
-          this.isAuthSubject.next(res.is_authenticated);
-        },
-      }),
-    );
-  }
-
-  login(credentials: Credentials): Observable<AuthResponse> {
-    const endpoint = `${this.apiUrl}/knox/login/`;
-
-    return this.http.post<AuthResponse>(endpoint, credentials).pipe(
-      tap({
-        next: () => {
-          this.isAuthSubject.next(true);
-        },
-        error: (error) => {
-          if (error.status === 400 && error.error?.non_field_errors) {
-            this.isAuthSubject.next(false);
+  public fetchSession(): Observable<SessionResponse> {
+    const url = new URL('browser/v1/auth/session', this.authUrl);
+    return this.http
+      .get<AuthenticatedResponse>(url.pathname, { observe: 'response' })
+      .pipe(
+        map((response) => {
+          if (response.status === 200) {
+            return response.body!;
           }
-        },
+          throw new Error('Unexpected 2XX status code');
+        }),
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401) {
+            return of(error.error as NotAuthenticatedResponse);
+          }
+          if (error.status === 410) {
+            this.logger.error('Untested 4XX or 5XX status code');
+            return of(error.error as NotAuthenticatedResponse);
+          }
+          this.logger.error('Unexpected 4XX or 5XX status code');
+          throw error;
+        }),
+      );
+  }
+
+  public deleteSession() {
+    const url = new URL('browser/v1/auth/session', this.authUrl);
+    return this.http.delete(url.pathname, { observe: 'response' }).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          return of(error.error as NotAuthenticatedResponse);
+        }
+        this.logger.error('Unexpected 4XX or 5XX status code');
+        throw error;
       }),
     );
   }
 
-  logout(): Observable<void> {
-    const endpoint = `${this.apiUrl}/knox/logout/`;
+  public loginByUsername(credentials: UsernameCredentials) {
+    return this.login(credentials);
+  }
 
-    return this.http.post<void>(endpoint, null).pipe(
-      tap({
-        next: () => {
-          this.isAuthSubject.next(false);
-          this.router.navigate(['/login']);
-        },
-      }),
-    );
+  public loginByEmail(credentials: EmailCredentials) {
+    return this.login(credentials);
+  }
+
+  private login(credentials: UsernameCredentials | EmailCredentials) {
+    const url = new URL('browser/v1/auth/login', this.authUrl);
+    return this.http.post(url.pathname, credentials, { observe: 'response' });
   }
 }

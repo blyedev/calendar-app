@@ -4,20 +4,6 @@
     <a [routerLink]="['/']"> Home </a>
     <a [routerLink]="['/calendar']"> Calendar </a>
   </nav>
-  @if (authService.isAuth$ | async; as isAuth) {
-    <a
-      (click)="logout()"
-      (keypress.enter)="logout()"
-      (keypress.space)="logout()"
-      class="cta"
-      tabindex="0"
-      role="button"
-    >
-      Logout
-    </a>
-  } @else {
-    <a [routerLink]="['/login']" class="cta"> Login </a>
-  }
 </header>
 
 <router-outlet />

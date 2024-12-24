@@ -1,23 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { AuthService } from './core/services/auth.service';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterLink, RouterOutlet, AsyncPipe],
+  imports: [RouterLink, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'calendar-app-frontend';
-  constructor(public authService: AuthService) {}
-
-  ngOnInit(): void {
-    this.authService.checkSession().subscribe();
-  }
-
-  logout() {
-    this.authService.logout().subscribe();
-  }
 }
