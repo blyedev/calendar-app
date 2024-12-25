@@ -1,16 +1,6 @@
-type Username = string;
-type Email = string;
-type Timestamp = number;
-
-export interface UsernameCredentials {
-  username: Username;
-  password: string;
-}
-
-export interface EmailCredentials {
-  email: Email;
-  password: string;
-}
+export type Username = string;
+export type Email = string;
+export type Timestamp = number;
 
 interface AccountConfiguration {
   authentication_method: 'email' | 'username' | 'username_email';
@@ -94,4 +84,10 @@ export interface Flow {
     flows: ('provider_redirect' | 'provider_token')[];
   };
   is_pending?: true;
+}
+
+export interface InputError<T> {
+  message: string;
+  code: 'email_password_mismatch' | 'invalid';
+  param?: T extends T ? keyof T : never;
 }
