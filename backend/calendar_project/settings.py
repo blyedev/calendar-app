@@ -119,6 +119,8 @@ HEADLESS_FRONTEND_URLS = {
     "account_signup": "https://app.org/account/signup",
 }
 
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+
 WSGI_APPLICATION = "calendar_project.wsgi.application"
 
 AUTH_PASSWORD_VALIDATORS = [

@@ -4,6 +4,17 @@
     <a [routerLink]="['/']"> Home </a>
     <a [routerLink]="['/calendar']"> Calendar </a>
   </nav>
+  @if (!(this.authService.isAuthenticated | async)) {
+    <nav>
+      <a [routerLink]="['/auth/login']"> Login </a>
+      <a [routerLink]="['/auth/signup']"> Sign Up </a>
+    </nav>
+  } @else {
+    <nav>
+      <a [routerLink]="['/auth/logout']"> Logout </a>
+      <a [routerLink]="['/auth/profile']"> Profile </a>
+    </nav>
+  }
 </header>
 
 <router-outlet />

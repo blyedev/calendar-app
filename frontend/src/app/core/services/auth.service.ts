@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { catchError, map, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, ReplaySubject } from 'rxjs';
 import {
   AuthenticatedResponse,
   ConfigurationResponse,
@@ -23,6 +23,10 @@ import { LoggingService } from './logging.service';
 })
 export class AuthService {
   private authUrl = new URL(environment.authUrl, window.location.origin);
+
+  private isAuthenticatedSubject = new ReplaySubject<boolean>();
+  public isAuthenticated = this.isAuthenticatedSubject.asObservable();
+
   constructor(
     private http: HttpClient,
     private logger: LoggingService,
@@ -50,13 +54,18 @@ export class AuthService {
       .pipe(
         map((response) => {
           if (response.status === 200) {
+            this.isAuthenticatedSubject.next(
+              response.body!.meta.is_authenticated,
+            );
             return response.body!;
           }
           throw new Error('Unexpected 2XX status code');
         }),
         catchError((error: HttpErrorResponse) => {
           if (error.status === 401) {
-            return of(error.error as NotAuthenticatedResponse);
+            const response = error.error as NotAuthenticatedResponse;
+            this.isAuthenticatedSubject.next(response.meta.is_authenticated);
+            return of(response);
           }
           if (error.status === 410) {
             return of(error.error as SessionGoneResponse);
@@ -79,7 +88,9 @@ export class AuthService {
       }),
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          return of(error.error as NotAuthenticatedResponse);
+          const response = error.error as NotAuthenticatedResponse;
+          this.isAuthenticatedSubject.next(response.meta.is_authenticated);
+          return of(response);
         }
         this.logger.error('Unexpected 4XX or 5XX status code');
         throw error;
@@ -96,6 +107,9 @@ export class AuthService {
       .pipe(
         map((response) => {
           if (response.status === 200) {
+            this.isAuthenticatedSubject.next(
+              response.body!.meta.is_authenticated,
+            );
             return response.body!;
           }
           throw new Error('Unexpected 2XX status code');
@@ -105,7 +119,9 @@ export class AuthService {
             return of(error.error as InputErrorResponse<typeof credentials>);
           }
           if (error.status === 401) {
-            return of(error.error as NotAuthenticatedResponse);
+            const response = error.error as NotAuthenticatedResponse;
+            this.isAuthenticatedSubject.next(response.meta.is_authenticated);
+            return of(response);
           }
           if (error.status === 409) {
             return of(error.error as ConflictResponse);
@@ -125,6 +141,9 @@ export class AuthService {
       .pipe(
         map((response) => {
           if (response.status === 200) {
+            this.isAuthenticatedSubject.next(
+              response.body!.meta.is_authenticated,
+            );
             return response.body!;
           }
           throw new Error('Unexpected 2XX status code');
@@ -134,7 +153,9 @@ export class AuthService {
             return of(error.error as InputErrorResponse<typeof credentials>);
           }
           if (error.status === 401) {
-            return of(error.error as NotAuthenticatedResponse);
+            const response = error.error as NotAuthenticatedResponse;
+            this.isAuthenticatedSubject.next(response.meta.is_authenticated);
+            return of(response);
           }
           if (error.status === 403) {
             return of(error.error as ForbiddenResponse);
