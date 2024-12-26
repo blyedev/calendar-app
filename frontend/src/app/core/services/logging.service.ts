@@ -4,12 +4,16 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class LoggingService {
-  log(...args: Parameters<typeof console.log>): void {
-    console.log(...args);
+  debug(...args: Parameters<typeof console.debug>): void {
+    console.debug(...args);
   }
 
   info(...args: Parameters<typeof console.info>): void {
     console.info(...args);
+  }
+
+  log(...args: Parameters<typeof console.log>): void {
+    console.log(...args);
   }
 
   warn(...args: Parameters<typeof console.warn>): void {

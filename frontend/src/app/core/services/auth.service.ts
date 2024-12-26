@@ -1,7 +1,15 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { catchError, map, Observable, of, ReplaySubject } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  ReplaySubject,
+  tap,
+} from 'rxjs';
 import {
   AuthenticatedResponse,
   ConfigurationResponse,
@@ -24,8 +32,13 @@ import { LoggingService } from './logging.service';
 export class AuthService {
   private authUrl = new URL(environment.authUrl, window.location.origin);
 
-  private isAuthenticatedSubject = new ReplaySubject<boolean>();
+  private isAuthenticatedSubject = new ReplaySubject<boolean>(1);
   public isAuthenticated = this.isAuthenticatedSubject.asObservable();
+
+  private userSubject = new BehaviorSubject<
+    AuthenticatedResponse['data']['user'] | null
+  >(null);
+  public user = this.userSubject.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -54,24 +67,27 @@ export class AuthService {
       .pipe(
         map((response) => {
           if (response.status === 200) {
-            this.isAuthenticatedSubject.next(
-              response.body!.meta.is_authenticated,
-            );
             return response.body!;
           }
           throw new Error('Unexpected 2XX status code');
         }),
         catchError((error: HttpErrorResponse) => {
           if (error.status === 401) {
-            const response = error.error as NotAuthenticatedResponse;
-            this.isAuthenticatedSubject.next(response.meta.is_authenticated);
-            return of(response);
+            return of(error.error as NotAuthenticatedResponse);
           }
           if (error.status === 410) {
             return of(error.error as SessionGoneResponse);
           }
           this.logger.error('Unexpected 4XX or 5XX status code');
           throw error;
+        }),
+        tap((response) => {
+          if (response.status === 200) {
+            this.handleAuthenticatedResponse(response);
+          }
+          if (response.status === 401) {
+            this.handleNotAuthenticatedResponse(response);
+          }
         }),
       );
   }
@@ -88,12 +104,15 @@ export class AuthService {
       }),
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          const response = error.error as NotAuthenticatedResponse;
-          this.isAuthenticatedSubject.next(response.meta.is_authenticated);
-          return of(response);
+          return of(error.error as NotAuthenticatedResponse);
         }
         this.logger.error('Unexpected 4XX or 5XX status code');
         throw error;
+      }),
+      tap((response) => {
+        if (response.status === 401) {
+          this.handleNotAuthenticatedResponse(response);
+        }
       }),
     );
   }
@@ -107,9 +126,6 @@ export class AuthService {
       .pipe(
         map((response) => {
           if (response.status === 200) {
-            this.isAuthenticatedSubject.next(
-              response.body!.meta.is_authenticated,
-            );
             return response.body!;
           }
           throw new Error('Unexpected 2XX status code');
@@ -119,15 +135,21 @@ export class AuthService {
             return of(error.error as InputErrorResponse<typeof credentials>);
           }
           if (error.status === 401) {
-            const response = error.error as NotAuthenticatedResponse;
-            this.isAuthenticatedSubject.next(response.meta.is_authenticated);
-            return of(response);
+            return of(error.error as NotAuthenticatedResponse);
           }
           if (error.status === 409) {
             return of(error.error as ConflictResponse);
           }
           this.logger.error('Unexpected 4XX or 5XX status code');
           throw error;
+        }),
+        tap((response) => {
+          if (response.status === 200) {
+            this.handleAuthenticatedResponse(response);
+          }
+          if (response.status === 401) {
+            this.handleNotAuthenticatedResponse(response);
+          }
         }),
       );
   }
@@ -141,9 +163,6 @@ export class AuthService {
       .pipe(
         map((response) => {
           if (response.status === 200) {
-            this.isAuthenticatedSubject.next(
-              response.body!.meta.is_authenticated,
-            );
             return response.body!;
           }
           throw new Error('Unexpected 2XX status code');
@@ -153,9 +172,7 @@ export class AuthService {
             return of(error.error as InputErrorResponse<typeof credentials>);
           }
           if (error.status === 401) {
-            const response = error.error as NotAuthenticatedResponse;
-            this.isAuthenticatedSubject.next(response.meta.is_authenticated);
-            return of(response);
+            return of(error.error as NotAuthenticatedResponse);
           }
           if (error.status === 403) {
             return of(error.error as ForbiddenResponse);
@@ -166,6 +183,28 @@ export class AuthService {
           this.logger.error('Unexpected 4XX or 5XX status code');
           throw error;
         }),
+        tap((response) => {
+          if (response.status === 200) {
+            this.handleAuthenticatedResponse(response);
+          }
+          if (response.status === 401) {
+            this.handleNotAuthenticatedResponse(response);
+          }
+        }),
       );
+  }
+
+  private handleAuthenticatedResponse(response: AuthenticatedResponse) {
+    this.logger.debug('Auth Service updates state an authenticated response');
+    this.isAuthenticatedSubject.next(response.meta.is_authenticated);
+    this.userSubject.next(response.data.user);
+  }
+
+  private handleNotAuthenticatedResponse(response: NotAuthenticatedResponse) {
+    this.logger.debug(
+      'Auth Service updates state after a not authenticated response',
+    );
+    this.isAuthenticatedSubject.next(response.meta.is_authenticated);
+    this.userSubject.next(null);
   }
 }

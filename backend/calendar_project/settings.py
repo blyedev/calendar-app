@@ -27,6 +27,8 @@ DATABASES = {
     }
 }
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 # Originally existed for healthcheks on ecs but it's not necessary at the moment
 #
 # if not DEBUG:
@@ -54,6 +56,7 @@ INSTALLED_APPS = [
     "health_check.db",
     "health_check.cache",
     "health_check.contrib.migrations",
+    "allauth",
     "allauth.account",
     "allauth.headless",
     # 'allauth.socialaccount',

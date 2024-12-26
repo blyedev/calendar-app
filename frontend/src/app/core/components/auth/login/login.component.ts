@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { LoggingService } from 'src/app/core/services/logging.service';
 
@@ -21,9 +21,13 @@ export class LoginComponent {
     private authService: AuthService,
     private logger: LoggingService,
     private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   onSubmit(): void {
+    this.logger.debug(
+      `Attempt login with credentials ${JSON.stringify(this.loginForm.value)}`,
+    );
     this.authService
       .login({
         username: this.loginForm.value.username!,
@@ -31,9 +35,11 @@ export class LoginComponent {
       })
       .subscribe({
         next: (value) => {
-          this.logger.log(value);
           if (value.status === 200) {
-            this.router.navigate(['auth', 'profile']);
+            const nextUrl =
+              this.route.snapshot.queryParamMap.get('nextUrl') ||
+              '/auth/profile';
+            this.router.navigateByUrl(nextUrl);
           }
         },
       });

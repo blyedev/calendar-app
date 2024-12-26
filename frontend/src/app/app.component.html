@@ -4,7 +4,7 @@
     <a [routerLink]="['/']"> Home </a>
     <a [routerLink]="['/calendar']"> Calendar </a>
   </nav>
-  @if (!(this.authService.isAuthenticated | async)) {
+  @if ((this.authService.isAuthenticated | async) === false) {
     <nav>
       <a [routerLink]="['/auth/login']"> Login </a>
       <a [routerLink]="['/auth/signup']"> Sign Up </a>

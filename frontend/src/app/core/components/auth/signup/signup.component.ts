@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { LoggingService } from 'src/app/core/services/logging.service';
 
@@ -20,6 +21,7 @@ export class SignupComponent {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private logger: LoggingService,
+    private router: Router,
   ) {}
 
   onSubmit(): void {
@@ -31,7 +33,12 @@ export class SignupComponent {
       })
       .subscribe({
         next: (value) => {
-          this.logger.log(value);
+          if (value.status === 200) {
+            this.router.navigateByUrl('/auth/profile');
+          }
+          if (value.status === 400) {
+            this.logger.error(value);
+          }
         },
       });
   }
