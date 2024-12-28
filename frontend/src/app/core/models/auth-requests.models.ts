@@ -21,7 +21,7 @@ export interface AuthenticatedResponse {
 
 export interface InputErrorResponse<T> {
   status: 400;
-  error: InputError<T>[];
+  errors: InputError<T>[];
 }
 
 export interface NotAuthenticatedResponse {

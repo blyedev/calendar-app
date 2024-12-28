@@ -88,6 +88,6 @@ export interface Flow {
 
 export interface InputError<T> {
   message: string;
-  code: 'email_password_mismatch' | 'invalid';
-  param?: T extends T ? keyof T : never;
+  code: string | 'email_password_mismatch' | 'invalid';
+  param?: string | T extends T ? keyof T : never;
 }

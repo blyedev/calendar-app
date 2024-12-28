@@ -1,9 +1,26 @@
 <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
-  <label for="email">Email: </label>
-  <input id="email" type="email" formControlName="email" />
-  <label for="username">Username: </label>
-  <input id="username" type="text" formControlName="username" />
-  <label for="password">Password: </label>
-  <input id="password" type="password" formControlName="password" />
+  <app-input
+    id="email"
+    label="Email: "
+    [control]="signupForm.controls.email"
+    type="email"
+  />
+  <app-input
+    id="username"
+    label="Username: "
+    [control]="signupForm.controls.username"
+    type="text"
+  />
+  <app-input
+    id="password"
+    label="Password: "
+    [control]="signupForm.controls.password"
+    type="password"
+  />
   <button type="submit" [disabled]="signupForm.invalid">Signup</button>
+  @if (signupForm.errors?.["serverErrors"]) {
+    @for (error of signupForm.errors?.["serverErrors"]; track error.code) {
+      <div>{{ error.message }}</div>
+    }
+  }
 </form>
