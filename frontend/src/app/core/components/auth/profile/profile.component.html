@@ -1,0 +1,7 @@
+@if (this.authService.user | async; as user) {
+  <h1>Hi {{ user.display }}</h1>
+  <p>Email: {{ user.email }}</p>
+  <p>Username: {{ user.username }}</p>
+} @else {
+  <p>Something went wrong ;(</p>
+}

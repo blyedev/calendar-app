@@ -1,12 +1,8 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { EventService } from './event.service';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import {
-  Calendar,
-  CalendarEvent,
-  Interval,
-} from 'src/app/core/models/calendar.models';
 import { CalendarService } from './calendar.service';
+import { Calendar, CalendarEvent, Interval } from '../models/calendar.models';
 
 @Injectable({
   providedIn: 'root',

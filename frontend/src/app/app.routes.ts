@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
+import { authenticatedGuard } from './core/guards/authenticated.guard';
+import { authRoutes } from './core/components/auth/auth.routes';
 
 export const routes: Routes = [
   {
@@ -10,11 +11,8 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'login',
-    loadComponent: () =>
-      import('./modules/auth/login-page/login-page.component').then(
-        (m) => m.LoginPageComponent,
-      ),
+    path: 'auth',
+    children: [...authRoutes],
   },
   {
     path: 'calendar',
@@ -22,6 +20,6 @@ export const routes: Routes = [
       import('./modules/calendar/calendar-page.component').then(
         (m) => m.CalendarPageComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authenticatedGuard],
   },
 ];

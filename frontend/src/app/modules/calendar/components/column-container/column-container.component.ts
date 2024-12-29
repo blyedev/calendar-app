@@ -6,7 +6,6 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { Interval } from 'src/app/core/models/calendar.models';
 import { EventComponent } from '../event/event.component';
 import {
   isNonFullDay,
@@ -15,6 +14,7 @@ import {
 import { columnPositionEvents } from '../../utils/positioning/column-positioning.utils';
 import { EventService } from '../../services/event.service';
 import { EventCreationService } from '../../services/event-creation.service';
+import { Interval } from '../../models/calendar.models';
 
 @Component({
   selector: 'app-column-container',

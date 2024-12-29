@@ -17,6 +17,5 @@
         "importFrom": ["src/styles.css"]
       }
     ]
-  },
-  "ignoreFiles": ["**/.angular/**", "**/dist/**", "**/node_modules/**"]
+  }
 }

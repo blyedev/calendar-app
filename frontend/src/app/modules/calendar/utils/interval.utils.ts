@@ -1,4 +1,4 @@
-import { Interval } from 'src/app/core/models/calendar.models';
+import { Interval } from '../models/calendar.models';
 
 export function intervalsOverlap(
   interval1: Interval,

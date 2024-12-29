@@ -3,6 +3,7 @@ services:
     image: postgres:latest
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: always
     environment:
       - POSTGRES_DB=your_db_name
       - POSTGRES_USER=your_db_user
@@ -13,22 +14,30 @@ services:
       context: .
       dockerfile: Dockerfile
       target: dev
+    restart: on-failure:3
     develop:
       watch:
-        - path: ./
-          action: sync
-          target: /app
+        - path: ./docker-compose.yml
+          action: rebuild
+        - path: ./Dockerfile
+          action: rebuild
         - path: ./pyproject.toml
           action: rebuild
         - path: ./poetry.lock
           action: rebuild
+        - path: ./calendar_project/settings.py
+          action: sync+restart
+          target: ./app/calendar_project/settings.py
+        - path: ./
+          action: sync
+          target: /app
     ports:
       - "8000:8000"
     depends_on:
       - db
     environment:
       - DJANGO_SUPERUSER_EMAIL=adam.smielewski@gmail.com
-      - DJANGO_SUPERUSER_PASSWORD=Ziomek56
+      - DJANGO_SUPERUSER_PASSWORD=root
       - POSTGRES_DB=your_db_name
       - POSTGRES_USER=your_db_user
       - POSTGRES_PASSWORD=your_db_password

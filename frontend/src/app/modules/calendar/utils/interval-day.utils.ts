@@ -1,4 +1,4 @@
-import { Interval } from 'src/app/core/models/calendar.models';
+import { Interval } from '../models/calendar.models';
 import { adjustInterval, intervalsOverlap } from './interval.utils';
 
 export function calculateIntervalDay(interval: Interval): Interval {

@@ -1,4 +1,3 @@
-import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
 import {
   AdjustEventFunction,
   AdjustedEvent,
@@ -12,6 +11,7 @@ import {
   eventsOverlap,
 } from '../calendar-event.utils';
 import { getMatrixConstructor } from './positioning.utils';
+import { CalendarEvent, Interval } from '../../models/calendar.models';
 
 export const adjustEvent: AdjustEventFunction = (interval) => (event) => ({
   event: event,

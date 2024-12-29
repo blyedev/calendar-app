@@ -4,19 +4,16 @@
     <a [routerLink]="['/']"> Home </a>
     <a [routerLink]="['/calendar']"> Calendar </a>
   </nav>
-  @if (authService.isAuth$ | async; as isAuth) {
-    <a
-      (click)="logout()"
-      (keypress.enter)="logout()"
-      (keypress.space)="logout()"
-      class="cta"
-      tabindex="0"
-      role="button"
-    >
-      Logout
-    </a>
+  @if ((this.authService.isAuthenticated | async) === false) {
+    <nav>
+      <a [routerLink]="['/auth/login']"> Login </a>
+      <a [routerLink]="['/auth/signup']"> Sign Up </a>
+    </nav>
   } @else {
-    <a [routerLink]="['/login']" class="cta"> Login </a>
+    <nav>
+      <a [routerLink]="['/auth/logout']"> Logout </a>
+      <a [routerLink]="['/auth/profile']"> Profile </a>
+    </nav>
   }
 </header>
 

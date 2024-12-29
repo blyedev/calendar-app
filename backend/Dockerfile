@@ -31,6 +31,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # ===========================
 FROM base AS dev
 
+RUN poetry install --no-interaction --no-ansi --no-root
+
 ENV DJANGO_ENV=development
 
 WORKDIR /app
@@ -41,7 +43,7 @@ RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver_plus", "0.0.0.0:8000"]
 
 EXPOSE 8000
 

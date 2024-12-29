@@ -6,7 +6,6 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { Interval } from 'src/app/core/models/calendar.models';
 import { EventComponent } from '../event/event.component';
 import { PosEvent } from '../../models/positioning.models';
 import {
@@ -15,6 +14,7 @@ import {
 } from '../../utils/calendar-event.utils';
 import { gridPositionEvents } from '../../utils/positioning/row-positioning.utils';
 import { EventService } from '../../services/event.service';
+import { Interval } from '../../models/calendar.models';
 
 @Component({
   selector: 'app-row-container',

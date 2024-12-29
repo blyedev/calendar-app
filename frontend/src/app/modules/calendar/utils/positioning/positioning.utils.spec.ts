@@ -1,7 +1,7 @@
-import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
 import { eventsOverlap } from '../calendar-event.utils';
 import { getMatrixConstructor, reduceToMatrix } from './positioning.utils';
 import { AdjustedEvent } from '../../models/positioning.models';
+import { CalendarEvent, Interval } from '../../models/calendar.models';
 
 describe('Positioning Utils - Matrix Functions', () => {
   let event1: CalendarEvent;

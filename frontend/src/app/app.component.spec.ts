@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { AuthService } from './core/services/auth.service';
 import { HttpTestingController } from '@angular/common/http/testing';
 import {
   provideHttpClient,
@@ -18,7 +17,6 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
-        AuthService,
         provideRouter(routes),
         provideHttpClient(
           withFetch(),

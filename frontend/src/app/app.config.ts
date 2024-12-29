@@ -1,4 +1,9 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  provideAppInitializer,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -7,6 +12,7 @@ import {
   withFetch,
   withXsrfConfiguration,
 } from '@angular/common/http';
+import { AuthService } from './core/services/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,5 +25,13 @@ export const appConfig: ApplicationConfig = {
         headerName: 'X-CSRFToken',
       }),
     ),
+    provideAppInitializer(() => {
+      const authService = inject(AuthService);
+      return authService.fetchConfig();
+    }),
+    provideAppInitializer(() => {
+      const authService = inject(AuthService);
+      return authService.fetchSession();
+    }),
   ],
 };

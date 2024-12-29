@@ -1,70 +1,210 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap, ReplaySubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import {
-  AuthPingResponse,
-  AuthResponse,
-  Credentials,
-} from '../models/auth.models';
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  ReplaySubject,
+  tap,
+} from 'rxjs';
+import {
+  AuthenticatedResponse,
+  ConfigurationResponse,
+  ConflictResponse,
+  ForbiddenResponse,
+  InputErrorResponse,
+  LoginRequest,
+  LoginResponse,
+  NotAuthenticatedResponse,
+  SessionGoneResponse,
+  SessionResponse,
+  SignupRequest,
+  SignupResponse,
+} from '../models/auth-requests.models';
+import { LoggingService } from './logging.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = environment.apiUrl + '/auth';
+  private authUrl = new URL(environment.authUrl, window.location.origin);
 
-  private isAuthSubject: ReplaySubject<boolean>;
-  public isAuth$: Observable<boolean>;
+  private isAuthenticatedSubject = new ReplaySubject<boolean>(1);
+  readonly isAuthenticated = this.isAuthenticatedSubject.asObservable();
+
+  private userSubject = new BehaviorSubject<
+    AuthenticatedResponse['data']['user'] | null
+  >(null);
+  readonly user = this.userSubject.asObservable();
 
   constructor(
     private http: HttpClient,
-    private router: Router,
-  ) {
-    this.isAuthSubject = new ReplaySubject<boolean>(1);
-    this.isAuth$ = this.isAuthSubject.asObservable();
+    private logger: LoggingService,
+  ) {}
+
+  public fetchConfig(): Observable<ConfigurationResponse> {
+    const url = new URL('browser/v1/config', this.authUrl);
+    return this.http
+      .get<ConfigurationResponse>(url.pathname, { observe: 'response' })
+      .pipe(
+        map((response) => {
+          return response.body!;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.logger.error('Unexpected 4XX or 5XX status code');
+          throw error;
+        }),
+      );
   }
 
-  checkSession(): Observable<AuthPingResponse> {
-    const endpoint = `${this.apiUrl}/check`;
-
-    return this.http.get<AuthPingResponse>(endpoint).pipe(
-      tap({
-        next: (res: AuthPingResponse) => {
-          this.isAuthSubject.next(res.is_authenticated);
-        },
-      }),
-    );
-  }
-
-  login(credentials: Credentials): Observable<AuthResponse> {
-    const endpoint = `${this.apiUrl}/knox/login/`;
-
-    return this.http.post<AuthResponse>(endpoint, credentials).pipe(
-      tap({
-        next: () => {
-          this.isAuthSubject.next(true);
-        },
-        error: (error) => {
-          if (error.status === 400 && error.error?.non_field_errors) {
-            this.isAuthSubject.next(false);
+  public fetchSession(): Observable<SessionResponse> {
+    const url = new URL('browser/v1/auth/session', this.authUrl);
+    return this.http
+      .get<AuthenticatedResponse>(url.pathname, { observe: 'response' })
+      .pipe(
+        map((response) => {
+          if (response.status === 200) {
+            return response.body!;
           }
-        },
+          throw new Error('Unexpected 2XX status code');
+        }),
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401) {
+            return of(error.error as NotAuthenticatedResponse);
+          }
+          if (error.status === 410) {
+            return of(error.error as SessionGoneResponse);
+          }
+          this.logger.error('Unexpected 4XX or 5XX status code');
+          throw error;
+        }),
+        tap((response) => {
+          if (response.status === 200) {
+            this.handleAuthenticatedResponse(response);
+          }
+          if (response.status === 401) {
+            this.handleNotAuthenticatedResponse(response);
+          }
+        }),
+      );
+  }
+
+  public deleteSession(): Observable<NotAuthenticatedResponse> {
+    const url = new URL('browser/v1/auth/session', this.authUrl);
+    return this.http.delete(url.pathname, { observe: 'response' }).pipe(
+      map(() => {
+        const error = new Error(
+          'Expected a 401 status code indicating a session no longer exists',
+        );
+        this.logger.error(error);
+        throw error;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          return of(error.error as NotAuthenticatedResponse);
+        }
+        this.logger.error('Unexpected 4XX or 5XX status code');
+        throw error;
+      }),
+      tap((response) => {
+        if (response.status === 401) {
+          this.handleNotAuthenticatedResponse(response);
+        }
       }),
     );
   }
 
-  logout(): Observable<void> {
-    const endpoint = `${this.apiUrl}/knox/logout/`;
+  public login(credentials: LoginRequest): Observable<LoginResponse> {
+    const url = new URL('browser/v1/auth/login', this.authUrl);
+    return this.http
+      .post<AuthenticatedResponse>(url.pathname, credentials, {
+        observe: 'response',
+      })
+      .pipe(
+        map((response) => {
+          if (response.status === 200) {
+            return response.body!;
+          }
+          throw new Error('Unexpected 2XX status code');
+        }),
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 400) {
+            return of(error.error as InputErrorResponse<typeof credentials>);
+          }
+          if (error.status === 401) {
+            return of(error.error as NotAuthenticatedResponse);
+          }
+          if (error.status === 409) {
+            return of(error.error as ConflictResponse);
+          }
+          this.logger.error('Unexpected 4XX or 5XX status code');
+          throw error;
+        }),
+        tap((response) => {
+          if (response.status === 200) {
+            this.handleAuthenticatedResponse(response);
+          }
+          if (response.status === 401) {
+            this.handleNotAuthenticatedResponse(response);
+          }
+        }),
+      );
+  }
 
-    return this.http.post<void>(endpoint, null).pipe(
-      tap({
-        next: () => {
-          this.isAuthSubject.next(false);
-          this.router.navigate(['/login']);
-        },
-      }),
+  public signup(credentials: SignupRequest): Observable<SignupResponse> {
+    const url = new URL('browser/v1/auth/signup', this.authUrl);
+    return this.http
+      .post<AuthenticatedResponse>(url.pathname, credentials, {
+        observe: 'response',
+      })
+      .pipe(
+        map((response) => {
+          if (response.status === 200) {
+            return response.body!;
+          }
+          throw new Error('Unexpected 2XX status code');
+        }),
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 400) {
+            return of(error.error as InputErrorResponse<typeof credentials>);
+          }
+          if (error.status === 401) {
+            return of(error.error as NotAuthenticatedResponse);
+          }
+          if (error.status === 403) {
+            return of(error.error as ForbiddenResponse);
+          }
+          if (error.status === 409) {
+            return of(error.error as ConflictResponse);
+          }
+          this.logger.error('Unexpected 4XX or 5XX status code');
+          throw error;
+        }),
+        tap((response) => {
+          if (response.status === 200) {
+            this.handleAuthenticatedResponse(response);
+          }
+          if (response.status === 401) {
+            this.handleNotAuthenticatedResponse(response);
+          }
+        }),
+      );
+  }
+
+  private handleAuthenticatedResponse(response: AuthenticatedResponse) {
+    this.logger.debug('Auth Service updates state an authenticated response');
+    this.isAuthenticatedSubject.next(response.meta.is_authenticated);
+    this.userSubject.next(response.data.user);
+  }
+
+  private handleNotAuthenticatedResponse(response: NotAuthenticatedResponse) {
+    this.logger.debug(
+      'Auth Service updates state after a not authenticated response',
     );
+    this.isAuthenticatedSubject.next(response.meta.is_authenticated);
+    this.userSubject.next(null);
   }
 }

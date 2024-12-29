@@ -1,0 +1,23 @@
+<label [for]="id()">{{ label() }}</label>
+<input [id]="id()" [type]="type()" [formControl]="control()" />
+@if (control().invalid && (control().dirty || control().touched)) {
+  <div [id]="id() + '-error'">
+    @if (control().errors?.["required"]) {
+      <div>This field is required.</div>
+    }
+    @if (control().errors?.["email"]) {
+      <div>Must be a valid email adress.</div>
+    }
+    @if (control().errors?.["minlength"]) {
+      <div>
+        Must be at least
+        {{ control().errors?.["minlength"].requiredLength }} characters long.
+      </div>
+    }
+    @if (control().errors?.["serverErrors"]) {
+      @for (error of control().errors?.["serverErrors"]; track error.code) {
+        <div>{{ error.message }}</div>
+      }
+    }
+  </div>
+}
