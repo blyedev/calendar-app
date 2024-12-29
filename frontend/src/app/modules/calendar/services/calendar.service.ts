@@ -1,55 +1,144 @@
-import { Injectable, Signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { tap } from 'rxjs/internal/operators/tap';
-import { Calendar } from 'src/app/core/models/calendar.models';
-import { CalendarAPIService } from 'src/app/core/services/calendar-api.service';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable, signal } from '@angular/core';
+import { environment } from 'src/environments/environment';
+import { Calendar } from '../models/calendar.models';
+import { CalendarRequest, CalendarResponse } from '../models/api.models';
+import { catchError, map, Observable, tap } from 'rxjs';
+import { LoggingService } from 'src/app/core/services/logging.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CalendarService {
-  private calendarsSubject: BehaviorSubject<Calendar[]>;
+  private apiUrl = new URL(environment.apiUrl, window.location.origin);
 
-  readonly calendars: Signal<Calendar[]>;
+  private calendarsSignal = signal<Calendar[]>([]);
+  public readonly calendars = this.calendarsSignal.asReadonly();
 
-  constructor(private calendarAPIService: CalendarAPIService) {
-    this.calendarsSubject = new BehaviorSubject<Calendar[]>([]);
-
-    this.calendars = toSignal(this.calendarsSubject.asObservable(), {
-      initialValue: [],
-    });
-
-    this.loadCalendars();
+  constructor(
+    private http: HttpClient,
+    private logger: LoggingService,
+  ) {
+    this.getCalendars().subscribe();
   }
 
-  loadCalendars(): void {
-    this.calendarAPIService
-      .getCalendars()
+  createCalendar(calendar: Calendar): Observable<Calendar> {
+    const url = new URL('v1/calendars/', this.apiUrl);
+    return this.http
+      .post<CalendarResponse>(url.pathname, this.serializeCalendar(calendar), {
+        observe: 'response',
+      })
       .pipe(
-        tap((calendars: Calendar[]) => this.calendarsSubject.next(calendars)),
-      )
-      .subscribe();
+        map((response) => {
+          if (response.status === 200) {
+            return this.deserializeCalendar(response.body!);
+          }
+          throw new Error('Unexpected 2XX status code');
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.logger.error('Unexpected 4XX or 5XX status code');
+          throw error;
+        }),
+        tap(() => this.getCalendars()),
+      );
   }
 
-  addCalendar(calendar: Calendar): void {
-    this.calendarAPIService
-      .addCalendar(calendar)
-      .pipe(tap(() => this.loadCalendars()))
-      .subscribe();
+  getCalendars(): Observable<Calendar[]> {
+    const url = new URL('v1/calendars/', this.apiUrl);
+    return this.http
+      .get<readonly CalendarResponse[]>(url.pathname, { observe: 'response' })
+      .pipe(
+        map((response) => {
+          if (response.status === 200) {
+            return response.body!.map(this.deserializeCalendar);
+          }
+          throw new Error('Unexpected 2XX status code');
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.logger.error('Unexpected 4XX or 5XX status code');
+          throw error;
+        }),
+        tap((calendars) => this.calendarsSignal.set(calendars)),
+      );
   }
 
-  updateCalendar(calendar: Calendar): void {
-    this.calendarAPIService
-      .updateCalendar(calendar)
-      .pipe(tap(() => this.loadCalendars()))
-      .subscribe();
+  getCalendar(uid: string): Observable<Calendar> {
+    const url = new URL('v1/calendars/' + uid + '/', this.apiUrl);
+    return this.http
+      .get<CalendarResponse>(url.pathname, { observe: 'response' })
+      .pipe(
+        map((response) => {
+          if (response.status === 200) {
+            return this.deserializeCalendar(response.body!);
+          }
+          throw new Error('Unexpected 2XX status code');
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.logger.error('Unexpected 4XX or 5XX status code');
+          throw error;
+        }),
+      );
   }
 
-  deleteCalendar(uid: string): void {
-    this.calendarAPIService
-      .deleteCalendar(uid)
-      .pipe(tap(() => this.loadCalendars()))
-      .subscribe();
+  updateCalendar(calendar: Calendar): Observable<Calendar> {
+    if (!calendar.uid) {
+      const error = new Error('UUID missing on request');
+      this.logger.error(error);
+      throw error;
+    }
+
+    const url = new URL('v1/calendars/' + calendar.uid + '/', this.apiUrl);
+    return this.http
+      .patch<CalendarResponse>(url.pathname, this.serializeCalendar(calendar), {
+        observe: 'response',
+      })
+      .pipe(
+        map((response) => {
+          if (response.status === 200) {
+            return this.deserializeCalendar(response.body!);
+          }
+          throw new Error('Unexpected 2XX status code');
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.logger.error('Unexpected 4XX or 5XX status code');
+          throw error;
+        }),
+        tap(() => this.getCalendars()),
+      );
+  }
+
+  deleteCalendar(uid: string): Observable<null> {
+    const url = new URL('v1/calendars/' + uid + '/', this.apiUrl);
+    return this.http.delete<null>(url.pathname, { observe: 'response' }).pipe(
+      map((response) => {
+        if (response.status === 204) {
+          return null;
+        }
+        throw new Error('Unexpected 2XX status code');
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.logger.error('Unexpected 4XX or 5XX status code');
+        throw error;
+      }),
+      tap(() => this.getCalendars()),
+    );
+  }
+
+  private deserializeCalendar(response: CalendarResponse): Calendar {
+    return {
+      user: response.user,
+      uid: response.uid,
+      name: response.name,
+      description: response.description,
+      createdAt: new Date(response.dtstamp),
+      lastModified: new Date(response.last_modified),
+    };
+  }
+
+  private serializeCalendar(calendar: Calendar): CalendarRequest {
+    return {
+      name: calendar.name,
+      description: calendar.description,
+    };
   }
 }

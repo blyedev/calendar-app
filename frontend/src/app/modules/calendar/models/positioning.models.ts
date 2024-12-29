@@ -1,4 +1,4 @@
-import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
+import { CalendarEvent, Interval } from './calendar.models';
 
 export interface EventWrapper {
   readonly event: CalendarEvent;

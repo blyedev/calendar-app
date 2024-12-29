@@ -1,4 +1,4 @@
-import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
+import { CalendarEvent, Interval } from '../../models/calendar.models';
 import { gridPositionEvents } from './row-positioning.utils';
 
 describe('Grid Position Events', () => {

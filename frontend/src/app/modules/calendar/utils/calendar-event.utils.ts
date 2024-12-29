@@ -1,6 +1,6 @@
-import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
 import { intervalOverlapsWithAny, intervalsOverlap } from './interval.utils';
 import { intervalDaysOverlap } from './interval-day.utils';
+import { CalendarEvent, Interval } from '../models/calendar.models';
 
 export function eventsOverlap(
   event1: CalendarEvent,

@@ -1,5 +1,4 @@
 from rest_framework import generics, permissions
-from rest_framework.exceptions import ValidationError
 
 from .models import Calendar, Event
 from .serializers import CalendarSerializer, EventSerializer
@@ -29,22 +28,7 @@ class EventListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        calendar_param = self.request.query_params.get("calendar")
-
-        if calendar_param:
-            try:
-                # Split the parameter to get a list of UUIDs
-                calendar_ids = calendar_param.split(",")
-                calendars = Calendar.objects.filter(pk__in=calendar_ids, user=user)
-                if not calendars.exists():
-                    msg = "Invalid calendar UUID(s) provided."
-                    raise ValidationError(msg)
-                return Event.objects.filter(calendar__in=calendars)
-            except ValueError as err:
-                msg = "Invalid UUID format provided."
-                raise ValidationError(msg) from err
-        return Event.objects.filter(calendar__user=user)
+        return Event.objects.filter(calendar__user=self.request.user)
 
 
 class EventRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):

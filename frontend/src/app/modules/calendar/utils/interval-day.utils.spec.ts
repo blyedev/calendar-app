@@ -1,3 +1,4 @@
+import { Interval } from '../models/calendar.models';
 import {
   calculateIntervalDay,
   intervalDayOverlapsWithAny,
@@ -5,7 +6,6 @@ import {
   intervalDaysOverlap,
   calculateDaysDuration,
 } from './interval-day.utils';
-import { Interval } from 'src/app/core/models/calendar.models';
 
 describe('calculateIntervalDay', () => {
   it('should calculate the interval day by setting start and end to midnight', () => {

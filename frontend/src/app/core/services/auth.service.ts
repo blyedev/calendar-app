@@ -33,12 +33,12 @@ export class AuthService {
   private authUrl = new URL(environment.authUrl, window.location.origin);
 
   private isAuthenticatedSubject = new ReplaySubject<boolean>(1);
-  public isAuthenticated = this.isAuthenticatedSubject.asObservable();
+  readonly isAuthenticated = this.isAuthenticatedSubject.asObservable();
 
   private userSubject = new BehaviorSubject<
     AuthenticatedResponse['data']['user'] | null
   >(null);
-  public user = this.userSubject.asObservable();
+  readonly user = this.userSubject.asObservable();
 
   constructor(
     private http: HttpClient,

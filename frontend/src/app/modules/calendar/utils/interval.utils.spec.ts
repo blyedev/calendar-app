@@ -1,10 +1,10 @@
+import { Interval } from '../models/calendar.models';
 import {
   intervalsOverlap,
   intervalOverlapsWithAny,
   adjustInterval,
   calculateUnixDuration,
 } from './interval.utils';
-import { Interval } from 'src/app/core/models/calendar.models';
 
 describe('intervalsOverlap', () => {
   it('should return false when intervals do not overlap', () => {

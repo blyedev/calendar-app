@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { ColumnContainerComponent } from './column-container.component';
 import { EventService } from '../../services/event.service';
-import { CalendarEvent } from 'src/app/core/models/calendar.models';
 import { signal } from '@angular/core';
 import { EventCreationService } from '../../services/event-creation.service';
+import { CalendarEvent } from '../../models/calendar.models';
 
 describe('ColumnContainerComponent', () => {
   let component: ColumnContainerComponent;

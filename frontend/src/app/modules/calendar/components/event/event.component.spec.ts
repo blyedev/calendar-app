@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { EventComponent } from './event.component';
 import { ComponentFixture } from '@angular/core/testing';
-import { CalendarEvent } from 'src/app/core/models/calendar.models';
 import { EventService } from '../../services/event.service';
+import { CalendarEvent } from '../../models/calendar.models';
 
 describe('EventComponent', () => {
   let component: EventComponent;

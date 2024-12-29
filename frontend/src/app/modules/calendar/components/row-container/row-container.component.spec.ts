@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { RowContainerComponent } from './row-container.component';
-import { signal } from '@angular/core'; // Import Angular's signal API
+import { signal } from '@angular/core';
 import { EventService } from '../../services/event.service';
-import { CalendarEvent } from 'src/app/core/models/calendar.models';
+import { CalendarEvent } from '../../models/calendar.models';
 
 describe('RowContainerComponent', () => {
   let component: RowContainerComponent;

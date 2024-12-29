@@ -5,18 +5,16 @@ interface CalendarObjectBase {
   last_modified: string;
 }
 
-export interface CalendarAPIMessage {
+export interface CalendarRequest {
   name: string;
   description?: string;
 }
 
-export interface CalendarAPIResponse
-  extends CalendarObjectBase,
-    CalendarAPIMessage {
+export interface CalendarResponse extends CalendarObjectBase, CalendarRequest {
   user: number;
 }
 
-export interface CalendarEventAPIMessage {
+export interface CalendarEventRequest {
   calendar: string;
 
   summary: string;
@@ -24,14 +22,14 @@ export interface CalendarEventAPIMessage {
   dtstart: string;
   dtend: string;
 
-  rrule?: RecurrenceRuleAPIResponse | null;
+  rrule?: RecurrenceRule | null;
 }
 
-export interface CalendarEventAPIResponse
+export interface CalendarEventResponse
   extends CalendarObjectBase,
-    CalendarEventAPIMessage {}
+    CalendarEventRequest {}
 
-export interface RecurrenceRuleAPIResponse {
+export interface RecurrenceRule {
   frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
   interval?: number | null;
   count?: number | null;

@@ -1,4 +1,3 @@
-import { CalendarEvent, Interval } from 'src/app/core/models/calendar.models';
 import {
   PosEvent,
   AdjustEventFunction,
@@ -10,6 +9,7 @@ import {
 } from '../interval-day.utils';
 import { eventDaysOverlap } from '../calendar-event.utils';
 import { getMatrixConstructor } from './positioning.utils';
+import { CalendarEvent, Interval } from '../../models/calendar.models';
 
 const adjustEventDay: AdjustEventFunction = (interval) => (event) => ({
   event: event,
