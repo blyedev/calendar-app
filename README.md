@@ -1,6 +1,6 @@
 # Blyedev's Calendar App
 
-⚠️ This repository is NOT a finished product but my staging ground for new and exciting tech. It has rarely ever worked as a complete app. Nonetheless it is my pride and joy.
+> ⚠️ This repository is NOT a finished product but my staging ground for new and exciting tech. It has rarely ever worked as a complete app. Nonetheless it is my pride and joy.
 
 ### Why calendars
 
@@ -32,7 +32,7 @@ This idea is not novel in any way, what is novel is the fact that it uses the br
 
 This repository follows the principles of github flow. It assumes the main branch should always be stable and deployable, while changes are made on feature branches. This order is sometimes conciously broken because it has never been stable and so feature branches are used mostly for modularity of changes and incremental stabilization of the codebase.
 
-The type checking, linting and formatting is quite agressive in this project. The frontend uses typescript, eslint, stylelint and prettier while the backend uses mypy and ruff (both linter and formatter). Precommit hooks are planned but not yet configured.
+Type checking, linting and formatting is quite agressive in this project. The frontend uses typescript, eslint, stylelint and prettier while the backend uses mypy and ruff (both linter and formatter). Precommit hooks are planned but not yet configured.
 
 Testing is a work in progress. The backend requires little of them as it's essentially a CRUD app. Most of it's complexity is in the models and serializers. The frontend has jest set up to test in the terminal without the chrome binary but only parts of the app are tested and some fail.
 
