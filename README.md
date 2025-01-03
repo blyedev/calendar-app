@@ -1,5 +1,7 @@
 # Blyedev's Calendar App
 
+![Repobeats analytics image](https://repobeats.axiom.co/api/embed/63ce103c11b70e3240f31868b2a7fc4f68b5ae41.svg "Repobeats analytics image")
+
 > ⚠️ This repository is NOT a finished product but my staging ground for new and exciting tech. It has rarely ever worked as a complete app. Nonetheless it is my pride and joy.
 
 #### Table of Contents
