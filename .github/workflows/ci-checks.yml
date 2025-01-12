@@ -74,5 +74,5 @@ jobs:
         run: poetry run ruff check --output-format=github .
 
       - name: Run Ruff Formatter
-        run: poetry run ruff format --output-format=github --check
+        run: poetry run ruff format --check
 
