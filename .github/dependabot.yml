@@ -86,6 +86,16 @@ updates:
           - "@typescript-eslint/*"
           - "eslint"
           - "eslint-*"
+      stylelint:
+        patterns:
+          - "stylelint"
+          - "stylelint-*"
+          - "@csstools/stylelint-formatter-github"
+      jest:
+        patterns:
+          - "jest"
+          - "jest-*"
+          - "@types/jest"
     ignore:
       - dependency-name: "@angular*"
         update-types: ["version-update:semver-major"]
