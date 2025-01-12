@@ -17,9 +17,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Ensure pipx apps are available in the PATH
 # `pipx ensurepath` does the same but for whatever reason does not work here
 ENV PATH="/root/.local/bin:$PATH"
+ENV PIPX_DEFAULT_PYTHON="/usr/local/bin/python"
 
 ENV POETRY_VERSION=1.8.5
-RUN pipx install --python "$(which python)" "poetry==$POETRY_VERSION"
+RUN pipx install "poetry==$POETRY_VERSION"
 
 WORKDIR /app
 
