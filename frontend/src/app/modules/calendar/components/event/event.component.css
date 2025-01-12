@@ -7,15 +7,15 @@
 
   box-sizing: border-box;
   padding: 4px;
+  border: 2px rgb(0 0 0 / 0%) solid;
+  border-left: 2px aqua solid;
+  border-radius: 4px;
 
   font-family: sans-serif;
   color: white;
 
   background-color: blueviolet;
   background-clip: padding-box;
-  border: 2px rgb(0 0 0 / 0%) solid;
-  border-left: 2px aqua solid;
-  border-radius: 4px;
 
   -webkit-touch-callout: none;
 }
