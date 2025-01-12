@@ -4,6 +4,9 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "saturday"
+    reviewers:
+      - "blyedev"
     labels:
       - "ci"
       - "dependencies"
@@ -12,6 +15,9 @@ updates:
     directory: "/backend"
     schedule:
       interval: "weekly"
+      day: "saturday"
+    reviewers:
+      - "blyedev"
     labels:
       - "backend"
       - "docker"
@@ -25,6 +31,9 @@ updates:
     directory: "/backend"
     schedule:
       interval: "weekly"
+      day: "saturday"
+    reviewers:
+      - "blyedev"
     labels:
       - "backend"
       - "dependencies"
@@ -33,6 +42,9 @@ updates:
     directory: "/frontend"
     schedule:
       interval: "weekly"
+      day: "saturday"
+    reviewers:
+      - "blyedev"
     labels:
       - "frontend"
       - "docker"
@@ -45,6 +57,9 @@ updates:
     directory: "/frontend"
     schedule:
       interval: "weekly"
+      day: "saturday"
+    reviewers:
+      - "blyedev"
     labels:
       - "frontend"
       - "dependencies"
@@ -52,25 +67,25 @@ updates:
       angular:
         applies-to: version-updates
         patterns:
-        - "@angular*"
-        - "angular-eslint"
+          - "@angular*"
+          - "angular-eslint"
         update-types:
-        - "minor"
-        - "patch"
+          - "minor"
+          - "patch"
       minor-and-patch:
         applies-to: security-updates
         patterns:
-        - "@angular*"
-        - "angular-eslint"
+          - "@angular*"
+          - "angular-eslint"
         update-types:
-        - "patch"
-        - "minor"
+          - "patch"
+          - "minor"
       eslint:
         patterns:
-          - 'typescript-eslint'
-          - '@typescript-eslint/*'
-          - 'eslint'
-          - 'eslint-*'
+          - "typescript-eslint"
+          - "@typescript-eslint/*"
+          - "eslint"
+          - "eslint-*"
     ignore:
       - dependency-name: "@angular*"
         update-types: ["version-update:semver-major"]
