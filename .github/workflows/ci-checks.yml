@@ -71,7 +71,7 @@ jobs:
         run: poetry run mypy .
 
       - name: Run Ruff Linter
-        run: poetry run ruff check .
+        run: poetry run ruff check --output-format=github .
 
       - name: Run Ruff Formatter
         run: poetry run ruff format --check
