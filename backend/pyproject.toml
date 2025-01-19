@@ -16,7 +16,7 @@ django-health-check = "3.18.3"
 whitenoise = "6.8.2"
 uuid = "1.30"
 gunicorn = "^23.0.0"
-psycopg = "^3.2.2"
+psycopg = "^3.2.4"
 django-allauth = {extras = ["socialaccount"], version = "^65.3.0"}
 
 [tool.poetry.group.dev.dependencies]
