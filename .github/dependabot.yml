@@ -37,6 +37,15 @@ updates:
     labels:
       - "backend"
       - "dependencies"
+    groups:
+      django:
+        patterns:
+          - "django"
+          - "django-stubs"
+      drf:
+        patterns:
+          - "djangorestframework"
+          - "djangorestframework-stubs"
 
   - package-ecosystem: "docker"
     directory: "/frontend"
