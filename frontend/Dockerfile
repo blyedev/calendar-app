@@ -1,7 +1,7 @@
 # ===========================
 # Development Stage
 # ===========================
-FROM node:22.13.0-slim AS dev
+FROM node:22.13.1-slim AS dev
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -16,7 +16,7 @@ CMD ["npm", "start"]
 # ===========================
 # Build Stage
 # ===========================
-FROM node:22.13.0-slim AS build
+FROM node:22.13.1-slim AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
