@@ -29,7 +29,7 @@ RUN npm run build
 # ===========================
 # Production Stage
 # ===========================
-FROM nginx:1.27.3-alpine AS prod
+FROM nginx:1.27.4-alpine AS prod
 
 COPY --from=build /app/dist/calendar-app-frontend/browser/ /usr/share/nginx/html
 
