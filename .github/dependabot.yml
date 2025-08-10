@@ -3,8 +3,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "saturday"
+      interval: "monthly"
     reviewers:
       - "blyedev"
     labels:
@@ -14,8 +13,7 @@ updates:
   - package-ecosystem: "docker"
     directory: "/backend"
     schedule:
-      interval: "weekly"
-      day: "saturday"
+      interval: "monthly"
     reviewers:
       - "blyedev"
     labels:
@@ -27,11 +25,10 @@ updates:
           - "version-update:semver-major"
           - "version-update:semver-minor"
 
-  - package-ecosystem: "pip"
+  - package-ecosystem: "uv"
     directory: "/backend"
     schedule:
-      interval: "weekly"
-      day: "saturday"
+      interval: "monthly"
     reviewers:
       - "blyedev"
     labels:
@@ -50,8 +47,7 @@ updates:
   - package-ecosystem: "docker"
     directory: "/frontend"
     schedule:
-      interval: "weekly"
-      day: "saturday"
+      interval: "monthly"
     reviewers:
       - "blyedev"
     labels:
@@ -65,8 +61,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
-      interval: "weekly"
-      day: "saturday"
+      interval: "monthly"
     reviewers:
       - "blyedev"
     labels:
