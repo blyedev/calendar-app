@@ -8,7 +8,7 @@ dependencies = [
     "django==5.1.7",
     "djangorestframework==3.16.1",
     "django-health-check==3.20.0",
-    "whitenoise==6.8.2",
+    "whitenoise==6.9.0",
     "uuid==1.30",
     "gunicorn<24.0.0,>=23.0.0",
     "psycopg<4.0.0,>=3.2.4",
