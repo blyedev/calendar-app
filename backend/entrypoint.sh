@@ -2,6 +2,6 @@
 
 set -e
 
-poetry run python manage.py migrate --noinput
-poetry run python manage.py createsuperuser --noinput --username root || true
-exec poetry run "$@"
+uv run python manage.py migrate --noinput
+uv run python manage.py createsuperuser --noinput --username root || true
+exec uv run "$@"

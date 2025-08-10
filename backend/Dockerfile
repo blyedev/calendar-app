@@ -3,40 +3,35 @@
 # ===========================
 FROM python:3.12.8-slim AS base
 
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    UV_NO_MANAGED_PYTHON=1 \
+    UV_PYTHON_DOWNLOADS=never \
+    UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    pipx \
     libpq5 \
     dos2unix \
     curl \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Ensure pipx apps are available in the PATH
-# `pipx ensurepath` does the same but for whatever reason does not work here
-ENV PATH="/root/.local/bin:$PATH"
-ENV PIPX_DEFAULT_PYTHON="/usr/local/bin/python"
-
-ENV POETRY_VERSION=1.8.5
-RUN pipx install "poetry==$POETRY_VERSION"
+COPY --from=ghcr.io/astral-sh/uv:0.8.8 /uv /uvx /bin/
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml uv.lock ./
 
-RUN poetry install --no-interaction --no-ansi --no-root --only main
+RUN uv sync --locked --no-dev
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD poetry run python manage.py health_check || exit 1
+    CMD uv run python manage.py health_check || exit 1
 
 # ===========================
 # Development Stage
 # ===========================
 FROM base AS dev
-
-RUN poetry install --no-interaction --no-ansi --no-root
 
 ENV DJANGO_ENV=development
 
@@ -45,6 +40,8 @@ WORKDIR /app
 COPY . .
 
 RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
+
+RUN uv sync --locked
 
 ENTRYPOINT ["./entrypoint.sh"]
 
@@ -66,7 +63,7 @@ WORKDIR /home/appuser/app
 
 COPY --chown=appuser . .
 
-RUN poetry run python manage.py collectstatic --noinput
+RUN uv run python manage.py collectstatic --noinput
 
 USER appuser
 
