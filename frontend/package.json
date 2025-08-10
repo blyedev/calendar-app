@@ -43,7 +43,7 @@
     "@csstools/stylelint-formatter-github": "^1.0.0",
     "@types/jest": "^29.5.14",
     "angular-eslint": "19.0.2",
-    "eslint": "^9.18.0",
+    "eslint": "^9.33.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-preset-angular": "^14.5.0",
@@ -54,7 +54,7 @@
     "stylelint-no-unsupported-browser-features": "^8.0.2",
     "stylelint-value-no-unknown-custom-properties": "^6.0.1",
     "typescript": "~5.6.3",
-    "typescript-eslint": "8.20.0"
+    "typescript-eslint": "8.39.0"
   },
   "jest": {
     "preset": "jest-preset-angular",
